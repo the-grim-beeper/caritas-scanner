@@ -206,13 +206,15 @@ def mock_digest(signals: list[dict], events: list[dict], movers: list[dict]) -> 
         ]}
         for layer, items in by_layer.items()
     ]
-    top = signals[:3]
+    top = signals[:2]
     n = len(signals)
     return {
-        "lead_en": f"[mock] {n} founding signals this cycle across {len(by_layer)} layers; "
-                   f"strongest: {'; '.join(s['headline_en'][:80] for s in top)}.",
-        "lead_de": f"[mock] {n} neue Signale in diesem Zyklus über {len(by_layer)} Ebenen; "
-                   f"stärkste: {'; '.join(s['headline_de'][:80] for s in top)}.",
+        "lead_en": f"[mock] {n} founding signals this cycle across {len(by_layer)} layers. "
+                   f"Highest-scoring: {' — '.join(s['headline_en'][:70] for s in top)}. "
+                   "Set ANTHROPIC_API_KEY for an analyst-written lead.",
+        "lead_de": f"[mock] {n} neue Signale in diesem Zyklus über {len(by_layer)} Ebenen. "
+                   f"Höchster Score: {' — '.join(s['headline_de'][:70] for s in top)}. "
+                   "ANTHROPIC_API_KEY setzen für ein analytisch verfasstes Lagebild.",
         "sections": sections,
         "chains": [],
         "watch": [{"event_id": e["id"], "why_en": "[mock] upcoming deadline", "why_de": "[mock] anstehende Frist"}

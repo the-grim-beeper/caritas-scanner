@@ -156,6 +156,7 @@ async def list_signals(
     min_score: float | None = None,
     q: str | None = None,
     since: date | None = None,
+    sort: str = Query("published", pattern="^(published|score)$"),
     page: int = Query(1, ge=1),
     per_page: int = Query(50, ge=1, le=200),
 ) -> dict:
@@ -182,7 +183,9 @@ async def list_signals(
     total = (await session.execute(select(func.count()).select_from(stmt.subquery()))).scalar_one()
     rows = (
         await session.execute(
-            stmt.options(*_SIGNAL_LOAD).order_by(desc(Signal.published_at)).offset((page - 1) * per_page).limit(per_page)
+            stmt.options(*_SIGNAL_LOAD)
+            .order_by(desc(Signal.score) if sort == "score" else desc(Signal.published_at), desc(Signal.published_at))
+            .offset((page - 1) * per_page).limit(per_page)
         )
     ).scalars().all()
     return {"total": int(total), "page": page, "per_page": per_page, "items": [signal_summary(s) for s in rows]}
