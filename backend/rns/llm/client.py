@@ -34,6 +34,11 @@ class LLMAuthError(RuntimeError):
     """The key is rejected. Not retryable, not per-item: the whole batch must stop."""
 
 
+class LLMRequestError(RuntimeError):
+    """HTTP 400: the request shape is wrong (schema, params). A bug, not an item —
+    the whole batch must stop rather than fail once per item."""
+
+
 _client: AsyncAnthropic | None = None
 
 
@@ -90,8 +95,10 @@ async def complete_json(
                 continue
             except APIStatusError as exc:
                 last_error = exc
+                if exc.status_code == 400:
+                    raise LLMRequestError(str(exc)) from exc
                 if exc.status_code and exc.status_code < 500:
-                    break  # a 400 does not become valid by being re-sent
+                    break  # other 4xx do not become valid by being re-sent
                 await asyncio.sleep(min(2**attempt, 30))
                 continue
 

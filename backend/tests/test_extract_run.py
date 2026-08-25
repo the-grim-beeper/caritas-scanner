@@ -108,3 +108,32 @@ async def test_auth_error_aborts_the_batch_instead_of_calling_per_item(db_sessio
     assert stats.aborted == "LLMAuthError: API key is invalid"
     unprocessed = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(False)))).scalars().all()
     assert len(unprocessed) == 20  # nothing marked processed; the next cycle retries
+
+
+async def test_bad_request_aborts_the_batch_too(db_session, monkeypatch):
+    # A 400 (e.g. an unsupported schema keyword) is a bug in our request, identical on
+    # every item — one failure per item would burn the whole batch for nothing.
+    from rns import config
+    from rns.extract import run as extract_run
+    from rns.llm.client import LLMRequestError
+
+    monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-x")
+    monkeypatch.setattr(config.settings, "extraction_concurrency", 1)
+    src = Source(slug="s", name="s", layer="policy", authority="high", scope="region", method="rss",
+                 url="https://s.test/f", collect=True)
+    db_session.add(src)
+    await db_session.flush()
+    for i in range(5):
+        db_session.add(FeedItem(source_id=src.id, external_id=str(i), title=f"Meldung {i}", url=f"https://s.test/{i}",
+                                canonical_url=f"https://s.test/{i}", content_hash=str(i)))
+    await db_session.commit()
+    calls = 0
+
+    async def bad(item, source):
+        nonlocal calls
+        calls += 1
+        raise LLMRequestError("output_config.format.schema: minimum not supported")
+
+    monkeypatch.setattr(extract_run, "_extract_live", bad)
+    stats = await extract_pending(db_session)
+    assert calls == 1 and stats.failed == 5 and stats.aborted.startswith("LLMRequestError")

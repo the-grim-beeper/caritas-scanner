@@ -16,7 +16,7 @@ from rns.db.models import Event, FeedItem, Signal, SignalEntity, SignalTopic, So
 from rns.entities import resolve
 from rns.extract import prompt
 from rns.extract.schema import EXTRACTION_SCHEMA, ExtractionResult, from_payload
-from rns.llm.client import LLMAuthError
+from rns.llm.client import LLMAuthError, LLMRequestError
 from rns.llm.mock import mock_extract
 
 log = logging.getLogger(__name__)
@@ -62,8 +62,8 @@ async def _extract_one(
             if settings.llm_enabled:
                 return item, await _extract_live(item, source)
             return item, mock_extract(item.title or "", item.summary or "", source.layer)
-        except LLMAuthError as exc:
-            abort.reason = f"LLMAuthError: {exc}"
+        except (LLMAuthError, LLMRequestError) as exc:
+            abort.reason = f"{type(exc).__name__}: {exc}"
             log.error("extraction aborted: %s", exc)
             return item, None
         except Exception as exc:  # noqa: BLE001 — one bad item must not sink the cycle

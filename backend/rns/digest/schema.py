@@ -40,7 +40,7 @@ DIGEST_SCHEMA = {
                 "properties": {
                     "title_en": {"type": "string"},
                     "title_de": {"type": "string"},
-                    "signal_ids": {"type": "array", "items": {"type": "string"}, "minItems": 2},
+                    "signal_ids": {"type": "array", "items": {"type": "string"}},
                 },
                 "required": ["title_en", "title_de", "signal_ids"],
                 "additionalProperties": False,
