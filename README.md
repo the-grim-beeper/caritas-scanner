@@ -4,6 +4,8 @@ A standalone, bilingual (EN/DE) horizon scanner for the Metropolregion Rhein-Nec
 Mannheim, Heidelberg, Ludwigshafen and the surrounding Rhein-Neckar-Kreis, Bergstraße,
 Pfalz and Odenwald, across Baden-Württemberg, Rheinland-Pfalz and Hessen.
 
+**Live:** https://web-production-bd635b.up.railway.app — password `kurpfalz`
+
 Built from two briefs (in `docs/brief/`): a four-pillar source architecture and a
 six-layer source map with a recommended pipeline, scoring formula, topic vocabulary and
 entity dictionary. The scanner implements that blueprint end to end:
@@ -120,7 +122,7 @@ cd ../frontend && npm install && npm run dev           # :3001, proxies /api →
 ## Tests
 
 ```bash
-cd backend && .venv/bin/python -m pytest -q      # 62 tests
+cd backend && .venv/bin/python -m pytest -q      # 66 tests
 cd frontend && npm run build && npx oxlint src
 ```
 
@@ -133,9 +135,14 @@ that cites an invented id, an extraction queue that starves undated page items.
 
 Multi-stage `Dockerfile` (Vite build → Python runtime with the embedding model warmed
 into the image), `railway.json` with `alembic upgrade head && load_sources` as the
-pre-deploy command and `/api/health` as the healthcheck. Needs a pgvector Postgres
-(Railway: deploy from the `pgvector/pgvector:pg16` image with a volume) and the env vars
-above. Not yet deployed.
+pre-deploy command and `/api/health` as the healthcheck.
+
+Deployed on Railway (project `rhein-neckar-scanner`, services `web` + `postgres`): Postgres
+is the `pgvector/pgvector:pg16` image with a volume at `/var/lib/postgresql/data`;
+`DATABASE_URL` on `web` references the postgres service's password and private domain.
+`ANTHROPIC_API_KEY` is set, so it runs **live**, with `MAX_EXTRACTIONS_PER_CYCLE=500` as
+the daily cost ceiling (~500 Haiku calls + one Opus digest ≈ under €1/day). Deploy with
+`railway up --service web` from the repo root; GitHub auto-deploy is not wired.
 
 ## Decisions taken while building (see spec §10)
 
