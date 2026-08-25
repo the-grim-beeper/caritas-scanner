@@ -45,7 +45,7 @@ async def _fetch_one(http: httpx.AsyncClient, source: Source, sem: asyncio.Semap
                 items, phash = await fetch_page(http, source.url, source.item_selector)
                 if phash == source.last_page_hash:
                     return _Fetched(source, [], page_hash=phash, unchanged=True)
-                return _Fetched(source, items, page_hash=phash)
+                return _Fetched(source, items[: settings.max_page_items], page_hash=phash)
             return _Fetched(source, [], error=f"method {source.method} is not collected")
         except httpx.HTTPStatusError as exc:
             return _Fetched(source, [], error=f"HTTP {exc.response.status_code}")

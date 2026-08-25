@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -36,7 +37,19 @@ class Settings(BaseSettings):
     feed_concurrency: int = 12
     # Quarantined after this many consecutive failures; never deleted.
     max_consecutive_failures: int = 5
+    # A list page is a snapshot, not a stream; the first N links in document order are
+    # the newest on every site checked. Caps what a nav-heavy page can inject per cycle.
+    max_page_items: int = 40
     user_agent: str = "Mozilla/5.0 (compatible; RheinNeckarScanner/0.1; +https://pharosfutures.com)"
+
+    # --- data ---------------------------------------------------------------
+    # Repo-relative by default; the Docker image sets DATA_DIR=/data.
+    data_dir: str | None = None
+
+    def resolved_data_dir(self) -> Path:
+        if self.data_dir:
+            return Path(self.data_dir)
+        return Path(__file__).resolve().parents[2] / "data"
 
     # --- app ----------------------------------------------------------------
     app_password: str = "kurpfalz"

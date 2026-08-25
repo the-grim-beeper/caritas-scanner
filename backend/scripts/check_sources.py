@@ -124,11 +124,30 @@ async def _check(http: httpx.AsyncClient, entry, sem: asyncio.Semaphore) -> dict
         return {**report, "ok": False, "reason": "no feed found"}
 
 
+def dedupe_resolved(results: list[dict]) -> list[dict]:
+    """Autodiscovery can land two catalogue entries on one feed (Heidelberg's
+    Baustellen entry resolving to the general press feed). Keep the first in
+    catalogue order; the rest are not verified, and say which feed they hit."""
+    seen: dict[str, str] = {}
+    out: list[dict] = []
+    for r in results:
+        if r.get("ok"):
+            url = r["resolved_url"]
+            if url in seen:
+                out.append({**{k: v for k, v in r.items() if k not in ("method", "resolved_url", "item_count")},
+                            "ok": False, "reason": f"resolved to the same feed as {seen[url]}"})
+                continue
+            seen[url] = r["slug"]
+        out.append(r)
+    return out
+
+
 async def main() -> int:
     entries = [e for e in load_catalogue(DATA / "sources.yaml") if e.method in COLLECTED_METHODS]
     sem = asyncio.Semaphore(8)
     async with httpx.AsyncClient(timeout=settings.feed_timeout_seconds, headers=HEADERS) as http:
         results = await asyncio.gather(*(_check(http, e, sem) for e in entries))
+    results = dedupe_resolved(list(results))
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     live = [
         {"slug": r["slug"], "method": r["method"], "resolved_url": r["resolved_url"], "item_count": r["item_count"]}

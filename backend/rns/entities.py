@@ -44,3 +44,63 @@ def load_seed(path: Path) -> list[EntitySeed]:
                 )
             )
     return seeds
+
+
+# ---------------------------------------------------------------------------
+# Resolver
+# ---------------------------------------------------------------------------
+import re  # noqa: E402
+import unicodedata  # noqa: E402
+
+from sqlalchemy import select  # noqa: E402
+from sqlalchemy.ext.asyncio import AsyncSession  # noqa: E402
+
+from rns.db.models import Entity  # noqa: E402
+
+_OPEN_KINDS = {"organisation", "project", "fund"}
+
+
+def slugify(name: str) -> str:
+    text = unicodedata.normalize("NFKD", name)
+    text = text.replace("ß", "ss")
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    text = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return text[:150] or "entity"
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"\s+", " ", s.strip().lower())
+
+
+async def resolve(session: AsyncSession, names: list[str], *, kind: str) -> list[Entity]:
+    """Map free-text names onto dictionary entities by name/alias (case-insensitive).
+
+    Places are a closed set: an unknown place is dropped. Organisations, projects and
+    funds are open: an unknown one is created, unseeded, so it can accumulate a timeline."""
+    if not names:
+        return []
+    rows = (await session.execute(select(Entity).where(Entity.kind == kind))).scalars().all()
+    index: dict[str, Entity] = {}
+    for e in rows:
+        index[_norm(e.name)] = e
+        index[e.slug] = e
+        for a in e.aliases or []:
+            index.setdefault(_norm(a), e)
+    out: list[Entity] = []
+    seen: set = set()
+    for raw in names:
+        if not raw or not raw.strip():
+            continue
+        key = _norm(raw)
+        ent = index.get(key) or index.get(slugify(raw))
+        if ent is None and kind in _OPEN_KINDS:
+            ent = Entity(slug=slugify(raw), kind=kind, name=raw.strip()[:300], aliases=[], seeded=False)
+            session.add(ent)
+            await session.flush()
+            index[key] = ent
+            index[ent.slug] = ent
+        if ent is None or ent.id in seen:
+            continue
+        seen.add(ent.id)
+        out.append(ent)
+    return out
