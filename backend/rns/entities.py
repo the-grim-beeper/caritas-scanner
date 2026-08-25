@@ -92,11 +92,17 @@ async def resolve(session: AsyncSession, names: list[str], *, kind: str) -> list
         if not raw or not raw.strip():
             continue
         key = _norm(raw)
-        ent = index.get(key) or index.get(slugify(raw))
+        slug = slugify(raw)
+        ent = index.get(key) or index.get(slug)
+        if ent is None:
+            # An entity is one thing whatever kind the extractor guessed this time:
+            # slugs are unique across kinds, so look the slug up unfiltered before creating.
+            ent = (await session.execute(select(Entity).where(Entity.slug == slug))).scalar_one_or_none()
         if ent is None and kind in _OPEN_KINDS:
-            ent = Entity(slug=slugify(raw), kind=kind, name=raw.strip()[:300], aliases=[], seeded=False)
+            ent = Entity(slug=slug, kind=kind, name=raw.strip()[:300], aliases=[], seeded=False)
             session.add(ent)
             await session.flush()
+        if ent is not None:
             index[key] = ent
             index[ent.slug] = ent
         if ent is None or ent.id in seen:

@@ -18,7 +18,7 @@ It implements the brief's architecture end to end:
 sources (6 layers) → collection (RSS first, list-page monitor second)
   → canonical URL + content hash dedup
   → entity extraction (place / organisation / project / fund)
-  → topic classification (fixed 30-tag vocabulary)
+  → topic classification (fixed 31-tag vocabulary)
   → novelty × authority scoring
   → event and deadline extraction
   → daily digest · trend database · watchlist

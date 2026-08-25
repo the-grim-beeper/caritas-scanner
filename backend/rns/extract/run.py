@@ -41,7 +41,7 @@ async def _extract_live(item: FeedItem, source: Source) -> ExtractionResult:
         system=prompt.SYSTEM,
         user=prompt.user_message(item, source),
         schema=EXTRACTION_SCHEMA,
-        max_tokens=2048,
+        max_tokens=4096,  # bilingual summaries + events can pass 2k
     )
     return from_payload(payload)
 
@@ -133,13 +133,22 @@ async def extract_pending(session: AsyncSession, *, limit: int | None = None) ->
         if result is None:
             stats.failed += 1
             continue
-        item.processed = True
-        stats.processed += 1
         if not result.is_signal:
+            item.processed = True
             item.discarded = True
+            stats.processed += 1
             stats.discarded += 1
             continue
-        await _persist(session, item, item.source, result)
+        # A savepoint per item: one bad write must not roll back a batch of paid calls.
+        try:
+            async with session.begin_nested():
+                await _persist(session, item, item.source, result)
+                item.processed = True
+        except Exception as exc:  # noqa: BLE001
+            log.warning("persist failed for %s: %s", item.url, exc)
+            stats.failed += 1
+            continue
+        stats.processed += 1
         stats.signals += 1
     await session.commit()
     return stats

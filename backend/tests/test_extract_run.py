@@ -137,3 +137,37 @@ async def test_bad_request_aborts_the_batch_too(db_session, monkeypatch):
     monkeypatch.setattr(extract_run, "_extract_live", bad)
     stats = await extract_pending(db_session)
     assert calls == 1 and stats.failed == 5 and stats.aborted.startswith("LLMRequestError")
+
+
+async def test_one_items_persist_failure_does_not_lose_the_batch(db_session, monkeypatch):
+    # Wrong: an exception while writing one signal rolls back every extraction in the
+    # cycle — 400 paid model calls gone.
+    from rns.extract import run as extract_run
+    from scripts.load_sources import upsert_entities
+    await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
+    src = Source(slug="s", name="s", layer="corporate", authority="high", scope="region", method="rss",
+                 url="https://s.test/f", collect=True)
+    db_session.add(src)
+    await db_session.flush()
+    db_session.add(FeedItem(source_id=src.id, external_id="1", title="BASF investiert 100 Millionen in Ludwigshafen",
+                            url="https://s.test/1", canonical_url="https://s.test/1", content_hash="1"))
+    db_session.add(FeedItem(source_id=src.id, external_id="2", title="SAP investiert 50 Millionen in Walldorf",
+                            url="https://s.test/2", canonical_url="https://s.test/2", content_hash="2"))
+    await db_session.commit()
+
+    real = extract_run._persist
+    calls = {"n": 0}
+
+    async def flaky(session, item, source, result):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("simulated unique violation")
+        return await real(session, item, source, result)
+
+    monkeypatch.setattr(extract_run, "_persist", flaky)
+    stats = await extract_pending(db_session)
+    assert stats.signals == 1 and stats.failed == 1
+    saved = (await db_session.execute(select(Signal))).scalars().all()
+    assert len(saved) == 1
+    unprocessed = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(False)))).scalars().all()
+    assert len(unprocessed) == 1  # the failed item is retried next cycle

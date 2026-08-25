@@ -30,3 +30,11 @@ async def test_resolver_unknown_organisation_is_created_unseeded(db_session):
     assert len(ents) == 1 and ents[0].seeded is False and ents[0].kind == "organisation"
     again = await resolve(db_session, ["cytion gmbh"], kind="organisation")
     assert again[0].id == ents[0].id
+
+
+async def test_same_name_under_two_kinds_reuses_one_entity_instead_of_colliding(db_session):
+    # Wrong: per-kind lookup, so "VRNnextbike" as organisation and then as project tries
+    # to insert the same slug twice and the whole cycle dies on a unique violation.
+    first = await resolve(db_session, ["VRNnextbike"], kind="organisation")
+    second = await resolve(db_session, ["VRNnextbike"], kind="project")
+    assert first[0].id == second[0].id and second[0].kind == "organisation"
