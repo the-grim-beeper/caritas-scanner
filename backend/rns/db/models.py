@@ -110,7 +110,7 @@ class Story(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=new_uuid)
     founding_signal_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("signals.id", ondelete="SET NULL", use_alter=True), nullable=True
+        UUID(as_uuid=True), ForeignKey("signals.id", ondelete="SET NULL", use_alter=True, name="fk_story_founder"), nullable=True
     )
     corroboration_count: Mapped[int] = mapped_column(Integer, default=0)
     distinct_sources: Mapped[int] = mapped_column(Integer, default=1)
