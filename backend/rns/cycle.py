@@ -44,6 +44,8 @@ async def run_cycle(session_factory: async_sessionmaker[AsyncSession], *, http: 
 
             e = await extract_pending(session)
             cycle.extracted, cycle.signals = e.processed, e.signals
+            if e.aborted:
+                cycle.error = f"extraction aborted: {e.aborted}"
             log.info("extract: %s", e)
 
             a = await analyse_pending(session)

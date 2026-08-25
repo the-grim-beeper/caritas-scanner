@@ -74,3 +74,37 @@ async def test_extraction_cap_does_not_starve_undated_page_items(db_session):
     assert stats.processed == 1
     done = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(True)))).scalar_one()
     assert done.external_id == "page-new"
+
+
+async def test_auth_error_aborts_the_batch_instead_of_calling_per_item(db_session, monkeypatch):
+    # Wrong: catching the 401 per item and carrying on, so a dead key costs a request
+    # per feed item and the cycle "completes" with zero signals.
+    from rns import config
+    from rns.extract import run as extract_run
+    from rns.llm.client import LLMAuthError
+
+    monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-dead")
+    monkeypatch.setattr(config.settings, "extraction_concurrency", 2)
+    src = Source(slug="s", name="s", layer="policy", authority="high", scope="region", method="rss",
+                 url="https://s.test/f", collect=True)
+    db_session.add(src)
+    await db_session.flush()
+    for i in range(20):
+        db_session.add(FeedItem(source_id=src.id, external_id=str(i), title=f"Meldung {i}", url=f"https://s.test/{i}",
+                                canonical_url=f"https://s.test/{i}", content_hash=str(i)))
+    await db_session.commit()
+
+    calls = 0
+
+    async def dead(item, source):
+        nonlocal calls
+        calls += 1
+        raise LLMAuthError("API key is invalid")
+
+    monkeypatch.setattr(extract_run, "_extract_live", dead)
+    stats = await extract_pending(db_session)
+    assert stats.processed == 0 and stats.failed == 20
+    assert calls <= 2
+    assert stats.aborted == "LLMAuthError: API key is invalid"
+    unprocessed = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(False)))).scalars().all()
+    assert len(unprocessed) == 20  # nothing marked processed; the next cycle retries

@@ -38,8 +38,8 @@ projects:
   - {slug: hochstrasse, name: Hochstraße Ludwigshafen, aliases: [Hochstraße Nord, Hochstraße Süd, Hochstrasse, Helmut-Kohl-Allee]}
   - {slug: kurt-schumacher-bruecke, name: Kurt-Schumacher-Brücke, aliases: [Kurt-Schumacher-Bruecke, KSB]}
   - {slug: riedbahn, name: Riedbahn}
-  - {slug: hospital-areal, name: Hospital-Areal Heidelberg, aliases: [Hospital Areal, Hospital]}
-  - {slug: heidelberg-innovation-park, name: Heidelberg Innovation Park, aliases: [hip]}
+  - {slug: hospital-areal, name: Hospital-Areal Heidelberg, aliases: [Hospital Areal, Hospital-Gelände]}
+  - {slug: heidelberg-innovation-park, name: Heidelberg Innovation Park, aliases: [Innovation Park Heidelberg]}
   - {slug: lab22, name: LAB22}
   - {slug: ki-lab-kurpfalz, name: KI Lab Kurpfalz}
   - {slug: gameshub-heidelberg, name: GamesHub Heidelberg}
@@ -115,7 +115,7 @@ organisations:
   - {slug: freudenberg, name: Freudenberg, aliases: [Freudenberg Gruppe]}
   - {slug: john-deere, name: John Deere, aliases: [John Deere Mannheim]}
   - {slug: daimler-truck, name: Daimler Truck, aliases: [Mercedes-Benz Werk Mannheim, Daimler Truck Mannheim]}
-  - {slug: heidelberger-druckmaschinen, name: Heidelberger Druckmaschinen, aliases: [Heidelberg Druck, HEIDELBERG]}
+  - {slug: heidelberger-druckmaschinen, name: Heidelberger Druckmaschinen, aliases: [Heidelberg Druck, Heidelberger Druck]}
   - {slug: sas-institute, name: SAS Institute}
   - {slug: tsg-hoffenheim, name: TSG Hoffenheim}
   - {slug: sv-waldhof, name: SV Waldhof Mannheim, aliases: [Waldhof Mannheim]}

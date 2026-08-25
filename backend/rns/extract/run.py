@@ -16,6 +16,7 @@ from rns.db.models import Event, FeedItem, Signal, SignalEntity, SignalTopic, So
 from rns.entities import resolve
 from rns.extract import prompt
 from rns.extract.schema import EXTRACTION_SCHEMA, ExtractionResult, from_payload
+from rns.llm.client import LLMAuthError
 from rns.llm.mock import mock_extract
 
 log = logging.getLogger(__name__)
@@ -28,6 +29,8 @@ class ExtractStats:
     discarded: int = 0
     failed: int = 0
     mode: str = "mock"
+    # Set when the batch was stopped early (a rejected key); items stay unprocessed.
+    aborted: str | None = None
 
 
 async def _extract_live(item: FeedItem, source: Source) -> ExtractionResult:
@@ -43,12 +46,26 @@ async def _extract_live(item: FeedItem, source: Source) -> ExtractionResult:
     return from_payload(payload)
 
 
-async def _extract_one(item: FeedItem, source: Source, sem: asyncio.Semaphore) -> tuple[FeedItem, ExtractionResult | None]:
+class _Abort:
+    """Shared across one batch: the first authentication error stops every later call."""
+
+    reason: str | None = None
+
+
+async def _extract_one(
+    item: FeedItem, source: Source, sem: asyncio.Semaphore, abort: _Abort
+) -> tuple[FeedItem, ExtractionResult | None]:
     async with sem:
+        if abort.reason:
+            return item, None
         try:
             if settings.llm_enabled:
                 return item, await _extract_live(item, source)
             return item, mock_extract(item.title or "", item.summary or "", source.layer)
+        except LLMAuthError as exc:
+            abort.reason = f"LLMAuthError: {exc}"
+            log.error("extraction aborted: %s", exc)
+            return item, None
         except Exception as exc:  # noqa: BLE001 — one bad item must not sink the cycle
             log.warning("extraction failed for %s: %s", item.url, exc)
             return item, None
@@ -108,7 +125,9 @@ async def extract_pending(session: AsyncSession, *, limit: int | None = None) ->
         return stats
 
     sem = asyncio.Semaphore(settings.extraction_concurrency if settings.llm_enabled else 64)
-    results = await asyncio.gather(*(_extract_one(i, i.source, sem) for i in items))
+    abort = _Abort()
+    results = await asyncio.gather(*(_extract_one(i, i.source, sem, abort) for i in items))
+    stats.aborted = abort.reason
 
     for item, result in results:
         if result is None:

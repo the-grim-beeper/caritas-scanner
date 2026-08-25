@@ -15,7 +15,7 @@ import json
 import logging
 from typing import Any
 
-from anthropic import APIStatusError, AsyncAnthropic, RateLimitError
+from anthropic import APIStatusError, AsyncAnthropic, AuthenticationError, RateLimitError
 
 from rns.config import settings
 
@@ -28,6 +28,10 @@ class LLMUnavailable(RuntimeError):
 
 class LLMEmptyCompletion(RuntimeError):
     """No usable text after every retry and the fallback."""
+
+
+class LLMAuthError(RuntimeError):
+    """The key is rejected. Not retryable, not per-item: the whole batch must stop."""
 
 
 _client: AsyncAnthropic | None = None
@@ -78,6 +82,8 @@ async def complete_json(
                     messages=[{"role": "user", "content": user}],
                     output_config=output_config,
                 )
+            except AuthenticationError as exc:
+                raise LLMAuthError(str(exc)) from exc
             except RateLimitError as exc:
                 last_error = exc
                 await asyncio.sleep(min(2**attempt, 30))

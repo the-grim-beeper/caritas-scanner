@@ -55,3 +55,13 @@ async def db_session(engine):
 @pytest.fixture
 def session_factory(engine):
     return async_sessionmaker(engine, expire_on_commit=False)
+
+
+@pytest.fixture(autouse=True)
+def _mock_mode(monkeypatch):
+    """Tests never spend money: a key in backend/.env must not flip them to live."""
+    from rns.config import settings
+
+    monkeypatch.setattr(settings, "anthropic_api_key", None)
+    monkeypatch.setattr(settings, "max_item_age_days", 60)
+    monkeypatch.setattr(settings, "max_extractions_per_cycle", 1500)
