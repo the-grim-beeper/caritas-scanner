@@ -1,0 +1,11 @@
+**/node_modules
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/*.egg-info
+backend/static
+backend/.env
+frontend/dist
+.git
+docs
+*.png
