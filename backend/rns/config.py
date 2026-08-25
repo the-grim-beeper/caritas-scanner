@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # A list page is a snapshot, not a stream; the first N links in document order are
     # the newest on every site checked. Caps what a nav-heavy page can inject per cycle.
     max_page_items: int = 40
+    # Items published earlier than this on first sight are archive, not news. Undated
+    # items (list pages) are kept — a missing date is not evidence of age.
+    max_item_age_days: int = 60
     user_agent: str = "Mozilla/5.0 (compatible; RheinNeckarScanner/0.1; +https://pharosfutures.com)"
 
     # --- data ---------------------------------------------------------------

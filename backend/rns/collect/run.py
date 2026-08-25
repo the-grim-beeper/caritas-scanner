@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import timedelta
 from dataclasses import dataclass
 
 import httpx
@@ -25,6 +26,7 @@ class CollectStats:
     new_items: int = 0
     failed_sources: int = 0
     sources_ok: int = 0
+    skipped_old: int = 0
 
 
 @dataclass
@@ -83,7 +85,10 @@ async def collect_all(session: AsyncSession, http: httpx.AsyncClient) -> Collect
         if res.unchanged:
             continue
         stats.fetched += len(res.items)
-        stats.new_items += await _store(session, src, res.items)
+        cutoff = now - timedelta(days=settings.max_item_age_days)
+        fresh = [i for i in res.items if i.published_at is None or i.published_at >= cutoff]
+        stats.skipped_old += len(res.items) - len(fresh)
+        stats.new_items += await _store(session, src, fresh)
 
     await session.commit()
     return stats

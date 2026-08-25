@@ -90,3 +90,20 @@ async def test_not_collected_sources_are_never_fetched(db_session, http):
     await db_session.commit()
     stats = await collect_all(db_session, http)
     assert stats.fetched == 0 and respx.calls.call_count == 0
+
+
+@respx.mock
+async def test_items_older_than_the_freshness_window_are_not_stored(db_session, http, monkeypatch):
+    # Wrong: ingesting a publisher's whole archive (MVV's feed carries ~1,700 items going
+    # back years) as if it were this cycle's news.
+    from rns import config
+    monkeypatch.setattr(config.settings, "max_item_age_days", 60)
+    s = _source("mvv", "rss", "https://mvv.test/feed.xml")
+    db_session.add(s)
+    await db_session.commit()
+    old = (FIX / "feed_a.xml").read_text().replace("Mon, 24 Aug 2026 06:30:00 +0200", "Tue, 23 Dec 2025 06:30:00 +0100")
+    respx.get("https://mvv.test/feed.xml").mock(return_value=httpx.Response(200, content=old.encode()))
+    stats = await collect_all(db_session, http)
+    titles = [i.title for i in (await db_session.execute(select(FeedItem))).scalars()]
+    assert stats.new_items == 1 and "BASF" not in " ".join(titles)
+    assert stats.skipped_old == 1
