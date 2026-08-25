@@ -161,9 +161,11 @@ class Signal(Base):
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
     story: Mapped["Story | None"] = relationship(back_populates="signals", foreign_keys=[story_id])
+    source: Mapped["Source | None"] = relationship(foreign_keys=[source_id])
+    feed_item: Mapped["FeedItem | None"] = relationship(foreign_keys=[feed_item_id])
     topics: Mapped[list["SignalTopic"]] = relationship(cascade="all, delete-orphan")
     entity_links: Mapped[list["SignalEntity"]] = relationship(cascade="all, delete-orphan")
-    events: Mapped[list["Event"]] = relationship(cascade="all, delete-orphan")
+    events: Mapped[list["Event"]] = relationship(back_populates="signal", cascade="all, delete-orphan")
 
 
 class Entity(Base):
@@ -220,6 +222,8 @@ class Event(Base):
     registration_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
     funding_program: Mapped[str | None] = mapped_column(String(300), nullable=True)
     target_audience: Mapped[str | None] = mapped_column(String(300), nullable=True)
+
+    signal: Mapped["Signal"] = relationship(back_populates="events")
 
 
 class Cycle(Base):
