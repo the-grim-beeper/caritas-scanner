@@ -1,0 +1,132 @@
+# Entity dictionary — seeded from the brief's "useful entity dictionaries" list and
+# the catalogue's issuers. Places are a closed set (the extractor may not invent a
+# place); organisations and projects grow as extraction meets new ones.
+
+places:
+  - {slug: mannheim, name: Mannheim}
+  - {slug: heidelberg, name: Heidelberg}
+  - {slug: ludwigshafen, name: Ludwigshafen, aliases: [Ludwigshafen am Rhein, LU]}
+  - {slug: rhein-neckar-kreis, name: Rhein-Neckar-Kreis, aliases: [RNK]}
+  - {slug: rhein-neckar, name: Rhein-Neckar (Metropolregion), aliases: [Metropolregion Rhein-Neckar, MRN, Rhein-Neckar-Region, Rhine-Neckar, Metropolregion]}
+  - {slug: bergstrasse, name: Bergstraße, aliases: [Kreis Bergstraße, Bergstrasse]}
+  - {slug: pfalz, name: Pfalz, aliases: [Vorderpfalz, Palatinate]}
+  - {slug: odenwald, name: Odenwald, aliases: [Neckar-Odenwald, Neckar-Odenwald-Kreis]}
+  - {slug: viernheim, name: Viernheim}
+  - {slug: weinheim, name: Weinheim}
+  - {slug: walldorf, name: Walldorf}
+  - {slug: schwetzingen, name: Schwetzingen}
+  - {slug: sinsheim, name: Sinsheim}
+  - {slug: speyer, name: Speyer}
+  - {slug: frankenthal, name: Frankenthal}
+  - {slug: worms, name: Worms}
+  - {slug: heppenheim, name: Heppenheim}
+  - {slug: bensheim, name: Bensheim}
+  - {slug: wiesloch, name: Wiesloch}
+  - {slug: hockenheim, name: Hockenheim}
+  - {slug: neustadt-weinstrasse, name: Neustadt an der Weinstraße, aliases: [Neustadt]}
+  - {slug: landau, name: Landau}
+  - {slug: kaiserslautern, name: Kaiserslautern}
+  - {slug: darmstadt, name: Darmstadt}
+  - {slug: baden-wuerttemberg, name: Baden-Württemberg, aliases: [BW, Baden-Wuerttemberg]}
+  - {slug: rheinland-pfalz, name: Rheinland-Pfalz, aliases: [RLP, Rhineland-Palatinate]}
+  - {slug: hessen, name: Hessen, aliases: [Hesse]}
+
+projects:
+  - {slug: franklin, name: FRANKLIN (Mannheim conversion), aliases: [Franklin, Benjamin Franklin Village]}
+  - {slug: patrick-henry-village, name: Patrick-Henry-Village, aliases: [PHV, Patrick Henry Village]}
+  - {slug: bahnstadt, name: Bahnstadt Heidelberg, aliases: [Bahnstadt]}
+  - {slug: hochstrasse, name: Hochstraße Ludwigshafen, aliases: [Hochstraße Nord, Hochstraße Süd, Hochstrasse, Helmut-Kohl-Allee]}
+  - {slug: kurt-schumacher-bruecke, name: Kurt-Schumacher-Brücke, aliases: [Kurt-Schumacher-Bruecke, KSB]}
+  - {slug: riedbahn, name: Riedbahn}
+  - {slug: hospital-areal, name: Hospital-Areal Heidelberg, aliases: [Hospital Areal, Hospital]}
+  - {slug: heidelberg-innovation-park, name: Heidelberg Innovation Park, aliases: [hip]}
+  - {slug: lab22, name: LAB22}
+  - {slug: ki-lab-kurpfalz, name: KI Lab Kurpfalz}
+  - {slug: gameshub-heidelberg, name: GamesHub Heidelberg}
+  - {slug: westbruecke, name: Westbrücke Ludwigshafen, aliases: [Westbruecke]}
+  - {slug: b37, name: B37}
+  - {slug: a5, name: A5, aliases: [Autobahn 5]}
+  - {slug: a6, name: A6, aliases: [Autobahn 6]}
+  - {slug: a61, name: A61}
+  - {slug: a65, name: A65}
+  - {slug: mannheim-hbf, name: Hauptbahnhof Mannheim, aliases: [Mannheim Hbf]}
+  - {slug: verbund-ludwigshafen, name: BASF Verbund Ludwigshafen, aliases: [Verbundstandort, Stammwerk Ludwigshafen]}
+
+organisations:
+  - {slug: basf, name: BASF, aliases: [BASF SE, BASF Ludwigshafen]}
+  - {slug: sap, name: SAP, aliases: [SAP SE]}
+  - {slug: heidelberg-materials, name: Heidelberg Materials, aliases: [HeidelbergCement, Heidelberg Cement]}
+  - {slug: mvv, name: MVV Energie, aliases: [MVV]}
+  - {slug: ihk-rhein-neckar, name: IHK Rhein-Neckar}
+  - {slug: ihk-pfalz, name: IHK Pfalz, aliases: [IHK für die Pfalz]}
+  - {slug: ihk-darmstadt, name: IHK Darmstadt Rhein Main Neckar, aliases: [IHK Darmstadt]}
+  - {slug: hwk-mannheim, name: Handwerkskammer Mannheim Rhein-Neckar-Odenwald, aliases: [HWK Mannheim, Handwerkskammer Mannheim]}
+  - {slug: biorn, name: BioRN, aliases: [BioRN Cluster, Life Science Cluster Rhein-Neckar]}
+  - {slug: 5-ht, name: 5-HT Digital Hub, aliases: [5-HT]}
+  - {slug: dkfz, name: DKFZ, aliases: [Deutsches Krebsforschungszentrum, German Cancer Research Center]}
+  - {slug: dktk, name: DKTK, aliases: [Deutsches Konsortium für Translationale Krebsforschung, German Cancer Consortium]}
+  - {slug: embl, name: EMBL, aliases: [European Molecular Biology Laboratory, EMBL Heidelberg]}
+  - {slug: zew, name: ZEW, aliases: [ZEW Mannheim, Leibniz-Zentrum für Europäische Wirtschaftsforschung]}
+  - {slug: hits, name: HITS, aliases: [Heidelberg Institute for Theoretical Studies, Heidelberger Institut für Theoretische Studien]}
+  - {slug: biomed-x, name: BioMed X, aliases: [BioMed X Institute]}
+  - {slug: uni-heidelberg, name: Universität Heidelberg, aliases: [Heidelberg University, Ruprecht-Karls-Universität, Uni Heidelberg]}
+  - {slug: uni-mannheim, name: Universität Mannheim, aliases: [University of Mannheim, Uni Mannheim]}
+  - {slug: ukhd, name: Universitätsklinikum Heidelberg, aliases: [UKHD, Uniklinik Heidelberg]}
+  - {slug: umm, name: Universitätsmedizin Mannheim, aliases: [UMM]}
+  - {slug: hei-innovation, name: hei_INNOVATION, aliases: [heiINNOVATION]}
+  - {slug: health-life-science-alliance, name: Health + Life Science Alliance Heidelberg Mannheim}
+  - {slug: technologiepark-heidelberg, name: Technologiepark Heidelberg}
+  - {slug: next-mannheim, name: NEXT MANNHEIM, aliases: [NEXT Mannheim, Next Mannheim]}
+  - {slug: mafinex, name: MAFINEX}
+  - {slug: ki-garage, name: KI-Garage}
+  - {slug: start-up-bw, name: Start-up BW, aliases: [Startup BW, Start-up BW]}
+  - {slug: palatina-angels, name: PALATINA Business Angels, aliases: [Palatina]}
+  - {slug: htgf, name: High-Tech Gründerfonds, aliases: [HTGF]}
+  - {slug: mbg-bw, name: MBG Baden-Württemberg, aliases: [MBG]}
+  - {slug: mrn-gmbh, name: Metropolregion Rhein-Neckar GmbH, aliases: [MRN GmbH]}
+  - {slug: vrrn, name: Verband Region Rhein-Neckar, aliases: [VRRN]}
+  - {slug: zmrn, name: Zukunft Metropolregion Rhein-Neckar e.V., aliases: [ZMRN]}
+  - {slug: stadt-mannheim, name: Stadt Mannheim}
+  - {slug: stadt-heidelberg, name: Stadt Heidelberg}
+  - {slug: stadt-ludwigshafen, name: Stadt Ludwigshafen}
+  - {slug: weg-ludwigshafen, name: W.E.G. Ludwigshafen, aliases: [W.E.G., WEG Ludwigshafen, Wirtschaftsentwicklungsgesellschaft Ludwigshafen]}
+  - {slug: mwsp, name: MWSP Mannheim, aliases: [MWS Projektentwicklungsgesellschaft, MWSP]}
+  - {slug: wirtschaftsregion-bergstrasse, name: Wirtschaftsregion Bergstraße, aliases: [WFB]}
+  - {slug: vrn, name: Verkehrsverbund Rhein-Neckar, aliases: [VRN]}
+  - {slug: rnv, name: rnv, aliases: [Rhein-Neckar-Verkehr]}
+  - {slug: deutsche-bahn, name: Deutsche Bahn, aliases: [DB, DB InfraGO, DB Netz]}
+  - {slug: autobahn-gmbh, name: Autobahn GmbH, aliases: [Die Autobahn GmbH des Bundes]}
+  - {slug: hafen-mannheim, name: Hafen Mannheim, aliases: [Staatliche Rhein-Neckar-Hafengesellschaft]}
+  - {slug: chemieverbaende-rlp, name: Chemieverbände Rheinland-Pfalz}
+  - {slug: bauwirtschaft-bw, name: Bauwirtschaft Baden-Württemberg}
+  - {slug: l-bank, name: L-Bank}
+  - {slug: isb, name: ISB Rheinland-Pfalz, aliases: [ISB, Investitions- und Strukturbank]}
+  - {slug: wibank, name: WIBank}
+  - {slug: kfw, name: KfW}
+  - {slug: eic, name: European Innovation Council, aliases: [EIC]}
+  - {slug: eu-commission, name: European Commission, aliases: [EU-Kommission, Europäische Kommission]}
+  - {slug: land-bw, name: Land Baden-Württemberg, aliases: [Landesregierung Baden-Württemberg]}
+  - {slug: land-rlp, name: Land Rheinland-Pfalz, aliases: [Landesregierung Rheinland-Pfalz]}
+  - {slug: land-hessen, name: Land Hessen, aliases: [Landesregierung Hessen]}
+  - {slug: bundesregierung, name: Bundesregierung, aliases: [Federal Government]}
+  - {slug: roche, name: Roche, aliases: [Roche Diagnostics]}
+  - {slug: abbvie, name: AbbVie, aliases: [AbbVie Ludwigshafen]}
+  - {slug: boehringer-ingelheim, name: Boehringer Ingelheim}
+  - {slug: freudenberg, name: Freudenberg, aliases: [Freudenberg Gruppe]}
+  - {slug: john-deere, name: John Deere, aliases: [John Deere Mannheim]}
+  - {slug: daimler-truck, name: Daimler Truck, aliases: [Mercedes-Benz Werk Mannheim, Daimler Truck Mannheim]}
+  - {slug: heidelberger-druckmaschinen, name: Heidelberger Druckmaschinen, aliases: [Heidelberg Druck, HEIDELBERG]}
+  - {slug: sas-institute, name: SAS Institute}
+  - {slug: tsg-hoffenheim, name: TSG Hoffenheim}
+  - {slug: sv-waldhof, name: SV Waldhof Mannheim, aliases: [Waldhof Mannheim]}
+
+funds:
+  - {slug: efre-bw, name: EFRE Baden-Württemberg, aliases: [EFRE, ERDF]}
+  - {slug: exist, name: EXIST}
+  - {slug: zim, name: ZIM, aliases: [Zentrales Innovationsprogramm Mittelstand]}
+  - {slug: foerderdatenbank, name: Förderdatenbank des Bundes}
+  - {slug: horizon-europe, name: Horizon Europe, aliases: [Horizont Europa]}
+  - {slug: eic-accelerator, name: EIC Accelerator}
+  - {slug: mexi, name: Mannheimer Existenzgründungspreis, aliases: [MEXI]}
+  - {slug: life-science-accelerator-bw, name: Life Science Accelerator Baden-Württemberg}
+  - {slug: regiowin, name: RegioWIN}

@@ -1,0 +1,7 @@
+{
+  "checked_at": "2026-08-25T08:00:00Z",
+  "results": [
+    {"slug": "mannheim-presse", "method": "rss", "resolved_url": "https://www.mannheim.de/de/rss/pressemeldungen", "item_count": 12},
+    {"slug": "rnk-presse", "method": "rss", "resolved_url": "https://www.rhein-neckar-kreis.de/rss.xml", "item_count": 8}
+  ]
+}

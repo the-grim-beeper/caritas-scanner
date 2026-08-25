@@ -1,0 +1,35 @@
+- slug: mannheim-presse
+  name: Stadt Mannheim — Pressemeldungen
+  layer: policy
+  authority: high
+  scope: city
+  places: [Mannheim]
+  method: rss
+  url: https://www.mannheim.de/de/rss/pressemeldungen
+  homepage: https://www.mannheim.de/de/presse
+  priority: core
+- slug: rnz-heidelberg
+  name: RNZ — Heidelberg
+  layer: editorial
+  authority: high
+  scope: city
+  places: [Heidelberg]
+  method: rss
+  url: https://www.rnz.de/feed/139-RL_Heidelberg_free.xml
+  priority: core
+- slug: rnk-presse
+  name: Rhein-Neckar-Kreis — Pressemeldungen
+  layer: policy
+  authority: high
+  scope: district
+  method: page
+  url: https://www.rhein-neckar-kreis.de/startseite/aktuelles/pressemeldungen.html
+  priority: core
+- slug: biorn-newsletter
+  name: BioRN — newsletter
+  layer: innovation
+  authority: high
+  scope: region
+  method: newsletter
+  homepage: https://biorn.org/newsletter/
+  priority: core
