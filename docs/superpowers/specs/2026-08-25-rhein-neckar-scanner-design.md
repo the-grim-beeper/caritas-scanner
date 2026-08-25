@@ -18,7 +18,7 @@ It implements the brief's architecture end to end:
 sources (6 layers) → collection (RSS first, list-page monitor second)
   → canonical URL + content hash dedup
   → entity extraction (place / organisation / project / fund)
-  → topic classification (fixed 30-tag vocabulary)
+  → topic classification (fixed 31-tag vocabulary)
   → novelty × authority scoring
   → event and deadline extraction
   → daily digest · trend database · watchlist
@@ -58,7 +58,7 @@ stakeholders — so content and interface are bilingual (EN/DE).
 | `infrastructure` | Infrastructure & property | Infrastruktur & Immobilien |
 | `funding` | Funding & capital | Förderung & Kapital |
 
-**Topic tags** — the report's normalised vocabulary, fixed, 30 codes:
+**Topic tags** — the report's normalised vocabulary, fixed, 31 codes:
 `CAPEX, FDI, corporate-expansion, corporate-contraction, jobs, startup, funding-round,
 grant, EU-funding, public-procurement, commercial-real-estate, housing, planning-permit,
 brownfield, rail, road, bridge, public-transport, port-logistics, energy, hydrogen, CCS,
@@ -163,7 +163,7 @@ is_signal: bool
 headline_en, headline_de: str      # one factual sentence
 summary_en, summary_de: str        # 2–3 sentences of substance
 signal_type: enum
-topics: [enum(30)]                 # any subset; empty allowed
+topics: [enum(31)]                 # any subset; empty allowed
 places: [str]                      # free text, resolved against dictionary
 organisations: [str]
 projects: [str]

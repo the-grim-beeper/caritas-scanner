@@ -1,0 +1,14 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+backend/.env
+# node
+node_modules/
+frontend/dist/
+backend/static/
+# local
+.DS_Store
+.superpowers/

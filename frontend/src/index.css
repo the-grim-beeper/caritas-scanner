@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f3f4f1;
+  --color-paper-2: #e9ebe6;
+  --color-paper-3: #dfe2dc;
+  --color-ink: #161b22;
+  --color-ink-2: #3a414b;
+  --color-ink-3: #6b7280;
+  --color-rule: #c9cdc6;
+  --color-river: #0f6e6b;
+  --color-river-2: #d9ecea;
+  --color-warn: #a34a2a;
+
+  --color-policy: #4a5e8a;
+  --color-editorial: #6b6f76;
+  --color-innovation: #5e7f3f;
+  --color-corporate: #a8782a;
+  --color-infrastructure: #9a4b3b;
+  --color-funding: #6e4a8a;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-river);
+  outline-offset: 2px;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.01em;
+}
+
+.reading {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.rule {
+  border-top: 1px solid var(--color-rule);
+}
+
+.rule-strong {
+  border-top: 2px solid var(--color-ink);
+}
+
+.layer-bar {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 1px;
+}
+
+table.data {
+  border-collapse: collapse;
+  width: 100%;
+}
+table.data th {
+  text-align: left;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  padding: 0.5rem 0.5rem 0.4rem 0;
+  border-bottom: 2px solid var(--color-ink);
+  white-space: nowrap;
+}
+table.data td {
+  padding: 0.55rem 0.5rem 0.55rem 0;
+  border-bottom: 1px solid var(--color-rule);
+  vertical-align: top;
+}
+
+.btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-ink);
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn[aria-pressed="true"] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn-quiet {
+  border-color: var(--color-rule);
+  color: var(--color-ink-2);
+}
+
+select,
+input[type="search"],
+input[type="text"],
+input[type="password"] {
+  font: inherit;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
+  padding: 0.35rem 0.5rem;
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fade-in 220ms ease-out both;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

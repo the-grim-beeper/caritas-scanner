@@ -17,7 +17,7 @@
 - Postgres host port **5438** in docker-compose.
 - Embedding model: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`, dim **384**.
 - Extraction model env `EXTRACTION_MODEL` default `claude-haiku-4-5`; digest model env `DIGEST_MODEL` default `claude-opus-5`, fallback `claude-sonnet-5`.
-- Topic vocabulary is exactly the 30 codes in spec §2; layer codes exactly the six in spec §2; signal types exactly the eleven in spec §2.
+- Topic vocabulary is exactly the 31 codes in spec §2; layer codes exactly the six in spec §2; signal types exactly the eleven in spec §2.
 - Only `data/sources-live.json` entries become active collected sources.
 - Score formula verbatim: `authority × regional_relevance × novelty × economic_materiality × forward_lag`.
 - Digest payload must pass the provenance validator before being stored.
