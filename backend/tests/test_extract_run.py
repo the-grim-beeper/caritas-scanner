@@ -51,3 +51,26 @@ async def test_non_signal_item_is_discarded_not_left_unprocessed(db_session):
     await db_session.refresh(item)
     assert item.processed and item.discarded
     assert (await db_session.execute(select(Signal))).first() is None
+
+
+async def test_extraction_cap_does_not_starve_undated_page_items(db_session):
+    # Wrong: ORDER BY published_at DESC NULLS LAST — list-page items have no date, so
+    # under the per-cycle cap they are never extracted while any dated RSS item exists.
+    from datetime import datetime, timedelta, timezone
+    from scripts.load_sources import upsert_entities
+    await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
+    src = Source(slug="s", name="s", layer="policy", authority="high", scope="region", method="page",
+                 url="https://s.test/f", collect=True)
+    db_session.add(src)
+    await db_session.flush()
+    old = datetime.now(timezone.utc) - timedelta(days=20)
+    db_session.add(FeedItem(source_id=src.id, external_id="rss-old", title="BASF investiert 100 Millionen in Ludwigshafen",
+                            url="https://s.test/a", canonical_url="https://s.test/a", content_hash="a", published_at=old,
+                            created_at=old))
+    db_session.add(FeedItem(source_id=src.id, external_id="page-new", title="Kreistag beschließt Förderprogramm Glasfaser",
+                            url="https://s.test/b", canonical_url="https://s.test/b", content_hash="b", published_at=None))
+    await db_session.commit()
+    stats = await extract_pending(db_session, limit=1)
+    assert stats.processed == 1
+    done = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(True)))).scalar_one()
+    assert done.external_id == "page-new"

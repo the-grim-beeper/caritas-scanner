@@ -6,7 +6,7 @@ import asyncio
 import logging
 from dataclasses import dataclass
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -99,7 +99,8 @@ async def extract_pending(session: AsyncSession, *, limit: int | None = None) ->
             select(FeedItem)
             .options(selectinload(FeedItem.source))
             .where(FeedItem.processed.is_(False))
-            .order_by(FeedItem.published_at.desc().nullslast(), FeedItem.created_at.desc())
+            # Undated list-page items count as new on arrival; otherwise the cap starves them.
+            .order_by(func.coalesce(FeedItem.published_at, FeedItem.created_at).desc())
             .limit(limit)
         )
     ).scalars().all()
