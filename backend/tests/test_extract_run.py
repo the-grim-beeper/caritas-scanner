@@ -297,3 +297,33 @@ async def test_dated_item_with_a_future_feed_date_is_clamped_too(db_session, mon
     await extract_pending(db_session)
     sig = (await db_session.execute(select(Signal))).scalar_one()
     assert sig.published_at <= item.created_at
+
+
+async def test_a_diff_change_carrying_an_old_date_is_a_signal_dated_when_seen(db_session, monkeypatch):
+    # Wrong: the archive rule reads the old date in a structural page's changed lines
+    # ("Satzung vom 10.12.2023", now amended) and throws the change away, or keeps it but
+    # dates it 2023 so it never shows in the last seven or thirty days.
+    from mhs import config
+    from mhs.extract import run as extract_run
+    from mhs.extract.schema import from_payload
+
+    monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-test")
+
+    async def fake_live(item, source):
+        return from_payload(_live_payload(item_date="2023-12-10"))
+
+    monkeypatch.setattr(extract_run, "_extract_live", fake_live)
+    await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
+    src = _source(method="diff")
+    db_session.add(src)
+    await db_session.flush()
+    item = FeedItem(source_id=src.id, external_id="diff-1", title="Änderung: Satzung Kindertagesstätten",
+                    summary="+ geändert durch Satzung vom 10.12.2023, neu gefasst", url="https://s.test/satzung",
+                    canonical_url="https://s.test/satzung#diff-1", content_hash="d1")
+    db_session.add(item)
+    await db_session.commit()
+
+    stats = await extract_pending(db_session)
+    assert stats.signals == 1 and stats.discarded == 0
+    sig = (await db_session.execute(select(Signal))).scalar_one()
+    assert sig.published_at == item.created_at

@@ -87,7 +87,7 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
         regional_relevance=result.regional_relevance,
         consequence=result.consequence,
         forward_lag=result.forward_lag,
-        published_at=_published_at(item, result),
+        published_at=_published_at(item, source, result),
     )
     session.add(signal)
     await session.flush()
@@ -126,18 +126,25 @@ def _as_instant(d) -> datetime | None:
     return datetime(d.year, d.month, d.day, 12, tzinfo=timezone.utc) if d else None
 
 
-def _published_at(item: FeedItem, result: ExtractionResult) -> datetime:
+def _published_at(item: FeedItem, source: Source, result: ExtractionResult) -> datetime:
     """When the development was reported, never later than when it was collected: an item's
     own date can be the date of a coming development ("Bürgerversammlung am 12. November"),
-    and a feed can date an entry by its event. Either would put the signal in the future."""
+    and a feed can date an entry by its event. Either would put the signal in the future.
+    A diff item is the change itself, so it is dated when the change was seen; a date in its
+    changed lines is whatever the page says, not when it changed."""
     ceiling = item.created_at or utcnow()
-    stated = item.published_at or _as_instant(result.item_date)
+    stated = item.published_at
+    if stated is None and source.method != "diff":
+        stated = _as_instant(result.item_date)
     return min(stated, ceiling) if stated else ceiling
 
 
 def _is_archive(item: FeedItem, result: ExtractionResult) -> bool:
     """An undated list-page item whose own stated date lies outside the freshness window is
-    archive, not news (first live run: "ab dem 10. Dezember 2023" on a municipal news page)."""
+    archive, not news (first live run: "ab dem 10. Dezember 2023" on a municipal news page).
+    Never a diff item: it is a change seen today, whatever date its changed lines carry."""
+    if item.source.method == "diff":
+        return False
     if item.published_at is not None or result.item_date is None:
         return False
     return result.item_date < (utcnow() - timedelta(days=settings.max_item_age_days)).date()
