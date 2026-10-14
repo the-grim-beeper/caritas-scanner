@@ -8,13 +8,14 @@ import logging
 from datetime import datetime, timezone
 
 import httpx
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from mhs.analyse import trends
 from mhs.analyse.run import analyse_pending
 from mhs.collect.run import collect_all
 from mhs.config import settings
-from mhs.db.models import Cycle, Digest
+from mhs.db.models import Cycle, Digest, Signal, Story
 from mhs.network.resolve import resolve_candidates
 from mhs.questions.judge import judge_pending
 from mhs.report.run import write_report
@@ -31,12 +32,36 @@ def _http() -> httpx.AsyncClient:
     )
 
 
+async def repair_future_dates(session: AsyncSession) -> int:
+    """No signal is published in the future. Rows written before extraction clamped their
+    date (an item dated by the development it announces) are moved back to when they were
+    collected, and their stories follow. Idempotent; returns the number of signals moved."""
+    moved = (await session.execute(
+        update(Signal).where(Signal.published_at > func.now()).values(published_at=Signal.created_at)
+        .execution_options(synchronize_session=False)
+    )).rowcount or 0
+    first = select(func.min(Signal.published_at)).where(Signal.story_id == Story.id).scalar_subquery()
+    last = select(func.max(Signal.published_at)).where(Signal.story_id == Story.id).scalar_subquery()
+    await session.execute(
+        update(Story)
+        .where((Story.first_seen > func.now()) | (Story.last_seen > func.now()))
+        .values(first_seen=func.least(Story.first_seen, func.coalesce(first, func.now())),
+                last_seen=func.least(Story.last_seen, func.coalesce(last, func.now())))
+        .execution_options(synchronize_session=False)
+    )
+    await session.commit()
+    return moved
+
+
 async def run_cycle(session_factory: async_sessionmaker[AsyncSession], *, http: httpx.AsyncClient | None = None) -> Cycle:
     async with session_factory() as session:
         cycle = Cycle(mode="live" if settings.llm_enabled else "mock")
         session.add(cycle)
         await session.commit()
         try:
+            repaired = await repair_future_dates(session)
+            if repaired:
+                log.info("repaired %d future-dated signals", repaired)
             own_http = http is None
             client = http or _http()
             try:

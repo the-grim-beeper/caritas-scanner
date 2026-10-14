@@ -264,3 +264,36 @@ async def test_undated_item_with_a_recent_own_date_becomes_a_signal_dated_by_it(
     assert stats.signals == 1
     sig = (await db_session.execute(select(Signal))).scalar_one()
     assert sig.published_at.date() == recent
+
+
+async def test_undated_item_whose_own_date_is_in_the_future_is_not_dated_in_the_future(db_session, monkeypatch):
+    # Wrong: the item's own date is the date of a coming development ("Bürgerversammlung am
+    # 12. November"), so the signal is published "next month" and tops every newest-first list.
+    from datetime import date, timedelta
+    ahead = date.today() + timedelta(days=30)
+    stats = await _run_live(db_session, monkeypatch, _live_payload(item_date=ahead.isoformat()))
+    assert stats.signals == 1
+    sig = (await db_session.execute(select(Signal))).scalar_one()
+    item = (await db_session.execute(select(FeedItem))).scalar_one()
+    assert sig.published_at <= item.created_at
+    assert sig.published_at <= datetime.now(timezone.utc)
+
+
+async def test_dated_item_with_a_future_feed_date_is_clamped_too(db_session, monkeypatch):
+    # Wrong: only the model's item_date is clamped; an RSS entry dated by its event slips through.
+    from mhs import config
+    from mhs.extract import run as extract_run
+    from mhs.extract.schema import from_payload
+
+    monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-test")
+
+    async def fake_live(item, source):
+        return from_payload(_live_payload())
+
+    monkeypatch.setattr(extract_run, "_extract_live", fake_live)
+    _, item = await _setup(db_session, "Jugendhilfeausschuss tagt", "Streetwork im Auftrag des Jugendamts.")
+    item.published_at = datetime.now(timezone.utc) + timedelta(days=20)
+    await db_session.commit()
+    await extract_pending(db_session)
+    sig = (await db_session.execute(select(Signal))).scalar_one()
+    assert sig.published_at <= item.created_at

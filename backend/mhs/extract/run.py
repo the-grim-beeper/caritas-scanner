@@ -87,7 +87,7 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
         regional_relevance=result.regional_relevance,
         consequence=result.consequence,
         forward_lag=result.forward_lag,
-        published_at=item.published_at or _as_instant(result.item_date) or item.created_at or utcnow(),
+        published_at=_published_at(item, result),
     )
     session.add(signal)
     await session.flush()
@@ -124,6 +124,15 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
 
 def _as_instant(d) -> datetime | None:
     return datetime(d.year, d.month, d.day, 12, tzinfo=timezone.utc) if d else None
+
+
+def _published_at(item: FeedItem, result: ExtractionResult) -> datetime:
+    """When the development was reported, never later than when it was collected: an item's
+    own date can be the date of a coming development ("Bürgerversammlung am 12. November"),
+    and a feed can date an entry by its event. Either would put the signal in the future."""
+    ceiling = item.created_at or utcnow()
+    stated = item.published_at or _as_instant(result.item_date)
+    return min(stated, ceiling) if stated else ceiling
 
 
 def _is_archive(item: FeedItem, result: ExtractionResult) -> bool:
