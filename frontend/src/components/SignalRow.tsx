@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
-import { layerLabel, relationLabel } from "../domain";
+import { layerLabel, relationLabel, safeUrl } from "../domain";
 import { fmtDate, fmtNum, pick, useLang, useT } from "../i18n";
 import type { Meta, Signal } from "../types";
 import { qNumber, useQuestionsMap } from "../useQuestions";
@@ -102,7 +102,7 @@ export function SignalRow({ s, meta, showLayer = true, compact = false }: { s: S
               </div>
             )}
             {d.url && (
-              <a href={d.url} target="_blank" rel="noreferrer" className="btn btn-quiet inline-block mt-4">
+              <a href={safeUrl(d.url)} target="_blank" rel="noreferrer" className="btn btn-quiet inline-block mt-4">
                 {t("open")} ↗
               </a>
             )}
@@ -121,7 +121,7 @@ export function SignalRow({ s, meta, showLayer = true, compact = false }: { s: S
                       <span className="text-ink-3 w-14 shrink-0">{fmtDate(m.published_at, lang)}</span>
                       <span className="min-w-0">
                         {m.url ? (
-                          <a href={m.url} target="_blank" rel="noreferrer" className="link">
+                          <a href={safeUrl(m.url)} target="_blank" rel="noreferrer" className="link">
                             {m.source_name}
                           </a>
                         ) : (

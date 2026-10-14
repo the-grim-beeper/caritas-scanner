@@ -226,3 +226,15 @@ export function shortName(slug: string, name: string): string {
   const plain = name.replace(/\s*\([^)]*\)\s*/g, " ").trim();
   return plain.length > 30 ? plain.slice(0, 28).trimEnd() + "…" : plain;
 }
+
+/** Only absolute http(s) URLs become links. Feed items, model output and catalogue entries
+ * are all outside text; a `javascript:` URL in an href would run on click. */
+export function safeUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.href : undefined;
+  } catch {
+    return undefined;
+  }
+}

@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { isNotFound } from "../api";
-import { layerLabel, topicLabel } from "../domain";
+import { layerLabel, topicLabel, safeUrl } from "../domain";
 import { fmtDate, fmtNum, pick, quoted, useLang, useT, type Key } from "../i18n";
 import { LAYER_COLOR, type CitedSignal, type Factors, type Layer, type Meta, type Movement, type QuestionLabels, type Signal, type WeekPoint } from "../types";
 
@@ -287,7 +287,7 @@ export function CitedSignalLine({ s, compact = false }: { s: CitedSignal | null 
         </span>
         <div className="min-w-0">
           {s.url ? (
-            <a href={s.url} target="_blank" rel="noreferrer" className="link leading-snug">
+            <a href={safeUrl(s.url)} target="_blank" rel="noreferrer" className="link leading-snug">
               {head}&nbsp;<span aria-hidden>↗</span>
             </a>
           ) : (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api, errorDetail, HttpError } from "../api";
-import { layerLabel, METHOD_LABELS } from "../domain";
+import { layerLabel, METHOD_LABELS, safeUrl } from "../domain";
 import { daysUntil, fmtDate, pick, useLang, useT, type Key } from "../i18n";
 import type { Meta, Suggestion } from "../types";
 import { useAsync } from "../useAsync";
@@ -153,7 +153,7 @@ function SuggestionCard({
         <div className="min-w-0">
           <h3 className="font-semibold leading-snug">
             {link ? (
-              <a href={link} target="_blank" rel="noreferrer" className="link">
+              <a href={safeUrl(link)} target="_blank" rel="noreferrer" className="link">
                 {s.name}
               </a>
             ) : (

@@ -1,7 +1,7 @@
 import { api } from "../api";
 import { SuggestionsPanel } from "../components/SuggestionsPanel";
 import { ErrorBox, Fail, LayerDot, Loading, Section } from "../components/ui";
-import { layerLabel, METHOD_LABELS, MUNICIPALITIES, placeMatches } from "../domain";
+import { layerLabel, METHOD_LABELS, MUNICIPALITIES, placeMatches, safeUrl } from "../domain";
 import { fmtDate, useLang, useT } from "../i18n";
 import { LAYERS, type Meta, type SourceOut } from "../types";
 import { useAsync } from "../useAsync";
@@ -155,7 +155,7 @@ function MunicipalityGrid({ items }: { items: SourceOut[] }) {
                   {coll.slice(0, 3).map((s) => (
                     <li key={s.slug} className="line-clamp-1" title={s.name}>
                       {s.url || s.homepage ? (
-                        <a href={(s.url || s.homepage)!} target="_blank" rel="noreferrer" className="link">
+                        <a href={safeUrl(s.url || s.homepage)} target="_blank" rel="noreferrer" className="link">
                           {s.name}
                         </a>
                       ) : (
@@ -182,7 +182,7 @@ function Row({ s }: { s: SourceOut }) {
     <tr id={`src-${s.slug}`} className={s.collect ? "" : "text-ink-3"}>
       <td>
         {link ? (
-          <a href={link} target="_blank" rel="noreferrer" className="link">
+          <a href={safeUrl(link)} target="_blank" rel="noreferrer" className="link">
             {s.name}
           </a>
         ) : (

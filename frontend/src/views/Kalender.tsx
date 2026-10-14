@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { api } from "../api";
 import { Empty, ErrorBox, LayerDot, Loading, Section } from "../components/ui";
-import { slugName, topicLabel } from "../domain";
+import { slugName, topicLabel, safeUrl } from "../domain";
 import { eventKind, eventName, eventNote, eventRange, isFromReport, todayKey, upcoming } from "../events";
 import { dayKey, fmtDate, mondayOf, parseDay, pick, useLang, useT, weekLabel } from "../i18n";
 import type { EventOut, Meta } from "../types";
@@ -120,7 +120,7 @@ function Row({ en, meta }: { en: Entry; meta: Meta | null }) {
           <div className="text-xs mt-1 inline-flex items-center gap-1.5">
             <LayerDot layer={e.signal.layer} />
             {e.signal.url ? (
-              <a href={e.signal.url} target="_blank" rel="noreferrer" className="link">
+              <a href={safeUrl(e.signal.url)} target="_blank" rel="noreferrer" className="link">
                 {pick(e.signal, "headline", lang)} <span aria-hidden>↗</span>
               </a>
             ) : (
@@ -129,7 +129,7 @@ function Row({ en, meta }: { en: Entry; meta: Meta | null }) {
           </div>
         )}
         {e.registration_url && (
-          <a href={e.registration_url} target="_blank" rel="noreferrer" className="link text-xs ml-3">
+          <a href={safeUrl(e.registration_url)} target="_blank" rel="noreferrer" className="link text-xs ml-3">
             {t("register")} ↗
           </a>
         )}
