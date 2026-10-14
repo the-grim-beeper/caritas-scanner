@@ -31,15 +31,17 @@ async def lifespan(app: FastAPI):
         from mhs.suggest.run import suggest_cycle
 
         scheduler = AsyncIOScheduler(timezone="UTC")
+        # misfire_grace_time: a job whose moment passed while the event loop was held up still
+        # runs within the hour instead of being skipped (APScheduler's default grace is 1 s).
         scheduler.add_job(run_cycle, CronTrigger(hour=settings.cycle_hour_utc, minute=0),
-                          args=[session_factory()], id="daily-cycle", coalesce=True, max_instances=1)
+                          args=[session_factory()], id="daily-cycle", coalesce=True, max_instances=1, misfire_grace_time=3600)
         # Thursday evening, so the Friday note to Caritas has a fresh Lagebericht behind it.
         scheduler.add_job(run_report, CronTrigger(day_of_week=settings.report_weekday, hour=settings.report_hour_local,
                                                   minute=0, timezone=settings.report_timezone),
-                          args=[session_factory()], id="weekly-report", coalesce=True, max_instances=1)
+                          args=[session_factory()], id="weekly-report", coalesce=True, max_instances=1, misfire_grace_time=3600)
         scheduler.add_job(suggest_cycle, CronTrigger(day_of_week=settings.suggest_weekday, hour=settings.suggest_hour_local,
                                                      minute=0, timezone=settings.report_timezone),
-                          args=[session_factory()], id="weekly-suggestions", coalesce=True, max_instances=1)
+                          args=[session_factory()], id="weekly-suggestions", coalesce=True, max_instances=1, misfire_grace_time=3600)
         scheduler.start()
         log.info("scheduler: daily cycle %02d:00 UTC; Lagebericht %s %02d:00 %s; source suggestions %s %02d:00",
                  settings.cycle_hour_utc, settings.report_weekday, settings.report_hour_local, settings.report_timezone,
