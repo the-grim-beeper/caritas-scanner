@@ -162,6 +162,7 @@ const STRINGS = {
     de: "Noch kein Lagebericht. Er entsteht donnerstags um 18 Uhr aus den Signalen der Woche, oder jetzt per Knopfdruck.",
     en: "No report yet. It is written on Thursdays at 18:00 from the week's signals, or now on demand.",
   },
+  rep_archive_empty: { de: "Keine früheren Lageberichte.", en: "No earlier reports." },
   rep_run: { de: "Lagebericht jetzt erstellen", en: "Write the report now" },
   rep_running: { de: "Wird erstellt, das kann eine Minute dauern …", en: "Writing, this can take a minute …" },
   rep_no_signals: { de: "Kein Bericht erstellt: in den letzten 7 Tagen gab es keine neuen Signale.", en: "No report written: there were no new signals in the last 7 days." },
@@ -245,6 +246,39 @@ const STRINGS = {
   source: { de: "Quelle", en: "Source" },
   mode: { de: "Modus", en: "Mode" },
   result: { de: "Ergebnis", en: "Result" },
+
+  // Vorschläge (self-updating sources, Task 9/10)
+  src_suggestions: { de: "Vorschläge", en: "Suggestions" },
+  src_suggestions_rule: {
+    de: "Neue Quellen schlägt der Scanner wöchentlich vor. Wer nicht ablehnt, stimmt zu: nach sieben Tagen wird die Quelle nach erneuter Prüfung aufgenommen.",
+    en: "The scanner proposes new sources once a week. Whoever does not decline agrees: after seven days the source is adopted, following a fresh check.",
+  },
+  src_suggestions_none: { de: "Derzeit keine offenen Vorschläge.", en: "No open suggestions at the moment." },
+  src_suggestion_badge: { de: "Vorschlag", en: "Suggestion" },
+  src_decline: { de: "Ablehnen", en: "Decline" },
+  src_adopt_now: { de: "Jetzt aufnehmen", en: "Adopt now" },
+  src_adopt_today: { de: "wird heute aufgenommen", en: "will be adopted today" },
+  src_adopt_in_1: { de: "wird am {date} aufgenommen (1 Tag)", en: "will be adopted on {date} (1 day)" },
+  src_adopt_in_n: { de: "wird am {date} aufgenommen ({n} Tage)", en: "will be adopted on {date} ({n} days)" },
+  src_items_at_check: { de: "Einträge bei Prüfung", en: "items at check" },
+  src_run_suggestions: { de: "Neue Vorschläge suchen", en: "Look for new suggestions" },
+  src_run_running: { de: "läuft …", en: "running …" },
+  src_run_busy: { de: "Es läuft bereits ein Lauf.", en: "A run is already in progress." },
+  src_run_result: {
+    de: "{proposed} geprüft, {pending_new} neu, {rejected} abgelehnt, {known} bekannt",
+    en: "{proposed} checked, {pending_new} new, {rejected} rejected, {known} known",
+  },
+  src_conflict: {
+    de: "Der Vorschlag wurde inzwischen bearbeitet. Bitte neu laden.",
+    en: "This suggestion has already been resolved. Please reload.",
+  },
+  src_show_history: { de: "Verlauf anzeigen", en: "Show history" },
+  src_hide_history: { de: "Verlauf ausblenden", en: "Hide history" },
+  src_history: { de: "Verlauf", en: "History" },
+  src_status_adopted: { de: "aufgenommen", en: "adopted" },
+  src_status_declined: { de: "abgelehnt", en: "declined" },
+  src_status_rejected: { de: "verworfen", en: "rejected" },
+  src_status_failed: { de: "fehlgeschlagen", en: "failed" },
 } as const;
 
 export type Key = keyof typeof STRINGS;
@@ -284,18 +318,30 @@ export function parseDay(iso: string): Date {
   return new Date(iso);
 }
 
-export function fmtDate(iso: string | null | undefined, lang: Lang, opts: { time?: boolean; year?: boolean } = {}): string {
+export function fmtDate(iso: string | null | undefined, lang: Lang, opts: { time?: boolean; year?: boolean; weekday?: boolean } = {}): string {
   if (!iso) return "–";
   const d = parseDay(iso);
   if (Number.isNaN(d.getTime())) return iso;
   // The year is shown when asked for, or when it is not the current one.
   const year = opts.year ?? d.getFullYear() !== new Date().getFullYear();
   return d.toLocaleDateString(locale(lang), {
+    ...(opts.weekday ? { weekday: "short" } : {}),
     day: "numeric",
     month: "short",
     ...(year ? { year: "numeric" } : {}),
     ...(opts.time ? { hour: "2-digit", minute: "2-digit" } : {}),
   });
+}
+
+/** Days from today's calendar date to `iso`'s (both local); negative when it is in the past. */
+export function daysUntil(iso: string | null | undefined): number | null {
+  if (!iso) return null;
+  const d = parseDay(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  const target = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  return Math.round((target - today) / 86400000);
 }
 
 export function fmtNum(v: number, lang: Lang, digits = 2): string {

@@ -1,5 +1,6 @@
 import { api } from "../api";
-import { ErrorBox, LayerDot, Loading, Section } from "../components/ui";
+import { SuggestionsPanel } from "../components/SuggestionsPanel";
+import { ErrorBox, Fail, LayerDot, Loading, Section } from "../components/ui";
 import { layerLabel, METHOD_LABELS, MUNICIPALITIES, placeMatches } from "../domain";
 import { fmtDate, useLang, useT } from "../i18n";
 import { LAYERS, type Meta, type SourceOut } from "../types";
@@ -27,6 +28,8 @@ export function Quellen({ meta }: { meta: Meta | null }) {
           </span>
         )}
       </p>
+
+      <SuggestionsPanel meta={meta} />
 
       <MunicipalityGrid items={items} />
 
@@ -74,34 +77,38 @@ export function Quellen({ meta }: { meta: Meta | null }) {
       })}
 
       <Section title={t("cycles")}>
-        <div className="overflow-x-auto">
-          <table className="data text-sm min-w-[760px]">
-            <thead>
-              <tr>
-                <th>{t("last_cycle")}</th>
-                <th>{t("mode")}</th>
-                <th className="text-right">{t("items_fetched")}</th>
-                <th className="text-right">{t("new_items")}</th>
-                <th className="text-right">{t("signals_n")}</th>
-                <th className="text-right">{t("judgements_n")}</th>
-                <th>{t("result")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cycles.data?.items.map((c) => (
-                <tr key={c.id}>
-                  <td className="whitespace-nowrap">{fmtDate(c.started_at, lang, { time: true })}</td>
-                  <td>{c.mode}</td>
-                  <td className="text-right num">{c.items_fetched}</td>
-                  <td className="text-right num">{c.items_new}</td>
-                  <td className="text-right num">{c.signals}</td>
-                  <td className="text-right num">{c.judgements ?? "–"}</td>
-                  <td>{c.error ? <span className="font-medium">{c.error}</span> : c.finished_at ? "ok" : "…"}</td>
+        {cycles.error ? (
+          <Fail error={cycles.error} retry={cycles.reload} emptyKey="no_cycle" />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="data text-sm min-w-[760px]">
+              <thead>
+                <tr>
+                  <th>{t("last_cycle")}</th>
+                  <th>{t("mode")}</th>
+                  <th className="text-right">{t("items_fetched")}</th>
+                  <th className="text-right">{t("new_items")}</th>
+                  <th className="text-right">{t("signals_n")}</th>
+                  <th className="text-right">{t("judgements_n")}</th>
+                  <th>{t("result")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {cycles.data?.items.map((c) => (
+                  <tr key={c.id}>
+                    <td className="whitespace-nowrap">{fmtDate(c.started_at, lang, { time: true })}</td>
+                    <td>{c.mode}</td>
+                    <td className="text-right num">{c.items_fetched}</td>
+                    <td className="text-right num">{c.items_new}</td>
+                    <td className="text-right num">{c.signals}</td>
+                    <td className="text-right num">{c.judgements ?? "–"}</td>
+                    <td>{c.error ? <span className="font-medium">{c.error}</span> : c.finished_at ? "ok" : "…"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Section>
     </div>
   );
@@ -172,7 +179,7 @@ function Row({ s }: { s: SourceOut }) {
   const t = useT();
   const link = s.url ?? s.homepage;
   return (
-    <tr className={s.collect ? "" : "text-ink-3"}>
+    <tr id={`src-${s.slug}`} className={s.collect ? "" : "text-ink-3"}>
       <td>
         {link ? (
           <a href={link} target="_blank" rel="noreferrer" className="link">
@@ -182,6 +189,7 @@ function Row({ s }: { s: SourceOut }) {
           s.name
         )}
         {s.priority === "core" && <span className="label ml-2">{t("core")}</span>}
+        {s.origin === "suggestion" && <span className="label ml-2">{t("src_suggestion_badge")}</span>}
       </td>
       <td>{METHOD_LABELS[s.method]?.[lang] ?? s.method}</td>
       <td>{s.authority}</td>

@@ -69,7 +69,9 @@ export function Lagebericht({ meta }: { meta: Meta | null }) {
   const archiveList = (
     <div>
       <h2 className="label mb-2">{t("rep_archive")}</h2>
-      {archive.data && archive.data.length > 0 ? (
+      {archive.error ? (
+        isNotFound(archive.error) ? <Empty k="rep_archive_empty" /> : <ErrorBox error={archive.error} retry={archive.reload} />
+      ) : archive.data && archive.data.length > 0 ? (
         <ul>
           {archive.data.map((a) => {
             const wk = reportWeek(a, lang);
@@ -86,7 +88,7 @@ export function Lagebericht({ meta }: { meta: Meta | null }) {
           })}
         </ul>
       ) : (
-        <p className="text-xs text-ink-3">–</p>
+        <Empty k="rep_archive_empty" />
       )}
     </div>
   );

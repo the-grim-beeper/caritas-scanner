@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { api, questionsCached } from "../api";
+import { api, isNotFound, questionsCached } from "../api";
 import { SignalRow } from "../components/SignalRow";
 import { Empty, ErrorBox, LayerDot, Loading, MovementText, Section } from "../components/ui";
 import { layerLabel, slugName } from "../domain";
@@ -68,7 +68,8 @@ export function Lage({ meta }: { meta: Meta | null }) {
   const movingSrc: QuestionMoving[] = fromOverview ? o.questions_moving! : (qs.data ?? []).filter((q) => q.movement !== "quiet");
   const movingQs = [...movingSrc].sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance));
   const movingLoading = !fromOverview && qs.loading && !qs.data;
-  const movingFailed = !fromOverview && !!qs.error;
+  const movingNotFound = !fromOverview && !!qs.error && isNotFound(qs.error);
+  const movingOtherError = !fromOverview && !!qs.error && !isNotFound(qs.error);
 
   return (
     <div className="fade-in">
@@ -99,8 +100,10 @@ export function Lage({ meta }: { meta: Meta | null }) {
           >
             {movingLoading ? (
               <Loading />
+            ) : movingOtherError ? (
+              <ErrorBox error={qs.error!} retry={qs.reload} />
             ) : movingQs.length === 0 ? (
-              <Empty k={movingFailed ? "q_none" : "moving_none"} />
+              <Empty k={movingNotFound ? "q_none" : "moving_none"} />
             ) : (
               <ul className="grid gap-x-8 sm:grid-cols-2 xl:grid-cols-3">
                 {movingQs.map((q) => (
