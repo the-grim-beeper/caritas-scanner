@@ -3,7 +3,7 @@ import type { Lang } from "./types";
 
 const STRINGS = {
   // masthead / nav
-  app_title: { en: "Rhein-Neckar Horizon Scanner", de: "Rhein-Neckar Horizon Scanner" },
+  app_title: { en: "Horizon Scanner Landkreis Miesbach", de: "Horizont-Scanner Landkreis Miesbach" },
   app_sub: { en: "Six-layer signal scanner for the Metropolregion", de: "Sechs-Ebenen-Signalscanner für die Metropolregion" },
   nav_radar: { en: "Radar", de: "Radar" },
   nav_digest: { en: "Digest", de: "Lagebild" },
