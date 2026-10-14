@@ -31,6 +31,5 @@ COPY --from=frontend /build/backend/static ./static
 RUN python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
 
 EXPOSE 8000
-# Migrations + source load run in scripts/start.sh before uvicorn (idempotent).
-# sh -c so ${PORT} expands — Railway injects it at runtime.
+# scripts/start.sh: migrations + idempotent source load, then uvicorn on ${PORT} (Railway injects it).
 CMD ["sh", "scripts/start.sh"]
