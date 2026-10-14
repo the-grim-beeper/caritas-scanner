@@ -24,6 +24,8 @@ class RawItem:
     summary: str
     published_at: datetime | None
     content_hash: str
+    # method=query: "Headline - Outlet" search results carry the outlet separately.
+    outlet: str | None = None
 
 
 def canonical_url(url: str) -> str:

@@ -1,11 +1,15 @@
-"""Fetch every rss/page entry in data/sources.yaml and write data/sources-live.json.
+"""Fetch every collected-method entry in data/sources.yaml and write
+data/sources-live.json.
 
 Verification is a build step, not a flag. For each entry:
-  1. if it has an explicit rss url, fetch + parse it (≥1 item → live as rss)
-  2. otherwise, or on failure, try feed autodiscovery on the homepage/url
+  1. query: build the Google News search URL and parse it (≥1 item → live as query)
+  2. diff: fetch the page and extract its main text (≥200 chars → live as diff)
+  3. pdf: fetch the list page and look for .pdf links (≥1 → live as pdf)
+  4. rss: if it has an explicit rss url, fetch + parse it (≥1 item → live as rss)
+  5. otherwise, or on failure, try feed autodiscovery on the homepage/url
      (<link rel=alternate type=application/rss+xml|atom+xml>, plus the usual
      /feed/ and /rss suffixes) — a found feed with ≥1 item → live as rss
-  3. if the entry is a page monitor and no feed was found, fetch the list page
+  6. if the entry is a page monitor and no feed was found, fetch the list page
      and run the extractor (≥3 items → live as page)
 Everything else is recorded in data/sources-check-report.json with the reason.
 """
@@ -23,7 +27,10 @@ from selectolax.parser import HTMLParser
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from mhs.collect.diff import main_text  # noqa: E402
 from mhs.collect.page import extract_items  # noqa: E402
+from mhs.collect.pdf import pdf_links  # noqa: E402
+from mhs.collect.query import build_query_url  # noqa: E402
 from mhs.collect.rss import parse_feed  # noqa: E402
 from mhs.config import settings  # noqa: E402
 from mhs.sources.catalogue import COLLECTED_METHODS, load_catalogue  # noqa: E402
@@ -31,6 +38,7 @@ from mhs.sources.catalogue import COLLECTED_METHODS, load_catalogue  # noqa: E40
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
 MIN_PAGE_ITEMS = 3
+MIN_DIFF_CHARS = 200
 HEADERS = {
     "User-Agent": settings.user_agent,
     "Accept": "application/rss+xml, application/atom+xml, application/xml, text/html;q=0.9, */*;q=0.8",
@@ -100,12 +108,45 @@ async def _autodiscover(http: httpx.AsyncClient, page_url: str) -> tuple[int, st
 async def _check(http: httpx.AsyncClient, entry, sem: asyncio.Semaphore) -> dict:
     async with sem:
         report = {"slug": entry.slug, "catalogue_method": entry.method, "tried": []}
+        if entry.method == "query":
+            url = build_query_url(entry.query or "")
+            hit = await _try_feed(http, url)
+            report["tried"].append(("query", url, bool(hit)))
+            if hit:
+                return {**report, "ok": True, "method": "query", "resolved_url": url, "item_count": hit[0]}
+            return {**report, "ok": False, "reason": "query feed had no items"}
+        if entry.method == "diff":
+            r = await _get(http, entry.url)
+            if r is not None and r.status_code == 200:
+                text = main_text(r.content, entry.item_selector)
+                report["tried"].append(("diff", entry.url, len(text)))
+                if len(text) >= MIN_DIFF_CHARS:
+                    return {**report, "ok": True, "method": "diff", "resolved_url": str(r.url), "item_count": len(text)}
+                return {**report, "ok": False, "reason": f"diff page extracted only {len(text)} chars of main text"}
+            code = r.status_code if r is not None else "no response"
+            report["tried"].append(("diff", entry.url, code))
+            return {**report, "ok": False, "reason": f"diff fetch failed: {code}"}
+        if entry.method == "pdf":
+            r = await _get(http, entry.url)
+            if r is not None and r.status_code == 200:
+                links = pdf_links(r.content, str(r.url))
+                report["tried"].append(("pdf", entry.url, len(links)))
+                if len(links) >= 1:
+                    return {**report, "ok": True, "method": "pdf", "resolved_url": str(r.url), "item_count": len(links)}
+                return {**report, "ok": False, "reason": "no pdf links found on the list page"}
+            code = r.status_code if r is not None else "no response"
+            report["tried"].append(("pdf", entry.url, code))
+            return {**report, "ok": False, "reason": f"pdf fetch failed: {code}"}
+        # Autodiscovery below is for rss/page only — diff and pdf return above and
+        # never reach it: a WordPress site's homepage advertises the same site-wide
+        # feed on every page, which would collapse several of that site's diff/pdf
+        # entries onto one rss source.
         if entry.method == "rss" and entry.url:
             hit = await _try_feed(http, entry.url)
             report["tried"].append(("rss", entry.url, bool(hit)))
             if hit:
                 return {**report, "ok": True, "method": "rss", "resolved_url": hit[1], "item_count": hit[0]}
-        for base in [u for u in (entry.homepage, entry.url) if u]:
+        for base in [u for u in (entry.url, entry.homepage) if u]:
             hit = await _autodiscover(http, base)
             report["tried"].append(("autodiscover", base, bool(hit)))
             if hit:
