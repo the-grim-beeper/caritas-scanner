@@ -80,6 +80,11 @@ forums, programmes or offices), read "a <relation> b", relation one of: {_RELATI
 Give the verbatim phrase of the text that states it as quote. Do not infer relations the
 text does not state; most items have none.
 
+ITEM DATE: the date the item itself states for its publication, or failing that for the
+development it reports ("ab dem 10. Dezember 2023", "Sitzung vom 8. März 2026"). List pages of
+municipalities keep years of archive, so this date decides whether an item is news at all.
+YYYY-MM-DD; a month or year alone → the first day of it; nothing stated → null.
+
 EVENTS AND DEADLINES: extract every dated event (council or committee meeting, Fachtag,
 consultation, information evening) and every deadline (application, consultation close).
 A deadline is a separate field from the event's start date; an item may carry a deadline

@@ -237,3 +237,30 @@ async def test_one_items_persist_failure_does_not_lose_the_batch(db_session, mon
     assert len(saved) == 1
     unprocessed = (await db_session.execute(select(FeedItem).where(FeedItem.processed.is_(False)))).scalars().all()
     assert len(unprocessed) == 1  # the failed item is retried next cycle
+
+
+# --- item date (first live run: municipal list pages carry their archive) -----------------
+
+def test_from_payload_reads_item_date():
+    from datetime import date
+    from mhs.extract.schema import from_payload
+    assert from_payload(_live_payload(item_date="2023-12-10")).item_date == date(2023, 12, 10)
+    assert from_payload(_live_payload(item_date=None)).item_date is None
+    assert from_payload(_live_payload(item_date="Dezember")).item_date is None
+
+
+async def test_undated_item_whose_own_date_is_old_is_archive_not_signal(db_session, monkeypatch):
+    stats = await _run_live(db_session, monkeypatch, _live_payload(item_date="2023-12-10"))
+    assert stats.signals == 0 and stats.discarded == 1
+    assert (await db_session.execute(select(Signal))).first() is None
+    item = (await db_session.execute(select(FeedItem))).scalar_one()
+    assert item.processed and item.discarded
+
+
+async def test_undated_item_with_a_recent_own_date_becomes_a_signal_dated_by_it(db_session, monkeypatch):
+    from datetime import date, timedelta
+    recent = date.today() - timedelta(days=5)
+    stats = await _run_live(db_session, monkeypatch, _live_payload(item_date=recent.isoformat()))
+    assert stats.signals == 1
+    sig = (await db_session.execute(select(Signal))).scalar_one()
+    assert sig.published_at.date() == recent

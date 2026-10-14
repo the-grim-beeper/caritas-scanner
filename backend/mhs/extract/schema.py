@@ -61,12 +61,13 @@ EXTRACTION_SCHEMA = {
         "regional_relevance": {"type": "number", "description": "0–1"},
         "consequence": {"type": "number", "description": "0–1"},
         "forward_lag": {"type": "number", "description": "0–1"},
+        "item_date": {**_DATE, "description": "The date the item itself states for its publication or, failing that, for the development it reports; YYYY-MM-DD, or null"},
         "events": {"type": "array", "items": EVENT_SCHEMA},
         "relations": {"type": "array", "items": RELATION_SCHEMA},
     },
     "required": ["is_signal", "headline_en", "headline_de", "summary_en", "summary_de", "signal_type",
                  "topics", "places", "organisations", "forums", "programmes", "offices",
-                 "regional_relevance", "consequence", "forward_lag", "events", "relations"],
+                 "regional_relevance", "consequence", "forward_lag", "item_date", "events", "relations"],
     "additionalProperties": False,
 }
 
@@ -110,6 +111,7 @@ class ExtractionResult:
     regional_relevance: float = 0.0
     consequence: float = 0.0
     forward_lag: float = 0.0
+    item_date: date | None = None
     events: tuple[EventDraft, ...] = field(default_factory=tuple)
     relations: tuple[RelationDraft, ...] = field(default_factory=tuple)
 
@@ -205,6 +207,7 @@ def from_payload(data: dict) -> ExtractionResult:
         regional_relevance=_clamp(data.get("regional_relevance")),
         consequence=_clamp(data.get("consequence")),
         forward_lag=_clamp(data.get("forward_lag")),
+        item_date=_date(data.get("item_date")),
         events=events,
         relations=_relations(data),
     )

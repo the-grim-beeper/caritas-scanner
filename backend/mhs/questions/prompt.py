@@ -45,8 +45,11 @@ WHAT COUNTS
     again, or a service cutting hours for lack of staff is.
   - An announced meeting is not its outcome.
 - Most signals bear on zero or one question; a few on two. Returning nothing for a signal is
-  the normal case. Over-inclusion is the failure to avoid: a judgement on weak grounds moves a
-  question's balance on no evidence.
+  common. Both errors cost the reader: a judgement on no evidence moves a question's balance
+  falsely, and a missed one hides a real development from the people tracking it. Where the
+  text does show a development that fits a question's FOR or AGAINST description, but only
+  partly or indirectly, record it as "weak" rather than leaving it out; skip a signal only
+  when it shares no more than a topic with the question.
 - At most one judgement per signal and question.
 - Place. q01–q14 concern Landkreis Miesbach and its municipalities, providers and bodies. A
   signal from the Bezirk, the Freistaat or the Bund counts in two cases. (a) The question

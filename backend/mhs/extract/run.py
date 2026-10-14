@@ -4,6 +4,7 @@ mock, same shape."""
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime, timedelta, timezone
 import logging
 from dataclasses import dataclass
 
@@ -86,7 +87,7 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
         regional_relevance=result.regional_relevance,
         consequence=result.consequence,
         forward_lag=result.forward_lag,
-        published_at=item.published_at or item.created_at or utcnow(),
+        published_at=item.published_at or _as_instant(result.item_date) or item.created_at or utcnow(),
     )
     session.add(signal)
     await session.flush()
@@ -121,6 +122,18 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
     return signal
 
 
+def _as_instant(d) -> datetime | None:
+    return datetime(d.year, d.month, d.day, 12, tzinfo=timezone.utc) if d else None
+
+
+def _is_archive(item: FeedItem, result: ExtractionResult) -> bool:
+    """An undated list-page item whose own stated date lies outside the freshness window is
+    archive, not news (first live run: "ab dem 10. Dezember 2023" on a municipal news page)."""
+    if item.published_at is not None or result.item_date is None:
+        return False
+    return result.item_date < (utcnow() - timedelta(days=settings.max_item_age_days)).date()
+
+
 async def extract_pending(session: AsyncSession, *, limit: int | None = None) -> ExtractStats:
     stats = ExtractStats(mode="live" if settings.llm_enabled else "mock")
     limit = limit or settings.max_extractions_per_cycle
@@ -153,7 +166,7 @@ async def extract_pending(session: AsyncSession, *, limit: int | None = None) ->
         if result is None:
             stats.failed += 1
             continue
-        if not result.is_signal:
+        if not result.is_signal or _is_archive(item, result):
             item.processed = True
             item.discarded = True
             stats.processed += 1
