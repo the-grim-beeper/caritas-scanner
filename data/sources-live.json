@@ -1,0 +1,935 @@
+{
+  "checked_at": "2026-10-14T20:58:34.375547Z",
+  "results": [
+    {
+      "slug": "bad-wiessee-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.gemeinde.bad-wiessee.de/Aktuelles/Pressemitteilungen/",
+      "item_count": 25
+    },
+    {
+      "slug": "bayrischzell-gemeinderat",
+      "method": "diff",
+      "resolved_url": "https://gemeinde.bayrischzell.de/de/rathaus/politik/gemeinderat",
+      "item_count": 2645
+    },
+    {
+      "slug": "bayrischzell-neuigkeiten",
+      "method": "rss",
+      "resolved_url": "https://api.cross-7.de/public/news/3462/articles/rss",
+      "item_count": 7
+    },
+    {
+      "slug": "bayrischzell-sitzungstermine",
+      "method": "diff",
+      "resolved_url": "https://gemeinde.bayrischzell.de/de/rathaus/politik/sitzungstermine",
+      "item_count": 1538
+    },
+    {
+      "slug": "bayrischzell-gemeindenachrichten",
+      "method": "pdf",
+      "resolved_url": "https://gemeinde.bayrischzell.de/de/rathaus/aktuelles/bayrischzeller-gemeindenachrichten",
+      "item_count": 26
+    },
+    {
+      "slug": "fischbachau-aktuelles",
+      "method": "page",
+      "resolved_url": "https://gemeinde.fischbachau.de/de/rathaus/aktuelles",
+      "item_count": 39
+    },
+    {
+      "slug": "fischbachau-bekanntmachungen",
+      "method": "pdf",
+      "resolved_url": "https://gemeinde.fischbachau.de/de/rathaus/bekanntmachungen",
+      "item_count": 31
+    },
+    {
+      "slug": "gmund-aktuelles",
+      "method": "page",
+      "resolved_url": "https://www.gemeinde.gmund.de/Rathaus-B%C3%BCrgerservice/Aktuelles-und-Termine/Aktuelles/",
+      "item_count": 25
+    },
+    {
+      "slug": "gmund-sitzungskalender",
+      "method": "diff",
+      "resolved_url": "https://buergerinfo-gmund.digitalfabrix.de/si0040.asp",
+      "item_count": 540
+    },
+    {
+      "slug": "gmund-gemeindebote",
+      "method": "pdf",
+      "resolved_url": "https://www.gemeinde.gmund.de/Rathaus-B%C3%BCrgerservice/Brosch%C3%BCren-und-Infos/Gemeindebote/",
+      "item_count": 24
+    },
+    {
+      "slug": "hausham-rathaus-aktuell",
+      "method": "rss",
+      "resolved_url": "https://api.cross-7.de/public/news/1149/articles/rss?CategoryIds=40902333",
+      "item_count": 23
+    },
+    {
+      "slug": "hausham-bekanntmachungen",
+      "method": "pdf",
+      "resolved_url": "https://www.hausham.de/de/rathaus/gemeindeverwaltung/oeffentliche-bekanntmachungen",
+      "item_count": 3
+    },
+    {
+      "slug": "holzkirchen-news",
+      "method": "page",
+      "resolved_url": "https://www.holzkirchen.de/Aktuelles/Immer-informiert",
+      "item_count": 231
+    },
+    {
+      "slug": "holzkirchen-gemeinderat",
+      "method": "diff",
+      "resolved_url": "https://www.holzkirchen.de/de/Ihr-Rathaus/Kommunalpolitik/Gemeinderat",
+      "item_count": 1565
+    },
+    {
+      "slug": "holzkirchen-gemeindeblatt",
+      "method": "pdf",
+      "resolved_url": "https://www.holzkirchen.de/gemeindeblatt",
+      "item_count": 46
+    },
+    {
+      "slug": "irschenberg-bekanntmachungen",
+      "method": "page",
+      "resolved_url": "https://irschenberg.de/oeffentliche-bekanntmachungen",
+      "item_count": 14
+    },
+    {
+      "slug": "irschenberg-aktuelles",
+      "method": "page",
+      "resolved_url": "https://irschenberg.de/aktuelles-2",
+      "item_count": 27
+    },
+    {
+      "slug": "kreuth-aktuell",
+      "method": "page",
+      "resolved_url": "https://gemeinde.kreuth.de/Unsere-Gemeinde/Aktuelles/Kreuth-aktuell/",
+      "item_count": 25
+    },
+    {
+      "slug": "kreuth-gemeindebote",
+      "method": "pdf",
+      "resolved_url": "https://gemeinde.kreuth.de/Unsere-Gemeinde/Aktuelles/Mitteilungsblatt-Gemeindebote-/",
+      "item_count": 179
+    },
+    {
+      "slug": "miesbach-rss",
+      "method": "rss",
+      "resolved_url": "https://www.miesbach.de/export/rss.php?id=7",
+      "item_count": 17
+    },
+    {
+      "slug": "miesbach-sitzungstermine",
+      "method": "page",
+      "resolved_url": "https://www.miesbach.de/sitzungstermine",
+      "item_count": 26
+    },
+    {
+      "slug": "otterfing-ratsinfo",
+      "method": "rss",
+      "resolved_url": "https://buergerinfo-otterfing.digitalfabrix.de/rssfeed.asp",
+      "item_count": 1
+    },
+    {
+      "slug": "otterfing-aktuelles",
+      "method": "rss",
+      "resolved_url": "https://www.otterfing.de/feed/",
+      "item_count": 10
+    },
+    {
+      "slug": "otterfing-gemeindeblatt",
+      "method": "pdf",
+      "resolved_url": "https://www.otterfing.de/letzte-ausgaben-des-gemeindeblatts/",
+      "item_count": 6
+    },
+    {
+      "slug": "rottach-egern-meldungen",
+      "method": "page",
+      "resolved_url": "https://www.gemeinde.rottach-egern.de/Unsere-Gemeinde/Aktuelles/Aktuelle-Meldungen/",
+      "item_count": 25
+    },
+    {
+      "slug": "rottach-egern-buergerbote",
+      "method": "pdf",
+      "resolved_url": "https://www.gemeinde.rottach-egern.de/Unsere-Gemeinde/Aktuelles/B%C3%BCrgerbote/",
+      "item_count": 2
+    },
+    {
+      "slug": "schliersee-finanzverwaltung",
+      "method": "pdf",
+      "resolved_url": "https://rathaus.schliersee.de/marktverwaltung/finanzverwaltung/",
+      "item_count": 2
+    },
+    {
+      "slug": "schliersee-bekanntmachungen",
+      "method": "pdf",
+      "resolved_url": "https://rathaus.schliersee.de/marktverwaltung/bekanntmachungen/",
+      "item_count": 463
+    },
+    {
+      "slug": "schliersee-gemeindenachrichten",
+      "method": "pdf",
+      "resolved_url": "https://rathaus.schliersee.de/aktuelles/gemeindenachrichten/",
+      "item_count": 56
+    },
+    {
+      "slug": "tegernsee-stadtrat",
+      "method": "diff",
+      "resolved_url": "https://www.stadt.tegernsee.de/Rathaus-B%C3%BCrgerservice/Politik-Stadtrat/Stadtrat/?La=1",
+      "item_count": 828
+    },
+    {
+      "slug": "tegernsee-aktuell",
+      "method": "page",
+      "resolved_url": "https://www.stadt.tegernsee.de/Unsere-Gemeinde/Aktuelles/Tegernsee-aktuell/",
+      "item_count": 14
+    },
+    {
+      "slug": "tegernsee-nachrichten",
+      "method": "pdf",
+      "resolved_url": "https://www.stadt.tegernsee.de/Unsere-Gemeinde/Aktuelles/Tegernseer-Nachrichten/",
+      "item_count": 272
+    },
+    {
+      "slug": "valley-nachrichten",
+      "method": "rss",
+      "resolved_url": "https://www.gemeinde-valley.de/nachrichten/rss",
+      "item_count": 44
+    },
+    {
+      "slug": "valley-sitzungen",
+      "method": "rss",
+      "resolved_url": "https://www.gemeinde-valley.de/veranstaltungen/rss-1",
+      "item_count": 2
+    },
+    {
+      "slug": "valley-bekanntmachungen",
+      "method": "pdf",
+      "resolved_url": "https://www.gemeinde-valley.de/buergerservice/bekanntmachungen/amtliche-bekanntmachungen",
+      "item_count": 63
+    },
+    {
+      "slug": "waakirchen-sitzungen",
+      "method": "diff",
+      "resolved_url": "https://www.waakirchen.de/de/rathaus/politik/sitzungen-gemeinderat-1",
+      "item_count": 5345
+    },
+    {
+      "slug": "waakirchen-rathaus-aktuell",
+      "method": "page",
+      "resolved_url": "https://www.waakirchen.de/de/rathaus/service/rathaus-aktuell",
+      "item_count": 30
+    },
+    {
+      "slug": "waakirchen-gemeindebote",
+      "method": "pdf",
+      "resolved_url": "https://www.waakirchen.de/de/waakirchen/aktuelles/gemeindebote",
+      "item_count": 84
+    },
+    {
+      "slug": "warngau-nachrichten",
+      "method": "rss",
+      "resolved_url": "https://www.warngau.de/nachrichten/rss",
+      "item_count": 47
+    },
+    {
+      "slug": "warngau-sitzungsprotokolle",
+      "method": "pdf",
+      "resolved_url": "https://www.warngau.de/buergerservice-politik/gemeinderat/sitzungsprotokolle",
+      "item_count": 107
+    },
+    {
+      "slug": "warngau-landzeit",
+      "method": "pdf",
+      "resolved_url": "https://www.warngau.de/unsere-gemeinde/willkommen-in-warngau/gemeindeblatt-landzeit",
+      "item_count": 32
+    },
+    {
+      "slug": "weyarn-aktuelles",
+      "method": "rss",
+      "resolved_url": "https://gemeinde-weyarn.de/feed/",
+      "item_count": 10
+    },
+    {
+      "slug": "weyarn-haushalt",
+      "method": "pdf",
+      "resolved_url": "https://gemeinde-weyarn.de/ihr-rathaus/finanzen/doppik-haushaltsplan/",
+      "item_count": 5
+    },
+    {
+      "slug": "weyarn-gmoablattl",
+      "method": "pdf",
+      "resolved_url": "https://gemeinde-weyarn.de/gemeinde/gmoablattl-archiv/",
+      "item_count": 2
+    },
+    {
+      "slug": "poliscope-miesbach",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/miesbach-st/091820125125",
+      "item_count": 6565
+    },
+    {
+      "slug": "poliscope-holzkirchen",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/holzkirchen-m/091820120120",
+      "item_count": 7790
+    },
+    {
+      "slug": "poliscope-hausham",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/hausham/091820119119",
+      "item_count": 6438
+    },
+    {
+      "slug": "poliscope-weyarn",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/weyarn/091820137137",
+      "item_count": 7152
+    },
+    {
+      "slug": "poliscope-kreuth",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/kreuth/091820124124",
+      "item_count": 5896
+    },
+    {
+      "slug": "poliscope-rottach-egern",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/rottach-egern/091820129129",
+      "item_count": 6001
+    },
+    {
+      "slug": "poliscope-tegernsee",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/tegernsee-st/091820132132",
+      "item_count": 5600
+    },
+    {
+      "slug": "poliscope-fischbachau",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/fischbachau/091820114114",
+      "item_count": 6217
+    },
+    {
+      "slug": "lk-fachstelle-soziales-senioren",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Fachstelle-f%C3%BCr-Soziales-und-Senioren/index.php",
+      "item_count": 963
+    },
+    {
+      "slug": "lk-pflegestuetzpunkt",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Betreuung-und-FQA/Pflegest%C3%BCtzpunkt/Unser-Service-/index.php",
+      "item_count": 2915
+    },
+    {
+      "slug": "lk-gesundheitsregionplus",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/index.php?NavID=2823.780",
+      "item_count": 359
+    },
+    {
+      "slug": "lk-jobcenter",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Arbeit-und-Soziales/Jobcenter-Leistung/",
+      "item_count": 1466
+    },
+    {
+      "slug": "lk-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Aktuelles-und-Presse-/Pressemitteilungen/",
+      "item_count": 29
+    },
+    {
+      "slug": "lk-amtsblatt",
+      "method": "pdf",
+      "resolved_url": "https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Aktuelles-und-Presse-/Amtsblatt/",
+      "item_count": 26
+    },
+    {
+      "slug": "lk-kreistag",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Landratsamt-und-Politik/Kreistag/",
+      "item_count": 1956
+    },
+    {
+      "slug": "lk-arbeitskreise",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Arbeitskreise/",
+      "item_count": 2115
+    },
+    {
+      "slug": "lk-mobilitaet",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Kreisentwicklung-und-Nachhaltigkeit/Mobilit%C3%A4t/",
+      "item_count": 271
+    },
+    {
+      "slug": "lk-stellenangebote",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/B%C3%BCrgerservice-Informationen-Karriere/Karriere/Aktuelle-Stellenangebote/",
+      "item_count": 580
+    },
+    {
+      "slug": "krankenhaus-agatharied-presse",
+      "method": "page",
+      "resolved_url": "https://www.khagatharied.de/news/presse/",
+      "item_count": 33
+    },
+    {
+      "slug": "leader-oberland",
+      "method": "page",
+      "resolved_url": "https://www.regionalentwicklung-oberland.de/leader/",
+      "item_count": 10
+    },
+    {
+      "slug": "mvv-presse",
+      "method": "page",
+      "resolved_url": "https://www.mvv-muenchen.de/mvv-im-ueberblick/die-gesellschaft/presse/",
+      "item_count": 13
+    },
+    {
+      "slug": "lk-gesundheit",
+      "method": "diff",
+      "resolved_url": "https://www.landkreis-miesbach.de/Landratsamt/Soziales-Jugend-und-Gesundheit/Gesundheit/",
+      "item_count": 7544
+    },
+    {
+      "slug": "leader-miesbacher-land",
+      "method": "page",
+      "resolved_url": "https://www.leader-mb.de/mitmachen/news-termine.html",
+      "item_count": 16
+    },
+    {
+      "slug": "mvv-on-demand",
+      "method": "diff",
+      "resolved_url": "https://www.mvv-muenchen.de/vernetzte-mobilitaet/on-demand-services-ods/",
+      "item_count": 1357
+    },
+    {
+      "slug": "poliscope-landkreis",
+      "method": "diff",
+      "resolved_url": "https://poliscope.de/ratsinformationssystem/miesbach/09182",
+      "item_count": 6239
+    },
+    {
+      "slug": "diakonie-rosenheim",
+      "method": "rss",
+      "resolved_url": "https://dwro.de/feed/",
+      "item_count": 8
+    },
+    {
+      "slug": "diakonie-jugendhilfe-miesbach",
+      "method": "diff",
+      "resolved_url": "https://dwro.de/standorte/einrichtung/kinder-und-jugendhilfe-miesbach/",
+      "item_count": 3317
+    },
+    {
+      "slug": "brk-miesbach",
+      "method": "page",
+      "resolved_url": "https://www.kvmiesbach.brk.de/start/aktuelles/aktuelle-meldungen/aktuelles.html",
+      "item_count": 9
+    },
+    {
+      "slug": "lebenshilfe-miesbach-jobs",
+      "method": "page",
+      "resolved_url": "https://www.lebenshilfe-miesbach.de/jobs/",
+      "item_count": 8
+    },
+    {
+      "slug": "lebenshilfe-oba-lebensmut",
+      "method": "diff",
+      "resolved_url": "https://www.lebenshilfe-miesbach.de/einrichtungen/offene-behindertenarbeit-lebensmut/start",
+      "item_count": 1888
+    },
+    {
+      "slug": "awo-seniorenzentrum-miesbach",
+      "method": "diff",
+      "resolved_url": "https://www.gesundheitsportal.awo-obb.de/mehr/senioren/einrichtung/awo-seniorenzentrum-miesbach",
+      "item_count": 7150
+    },
+    {
+      "slug": "hospizkreis-miesbach",
+      "method": "page",
+      "resolved_url": "https://www.hospizkreis.de/aktuelles.html",
+      "item_count": 61
+    },
+    {
+      "slug": "nachbarschaftshilfe-warngau",
+      "method": "diff",
+      "resolved_url": "https://www.nachbarschaftshilfe-warngau.de/neues-und-aktuelles",
+      "item_count": 13616
+    },
+    {
+      "slug": "kjf-muenchen-presse",
+      "method": "pdf",
+      "resolved_url": "https://www.kjf-muenchen.de/presse.html",
+      "item_count": 29
+    },
+    {
+      "slug": "dekanat-miesbach",
+      "method": "diff",
+      "resolved_url": "https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien/dekanat-miesbach",
+      "item_count": 1949
+    },
+    {
+      "slug": "erzbistum-dekanatsreform",
+      "method": "diff",
+      "resolved_url": "https://www2.erzbistum-muenchen.de/im-blick/dekanatsreform2024",
+      "item_count": 1441
+    },
+    {
+      "slug": "dekanat-bad-toelz",
+      "method": "diff",
+      "resolved_url": "https://www.evangelisch-im-oberland.de/",
+      "item_count": 6289
+    },
+    {
+      "slug": "bezirk-sitzungstermine",
+      "method": "diff",
+      "resolved_url": "https://buergerinfo-bezirk-obb.digitalfabrix.de/si0046.asp",
+      "item_count": 701
+    },
+    {
+      "slug": "bezirk-haushalt",
+      "method": "diff",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Der-Bezirk-Oberbayern/Finanzen/Bezirkshaushalt",
+      "item_count": 780
+    },
+    {
+      "slug": "bezirk-sozialberichterstattung",
+      "method": "diff",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung/?La=1",
+      "item_count": 1548
+    },
+    {
+      "slug": "bezirk-sozialplanung",
+      "method": "diff",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung-neu/",
+      "item_count": 2694
+    },
+    {
+      "slug": "bezirk-sozialberichte-archiv",
+      "method": "pdf",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung/Bisherige-Sozialberichterstattung/",
+      "item_count": 29
+    },
+    {
+      "slug": "bezirk-publikationen-soziales",
+      "method": "pdf",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Service/Publikationen/Soziales/",
+      "item_count": 5
+    },
+    {
+      "slug": "bezirk-pressemeldungen",
+      "method": "page",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Der-Bezirk-Oberbayern/Aktuelles-Presse/Pressemeldungen/",
+      "item_count": 24
+    },
+    {
+      "slug": "bezirk-psag",
+      "method": "diff",
+      "resolved_url": "https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Psychosoziale-Arbeitsgemeinschaften/",
+      "item_count": 956
+    },
+    {
+      "slug": "stmas-sela",
+      "method": "diff",
+      "resolved_url": "https://www.stmas.bayern.de/themen/wohnen-im-alter/SeLA/foerderrichtlinie-sela.php",
+      "item_count": 5704
+    },
+    {
+      "slug": "stmas-pressemitteilungen",
+      "method": "rss",
+      "resolved_url": "https://www.stmas.bayern.de/_xml/rss.xml",
+      "item_count": 1384
+    },
+    {
+      "slug": "stmgp-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.stmgp.bayern.de/ministerium/presse/pressemitteilungen/",
+      "item_count": 8
+    },
+    {
+      "slug": "pflegesonah",
+      "method": "diff",
+      "resolved_url": "https://www.lfp.bayern.de/pflegesonah-investitionskostenrichtlinie/",
+      "item_count": 21520
+    },
+    {
+      "slug": "stmfh-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.stmfh.bayern.de/aktuelles/pressemitteilungen/",
+      "item_count": 287
+    },
+    {
+      "slug": "landtag-sitzungen",
+      "method": "diff",
+      "resolved_url": "https://www.bayern.landtag.de/aktuelles/sitzungen/",
+      "item_count": 4499
+    },
+    {
+      "slug": "landtag-ausschuss-soziales",
+      "method": "rss",
+      "resolved_url": "https://www.bayern.landtag.de/webangebot3/views/rssfeed/rssfeed.xhtml?federfuehrung=SO&titel=Drucksachen+zu+Initiativen+mit+federf%C3%BChrender+Beratung+im+Ausschuss+f%C3%BCr+Arbeit+und+Soziales%2C+Jugend+und+Familie",
+      "item_count": 87
+    },
+    {
+      "slug": "statistik-bayern-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.statistik.bayern.de/presse/mitteilungen/index.php",
+      "item_count": 10
+    },
+    {
+      "slug": "bay-landkreistag",
+      "method": "rss",
+      "resolved_url": "https://www.bay-landkreistag.de/aktuelles/aktuelle-meldungen/newsrss/",
+      "item_count": 247
+    },
+    {
+      "slug": "bay-gemeindetag",
+      "method": "page",
+      "resolved_url": "https://www.bay-gemeindetag.de/",
+      "item_count": 7
+    },
+    {
+      "slug": "freie-wohlfahrtspflege-bayern",
+      "method": "page",
+      "resolved_url": "https://www.freie-wohlfahrtspflege-bayern.de/informationen/pressemitteilungen",
+      "item_count": 26
+    },
+    {
+      "slug": "caritas-bayern-presse",
+      "method": "page",
+      "resolved_url": "https://www.caritas-bayern.de/aktuelles/presse/",
+      "item_count": 5
+    },
+    {
+      "slug": "bmas-sgb2-gesetz",
+      "method": "diff",
+      "resolved_url": "https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/13-gesetz-zur-aenderung-zweiten-buch-sozialgesetzbuch-und-anderer-gesetze.html",
+      "item_count": 2495
+    },
+    {
+      "slug": "bmas-pressemitteilungen",
+      "method": "rss",
+      "resolved_url": "https://www.bmas.de/SiteGlobals/Functions/RSSFeed/DE/RSSNewsfeed/RSSNewsfeed.xml",
+      "item_count": 30
+    },
+    {
+      "slug": "bmbfsfj-pressemitteilungen",
+      "method": "rss",
+      "resolved_url": "https://www.bmbfsfj.bund.de/service/rss/bmbfsfj/111102/feed.rss",
+      "item_count": 20
+    },
+    {
+      "slug": "bmg-pressemitteilungen",
+      "method": "rss",
+      "resolved_url": "https://www.bundesgesundheitsministerium.de/pressemitteilungen.xml",
+      "item_count": 412
+    },
+    {
+      "slug": "deutscher-landkreistag",
+      "method": "rss",
+      "resolved_url": "https://www.landkreistag.de/index.php/presseforum/pressemitteilungen?format=feed&type=rss",
+      "item_count": 11
+    },
+    {
+      "slug": "bagfw-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.bagfw.de/veroeffentlichungen/pressemitteilungen",
+      "item_count": 14
+    },
+    {
+      "slug": "caritas-dcv-pressemeldungen",
+      "method": "page",
+      "resolved_url": "https://www.caritas.de/presse/pressemeldungen-dcv/pressemeldungen-dcv",
+      "item_count": 21
+    },
+    {
+      "slug": "merkur-region-miesbach",
+      "method": "rss",
+      "resolved_url": "https://www.merkur.de/lokales/region-miesbach/rssfeed.rdf",
+      "item_count": 40
+    },
+    {
+      "slug": "tegernseer-stimme",
+      "method": "rss",
+      "resolved_url": "https://tegernseerstimme.de/feed/",
+      "item_count": 8
+    },
+    {
+      "slug": "gelbe-blatt-miesbach",
+      "method": "page",
+      "resolved_url": "https://www.dasgelbeblatt.de/lokales/miesbach/",
+      "item_count": 27
+    },
+    {
+      "slug": "br24-oberbayern",
+      "method": "rss",
+      "resolved_url": "https://nachrichtenfeeds.br.de/rss/nachrichten/seiten/UZlJdUE",
+      "item_count": 25
+    },
+    {
+      "slug": "thuenen-pressemitteilungen",
+      "method": "page",
+      "resolved_url": "https://www.thuenen.de/de/newsroom/presse/pressemitteilungen",
+      "item_count": 15
+    },
+    {
+      "slug": "dza",
+      "method": "page",
+      "resolved_url": "https://www.dza.de/",
+      "item_count": 8
+    },
+    {
+      "slug": "iab",
+      "method": "rss",
+      "resolved_url": "https://iab.de/feed/",
+      "item_count": 10
+    },
+    {
+      "slug": "dji",
+      "method": "rss",
+      "resolved_url": "https://www.dji.de/presse-rss.xml",
+      "item_count": 30
+    },
+    {
+      "slug": "berlin-institut",
+      "method": "page",
+      "resolved_url": "https://www.berlin-institut.org/was-wir-tun/aktuelles",
+      "item_count": 10
+    },
+    {
+      "slug": "bertelsmann-pressemitteilungen",
+      "method": "rss",
+      "resolved_url": "https://www.bertelsmann-stiftung.de/de/system/service/rss-feed-pressemitteilungen",
+      "item_count": 10
+    },
+    {
+      "slug": "neue-caritas",
+      "method": "page",
+      "resolved_url": "https://www.caritas.de/neue-caritas/aktuelles/",
+      "item_count": 10
+    },
+    {
+      "slug": "ndv",
+      "method": "diff",
+      "resolved_url": "https://www.deutscher-verein.de/buchshop/nachrichtendienst-ndv/",
+      "item_count": 1866
+    },
+    {
+      "slug": "wohlfahrt-intern",
+      "method": "page",
+      "resolved_url": "https://www.wohlfahrtintern.de/",
+      "item_count": 10
+    },
+    {
+      "slug": "sozialwirtschaft-nomos",
+      "method": "rss",
+      "resolved_url": "https://www.nomos.de/feed/",
+      "item_count": 12
+    },
+    {
+      "slug": "gn-bad-wiessee",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Bad+Wiessee%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 9
+    },
+    {
+      "slug": "gn-bayrischzell",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Bayrischzell%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 3
+    },
+    {
+      "slug": "gn-fischbachau",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Fischbachau%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 6
+    },
+    {
+      "slug": "gn-gmund",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Gmund%22+Tegernsee+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 5
+    },
+    {
+      "slug": "gn-hausham",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Hausham%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 6
+    },
+    {
+      "slug": "gn-holzkirchen",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Holzkirchen%22+Miesbach+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gn-irschenberg",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Irschenberg%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 9
+    },
+    {
+      "slug": "gn-kreuth",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Kreuth%22+Tegernsee+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 7
+    },
+    {
+      "slug": "gn-miesbach",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Miesbach%22+Stadtrat+%28Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas+OR+B%C3%BCrgermeister%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 6
+    },
+    {
+      "slug": "gn-otterfing",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Otterfing%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 2
+    },
+    {
+      "slug": "gn-rottach-egern",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Rottach-Egern%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 9
+    },
+    {
+      "slug": "gn-schliersee",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Schliersee%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gn-tegernsee",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Tegernsee%22+Stadtrat+%28Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas+OR+B%C3%BCrgermeister%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 5
+    },
+    {
+      "slug": "gn-valley",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Valley%22+Landkreis+Miesbach+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 4
+    },
+    {
+      "slug": "gn-waakirchen",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Waakirchen%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 9
+    },
+    {
+      "slug": "gn-warngau",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Warngau%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 4
+    },
+    {
+      "slug": "gn-weyarn",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Weyarn%22+%28Gemeinderat+OR+Haushalt+OR+Pflege+OR+Sozial+OR+Kita+OR+Zuschuss+OR+Caritas%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 8
+    },
+    {
+      "slug": "gn-lk-pflege",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Pflege+OR+Pflegeheim+OR+Tagespflege+OR+Pflegest%C3%BCtzpunkt%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 5
+    },
+    {
+      "slug": "gn-lk-haushalt",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Kreisumlage+OR+Kreishaushalt+OR+Kreistag+OR+Haushalt%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 35
+    },
+    {
+      "slug": "gn-lk-jugend",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Jugendhilfe+OR+Jugendamt+OR+Kita+OR+Kinderbetreuung%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 3
+    },
+    {
+      "slug": "gn-lk-mobilitaet",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Bus+OR+BRB+OR+Rufbus+OR+MVV+OR+%C3%96PNV+OR+Bahn%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 13
+    },
+    {
+      "slug": "gn-lk-fachkraefte",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Fachkr%C3%A4ftemangel+OR+Personalmangel+OR+Stellen+OR+Pflegekr%C3%A4fte%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gn-lk-ehrenamt",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Ehrenamt+OR+Nachbarschaftshilfe+OR+Quartiersmanagement%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 3
+    },
+    {
+      "slug": "gn-lk-grundsicherung",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Landkreis+Miesbach%22+%28Jobcenter+OR+Grundsicherung+OR+B%C3%BCrgergeld+OR+Wohngeld%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gn-lk-armut",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=Miesbach+%28Armut+OR+Tafel+OR+obdachlos+OR+Wohnungsnot+OR+Einsamkeit+OR+Schuldnerberatung+OR+Altersarmut%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 3
+    },
+    {
+      "slug": "gn-caritas-miesbach",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Caritas%22+Miesbach+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 7
+    },
+    {
+      "slug": "gn-krankenhaus-agatharied",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Krankenhaus+Agatharied%22+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gn-kirche-miesbach",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Dekanat+Miesbach%22+OR+%22Pfarrverband%22+Miesbach+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 2
+    },
+    {
+      "slug": "gn-bezirk-oberbayern",
+      "method": "query",
+      "resolved_url": "https://news.google.com/rss/search?q=%22Bezirk+Oberbayern%22+%28Bezirksumlage+OR+Eingliederungshilfe+OR+Bezirkstag+OR+Haushalt+OR+Pflege%29+when:60d&hl=de&gl=DE&ceid=DE:de",
+      "item_count": 10
+    },
+    {
+      "slug": "gemeindeschwester-plus",
+      "method": "diff",
+      "resolved_url": "https://masffj.rlp.de/themen/soziales/gut-leben-im-alter/gemeindeschwester-plus",
+      "item_count": 4225
+    },
+    {
+      "slug": "community-nursing-oesterreich",
+      "method": "pdf",
+      "resolved_url": "https://cn-oesterreich.at/aktuelles-service/downloads",
+      "item_count": 9
+    },
+    {
+      "slug": "isa-praeventionsketten",
+      "method": "diff",
+      "resolved_url": "https://isa-muenster.de/arbeitsbereiche/praevention/",
+      "item_count": 3796
+    },
+    {
+      "slug": "kinderstark-nrw",
+      "method": "page",
+      "resolved_url": "https://www.kinderstark.nrw/",
+      "item_count": 11
+    }
+  ]
+}
