@@ -292,6 +292,8 @@ async def list_events(
     from_: date | None = Query(None, alias="from"),
     to: date | None = None,
 ) -> dict:
+    from mhs.calendar import overlaps
+
     start = from_ or _now().date()
     end = to or (start + timedelta(days=90))
     key = func.coalesce(Event.deadline, Event.start_date)
@@ -299,7 +301,8 @@ async def list_events(
         await session.execute(
             select(Event).options(selectinload(Event.signal).selectinload(Signal.source),
                                   selectinload(Event.signal).selectinload(Signal.feed_item))
-            .where(key >= start, key <= end).order_by(key)
+            # A watch window open across the range is shown although it started before it.
+            .where(overlaps(start, end)).order_by(key, Event.name)
         )
     ).scalars().all()
     return {"from": start.isoformat(), "to": end.isoformat(), "items": [event_out(e, e.signal) for e in rows]}
