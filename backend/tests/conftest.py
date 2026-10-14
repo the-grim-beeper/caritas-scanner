@@ -1,8 +1,12 @@
-"""Test database: a separate `mhs_test` database on the same Postgres, created on
-demand, schema built from the ORM, every table truncated between tests."""
+"""Test database: a separate database on the same Postgres (named by
+TEST_DATABASE_URL, default `mhs_test`), created on demand, schema built from the
+ORM, every table truncated between tests. The name is parsed from the URL rather
+than hardcoded so parallel test runs (e.g. a per-task `mhs_test_t3`) never share a
+schema with each other."""
 from __future__ import annotations
 
 import os
+from urllib.parse import urlsplit
 
 import asyncpg
 import pytest
@@ -11,14 +15,15 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 TEST_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://mhs:mhs@localhost:5441/mhs_test")
 ADMIN_DSN = "postgresql://mhs:mhs@localhost:5441/postgres"
+_TEST_DB_NAME = urlsplit(TEST_URL).path.lstrip("/")
 
 
 async def _ensure_database() -> None:
     conn = await asyncpg.connect(ADMIN_DSN)
     try:
-        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname='mhs_test'")
+        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname=$1", _TEST_DB_NAME)
         if not exists:
-            await conn.execute("CREATE DATABASE mhs_test")
+            await conn.execute(f'CREATE DATABASE "{_TEST_DB_NAME}"')
     finally:
         await conn.close()
 
