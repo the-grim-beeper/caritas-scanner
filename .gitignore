@@ -12,3 +12,4 @@ backend/static/
 # local
 .DS_Store
 .superpowers/
+.claude/
