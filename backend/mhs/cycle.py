@@ -105,6 +105,15 @@ async def _run_cycle(session_factory: async_sessionmaker[AsyncSession], http: ht
         cycle = Cycle(mode="live" if settings.llm_enabled else "mock")
         session.add(cycle)
         await session.commit()
+        known: dict[str, object] = {}
+
+        def record(**fields: object) -> None:
+            # On the row and remembered: a rollback after a failed statement expires the row.
+            known.update(fields)
+            for k, v in fields.items():
+                setattr(cycle, k, v)
+
+        failed = False
         try:
             repaired = await repair_future_dates(session)
             if repaired:
@@ -119,35 +128,42 @@ async def _run_cycle(session_factory: async_sessionmaker[AsyncSession], http: ht
             finally:
                 if own_http:
                     await client.aclose()
-            cycle.items_fetched, cycle.items_new, cycle.failed_sources = c.fetched, c.new_items, c.failed_sources
+            record(items_fetched=c.fetched, items_new=c.new_items, failed_sources=c.failed_sources)
             log.info("collect: %s", c)
 
             e = await extract_pending(session)
-            cycle.extracted, cycle.signals = e.processed, e.signals
+            record(extracted=e.processed, signals=e.signals)
             if e.aborted:
-                cycle.error = f"extraction aborted: {e.aborted}"
+                record(error=f"extraction aborted: {e.aborted}")
             log.info("extract: %s", e)
 
             a = await analyse_pending(session)
-            cycle.stories_new, cycle.corroborations = a.stories_new, a.corroborations
+            record(stories_new=a.stories_new, corroborations=a.corroborations)
             log.info("analyse: %s", a)
 
             j = await judge_pending(session)
-            cycle.judged, cycle.judgements = j.judged, j.judgements
-            if j.aborted and not cycle.error:
-                cycle.error = f"judge aborted: {j.aborted}"
+            record(judged=j.judged, judgements=j.judgements)
+            if j.aborted and not known.get("error"):
+                record(error=f"judge aborted: {j.aborted}")
             log.info("judge: %s", j)
 
             n = await resolve_candidates(session)
-            cycle.edges_new = n.edges_new
+            record(edges_new=n.edges_new)
             log.info("network: %s", n)
 
             await trends.rebuild(session)
         except Exception as exc:  # noqa: BLE001
             log.exception("cycle failed")
-            cycle.error = f"{type(exc).__name__}: {exc}"[:2000]
+            # A failed statement leaves the session unusable: commit would raise
+            # PendingRollbackError and the row would stay unfinished forever. Roll back, then
+            # put back what the stages had reported before the failure.
+            failed = True
+            await session.rollback()
+            record(**{**known, "error": f"{type(exc).__name__}: {exc}"[:2000]})
         cycle.finished_at = datetime.now(timezone.utc)
         await session.commit()
+        if failed:
+            await session.refresh(cycle)  # the rollback expired it; callers read every field
         return cycle
 
 

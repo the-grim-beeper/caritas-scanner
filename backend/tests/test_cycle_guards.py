@@ -130,3 +130,37 @@ async def test_a_report_does_not_start_while_another_report_runs_but_a_cycle_doe
         assert calls == ["report"]
     finally:
         await _drop(cycle_running)
+
+
+# --- a database error mid-stage still closes the cycle row ----------------------------------
+
+async def test_a_database_error_mid_stage_still_closes_the_cycle_row(db_session, session_factory, engine,
+                                                                      stub_stages, monkeypatch):
+    # Wrong: the except branch commits on a session whose flush failed, commit() raises
+    # PendingRollbackError, and the cycle row keeps finished_at NULL ("…" in Quellen) forever.
+    import uuid
+
+    async def collect(session, http):
+        return SimpleNamespace(fetched=5, new_items=4, failed_sources=1)
+
+    async def analyse(session):
+        session.add(Signal(source_id=uuid.uuid4(), headline_de="h", headline_en="h", signal_type="decision"))
+        await session.flush()  # foreign-key violation: the session now needs a rollback
+
+    async def extract(session):  # an earlier stage already noted a (lesser) error
+        return SimpleNamespace(processed=3, signals=2, aborted="LLMAuthError: key rejected")
+
+    monkeypatch.setattr(cycle_mod, "collect_all", collect)
+    monkeypatch.setattr(cycle_mod, "extract_pending", extract)
+    monkeypatch.setattr(cycle_mod, "analyse_pending", analyse)
+
+    c = await cycle_mod.run_cycle(session_factory)
+    assert c.error and c.error.startswith("IntegrityError")
+    assert (c.mode, c.items_fetched, c.finished_at is not None) == ("mock", 5, True)  # readable, as the CLI prints it
+
+    row = (await db_session.execute(select(Cycle))).scalar_one()
+    assert row.finished_at is not None and row.error.startswith("IntegrityError")
+    assert (row.items_fetched, row.items_new, row.failed_sources, row.signals) == (5, 4, 1, 2)  # what was known is kept
+    assert "judge" not in stub_stages
+    probe = await _hold(engine, cycle_mod.CYCLE_LOCK)  # and the lock was released
+    await _drop(probe)
