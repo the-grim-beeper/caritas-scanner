@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from mhs.api import auth, routes
+from mhs.api import auth, network, questions, reports, routes, suggestions
 from mhs.config import settings
 
 log = logging.getLogger(__name__)
@@ -27,11 +27,23 @@ async def lifespan(app: FastAPI):
         from mhs.cycle import run_cycle
         from mhs.db.engine import session_factory
 
+        from mhs.cycle import run_report
+        from mhs.suggest.run import suggest_cycle
+
         scheduler = AsyncIOScheduler(timezone="UTC")
         scheduler.add_job(run_cycle, CronTrigger(hour=settings.cycle_hour_utc, minute=0),
                           args=[session_factory()], id="daily-cycle", coalesce=True, max_instances=1)
+        # Thursday evening, so the Friday note to Caritas has a fresh Lagebericht behind it.
+        scheduler.add_job(run_report, CronTrigger(day_of_week=settings.report_weekday, hour=settings.report_hour_local,
+                                                  minute=0, timezone=settings.report_timezone),
+                          args=[session_factory()], id="weekly-report", coalesce=True, max_instances=1)
+        scheduler.add_job(suggest_cycle, CronTrigger(day_of_week=settings.suggest_weekday, hour=settings.suggest_hour_local,
+                                                     minute=0, timezone=settings.report_timezone),
+                          args=[session_factory()], id="weekly-suggestions", coalesce=True, max_instances=1)
         scheduler.start()
-        log.info("scheduler: daily cycle at %02d:00 UTC", settings.cycle_hour_utc)
+        log.info("scheduler: daily cycle %02d:00 UTC; Lagebericht %s %02d:00 %s; source suggestions %s %02d:00",
+                 settings.cycle_hour_utc, settings.report_weekday, settings.report_hour_local, settings.report_timezone,
+                 settings.suggest_weekday, settings.suggest_hour_local)
     yield
     if scheduler:
         scheduler.shutdown(wait=False)
@@ -48,6 +60,8 @@ app.add_middleware(
 app.include_router(routes.open_router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(routes.router, prefix="/api")
+for extra in (questions.router, network.router, reports.router, suggestions.router):
+    app.include_router(extra, prefix="/api")
 
 if STATIC.exists():
     app.mount("/assets", StaticFiles(directory=STATIC / "assets"), name="assets")

@@ -66,6 +66,9 @@ async def meta(session: AsyncSession = Depends(get_session)) -> dict:
         "languages": ["en", "de"],
         "layers": {k: {"en": v.en, "de": v.de} for k, v in vocab.LAYERS.items()},
         "topics": {k: {"en": v.en, "de": v.de} for k, v in vocab.TOPICS.items()},
+        "families": {k: {"en": v.en, "de": v.de} for k, v in vocab.FAMILIES.items()},
+        "topic_family": dict(vocab.TOPIC_FAMILY),
+        "judge_model": settings.judge_model if settings.llm_enabled else "mock",
         "signal_types": {k: {"en": v.en, "de": v.de} for k, v in vocab.SIGNAL_TYPE_LABELS.items()},
         "last_cycle": _cycle_out(last) if last else None,
         "cycle_hour_utc": settings.cycle_hour_utc,
@@ -80,6 +83,7 @@ def _cycle_out(c: Cycle) -> dict:
         "items_fetched": c.items_fetched, "items_new": c.items_new, "extracted": c.extracted,
         "signals": c.signals, "stories_new": c.stories_new, "corroborations": c.corroborations,
         "failed_sources": c.failed_sources, "digest_ok": c.digest_ok, "error": c.error,
+        "judged": c.judged, "judgements": c.judgements, "edges_new": c.edges_new,
     }
 
 
@@ -119,13 +123,24 @@ async def overview(session: AsyncSession = Depends(get_session)) -> dict:
         await session.execute(
             select(Event).options(selectinload(Event.signal).selectinload(Signal.source),
                                   selectinload(Event.signal).selectinload(Signal.feed_item))
-            .where(func.coalesce(Event.deadline, Event.start_date) >= today)
+            # A watch window that is already running (Nov–Mar budget season) is still ahead of us.
+            .where(or_(func.coalesce(Event.deadline, Event.start_date) >= today, Event.end_date >= today))
             .order_by(func.coalesce(Event.deadline, Event.start_date)).limit(6)
         )
     ).scalars().all()
     digest = (await session.execute(select(Digest).order_by(desc(Digest.created_at)).limit(1))).scalar_one_or_none()
     movers = await trends.movers(session)
+    from mhs.api.questions import list_questions
+
+    moving = [
+        {k: q.get(k) for k in ("id", "title_de", "title_en", "movement", "balance", "for_label_de", "for_label_en",
+                               "against_label_de", "against_label_en")}
+        for q in await list_questions(session=session) if q.get("movement") != "quiet"
+    ]
     return {
+        "questions_moving": moving,
+        "report_lead": {"id": str(digest.id), "lead_de": digest.lead_de, "lead_en": digest.lead_en,
+                        "week": digest.week.isoformat() if digest.week else None} if digest else None,
         "last_cycle": _cycle_out(last) if last else None,
         "top_stories": [signal_summary(s) for s in top],
         "layers": await _layer_volumes(session),
@@ -397,8 +412,12 @@ async def list_sources(session: AsyncSession = Depends(get_session)) -> dict:
         select(FeedItem.source_id, func.count(FeedItem.id)).where(FeedItem.created_at >= since).group_by(FeedItem.source_id))).all())
     sig7 = dict((await session.execute(
         select(Signal.source_id, func.count(Signal.id)).where(Signal.created_at >= since, Signal.is_founder.is_(True)).group_by(Signal.source_id))).all())
+    items30 = dict((await session.execute(
+        select(FeedItem.source_id, func.count(FeedItem.id)).where(FeedItem.created_at >= _now() - timedelta(days=30))
+        .group_by(FeedItem.source_id))).all())
     rows = (await session.execute(select(Source).order_by(Source.layer, desc(Source.collect), Source.name))).scalars().all()
-    return {"items": [source_out(s, int(items7.get(s.id, 0)), int(sig7.get(s.id, 0))) for s in rows]}
+    return {"items": [source_out(s, int(items7.get(s.id, 0)), int(sig7.get(s.id, 0)), int(items30.get(s.id, 0)))
+                      for s in rows]}
 
 
 @router.get("/cycles")
@@ -425,8 +444,8 @@ async def trigger_cycle() -> dict:
     return _spawn("cycle", run_cycle(session_factory()))
 
 
-@router.post("/cycle/digest")
-async def trigger_digest() -> dict:
-    from mhs.cycle import run_digest_only
+@router.post("/cycle/report")
+async def trigger_report() -> dict:
+    from mhs.cycle import run_report
 
-    return _spawn("digest", run_digest_only(session_factory()))
+    return _spawn("report", run_report(session_factory()))

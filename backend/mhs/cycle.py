@@ -1,5 +1,7 @@
-"""One cycle: collect → extract → analyse (embed, stories, score) → trends → digest.
-Each stage is separately callable; the cycle row records what each one did."""
+"""One daily cycle: adopt due source suggestions → collect → extract → analyse (embed,
+stories, score) → judge against the fifteen questions → resolve relations into the
+network → trends. The weekly Lagebericht and the weekly source discovery are separate
+jobs (see main.py); the cycle row records what each stage did."""
 from __future__ import annotations
 
 import logging
@@ -13,7 +15,10 @@ from mhs.analyse.run import analyse_pending
 from mhs.collect.run import collect_all
 from mhs.config import settings
 from mhs.db.models import Cycle, Digest
-from mhs.digest.run import write_digest
+from mhs.network.resolve import resolve_candidates
+from mhs.questions.judge import judge_pending
+from mhs.report.run import write_report
+from mhs.suggest.adopt import adopt_due
 from mhs.extract.run import extract_pending
 
 log = logging.getLogger(__name__)
@@ -35,6 +40,9 @@ async def run_cycle(session_factory: async_sessionmaker[AsyncSession], *, http: 
             own_http = http is None
             client = http or _http()
             try:
+                # Adopted first, so a suggestion that came due collects the same day.
+                adopted = await adopt_due(session, client)
+                log.info("adopt: %s", adopted)
                 c = await collect_all(session, client)
             finally:
                 if own_http:
@@ -52,8 +60,17 @@ async def run_cycle(session_factory: async_sessionmaker[AsyncSession], *, http: 
             cycle.stories_new, cycle.corroborations = a.stories_new, a.corroborations
             log.info("analyse: %s", a)
 
+            j = await judge_pending(session)
+            cycle.judged, cycle.judgements = j.judged, j.judgements
+            if j.aborted and not cycle.error:
+                cycle.error = f"judge aborted: {j.aborted}"
+            log.info("judge: %s", j)
+
+            n = await resolve_candidates(session)
+            cycle.edges_new = n.edges_new
+            log.info("network: %s", n)
+
             await trends.rebuild(session)
-            await write_digest(session, cycle)
         except Exception as exc:  # noqa: BLE001
             log.exception("cycle failed")
             cycle.error = f"{type(exc).__name__}: {exc}"[:2000]
@@ -62,6 +79,7 @@ async def run_cycle(session_factory: async_sessionmaker[AsyncSession], *, http: 
         return cycle
 
 
-async def run_digest_only(session_factory: async_sessionmaker[AsyncSession]) -> Digest | None:
+async def run_report(session_factory: async_sessionmaker[AsyncSession]) -> Digest | None:
+    """The weekly Lagebericht (Thursday evening, ready for the Friday note)."""
     async with session_factory() as session:
-        return await write_digest(session, None)
+        return await write_report(session)

@@ -112,7 +112,7 @@ def event_out(e: Event, signal: Signal | None = None) -> dict:
     return out
 
 
-def source_out(s: Source, items_7d: int = 0, signals_7d: int = 0) -> dict:
+def source_out(s: Source, items_7d: int = 0, signals_7d: int = 0, items_30d: int = 0) -> dict:
     return {
         "id": str(s.id),
         "slug": s.slug,
@@ -129,6 +129,8 @@ def source_out(s: Source, items_7d: int = 0, signals_7d: int = 0) -> dict:
         "cadence": s.cadence,
         "notes": s.notes,
         "brief_ref": s.brief_ref,
+        "origin": s.origin,
+        "items_30d": items_30d,
         "collect": s.collect,
         "not_collected_reason": s.not_collected_reason,
         "items_at_check": s.items_at_check,
