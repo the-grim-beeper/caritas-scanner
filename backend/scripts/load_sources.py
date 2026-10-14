@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from mhs.db.engine import session_factory  # noqa: E402
 from mhs.db.models import Entity, FeedItem, Source  # noqa: E402
 from mhs.entities import load_seed  # noqa: E402
+from mhs.questions.load import load_questions, upsert_questions  # noqa: E402
 from mhs.sources.catalogue import SourceRow, load_catalogue, load_live, merge_for_load  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[2] / "data"
@@ -79,6 +80,7 @@ async def main() -> None:
         c, u = await upsert_sources(session, rows)
         pruned = await prune_sources(session, {r.slug for r in rows})
         e = await upsert_entities(session, seeds)
+        print(f"questions: {await upsert_questions(session, load_questions(DATA / 'questions.yaml'))} new of 15")
     collected = sum(1 for r in rows if r.collect)
     print(f"sources: {c} created, {u} updated, {pruned} pruned, {collected}/{len(rows)} collected; entities seeded: {e} new of {len(seeds)}")
 
