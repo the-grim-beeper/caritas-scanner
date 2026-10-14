@@ -207,7 +207,7 @@ of preventive coordination · q15 which peer models survived project funding.
 For each founding signal with `regional_relevance ≥ 0.3` (or layer `vergleich`/`bund`/`freistaat`)
 not yet judged by the current judge model: batches of 10 signals per call. The model returns, per
 signal, only the questions the signal genuinely bears on (empty allowed):
-`{signal_id, question_id, direction: concern|stabilising, strength: weak|moderate|strong, quote,
+`{signal_id, question_id, direction: for|against, strength: weak|moderate|strong, quote,
 rationale_de, rationale_en}`.
 
 **Provenance (build-enforced):** `signal_id` must be in the batch, `question_id` must exist, and
@@ -219,7 +219,7 @@ retried once.
 strong 3), clipped to ±3 and scaled by `n/(n+2)` (n = judgements that week), so one week's flood
 cannot outweigh a strong single signal by volume alone. The running balance is
 `b_w = 0.85 · b_{w−1} + net_w`, so a question with no new evidence drifts back toward zero. The UI
-shows direction ("Sorge wächst" / "entlastend" / "gemischt" / "ruhig"), the 12-week sparkline and the
+shows the direction with each question's own label for each side (the report's "evidence for the concern or transition" vs "evidence against / stabilising"; for q03 "for" is good news, for q01 bad), "gemischt" or "ruhig", the 12-week sparkline and the
 evidence quotes, never a bare number.
 
 ### 4.3 Network
@@ -276,7 +276,7 @@ Bezirksumlage Nov–Dec 2026 (window); SeLA rolling; Landtag calendar through 20
   confidence, brief_ref, created_at) and `network_gaps` (id, title_de/en, detail_de/en, kind).
 - `entities.kind` gains `forum | programme | office`; `entities.actor_kind` (authority, provider,
   forum, church, funder, programme, municipality, media, peer) for the graph.
-- `digests` → `reports` keeps the template shape plus `week` (ISO Monday), `friday_de/en`.
+- `digests` keeps the template table (served as the Lagebericht) plus `week` (ISO Monday), `friday_de/en`.
 
 ## 6. API (FastAPI, `/api`; template routes kept and adapted)
 

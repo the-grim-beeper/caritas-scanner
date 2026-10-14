@@ -52,9 +52,16 @@ app.include_router(routes.router, prefix="/api")
 if STATIC.exists():
     app.mount("/assets", StaticFiles(directory=STATIC / "assets"), name="assets")
 
+    STATIC_ROOT = STATIC.resolve()
+
     @app.get("/{path:path}", include_in_schema=False)
     async def spa(path: str):
-        candidate = STATIC / path
-        if path and candidate.is_file():
-            return FileResponse(candidate)
-        return FileResponse(STATIC / "index.html")
+        # Resolve before serving: an encoded "../" must not walk out of static/.
+        if path:
+            try:
+                candidate = (STATIC_ROOT / path).resolve()
+            except (OSError, RuntimeError):
+                candidate = None
+            if candidate is not None and candidate.is_file() and candidate.is_relative_to(STATIC_ROOT):
+                return FileResponse(candidate)
+        return FileResponse(STATIC_ROOT / "index.html")
