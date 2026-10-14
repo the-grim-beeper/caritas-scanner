@@ -9,7 +9,7 @@ import { LAYER_COLOR, type Factors, type Layer, type Meta, type Signal } from ".
 // ---------------------------------------------------------------------------
 export const FACTOR_ORDER: (keyof Factors)[] = [
   "forward_lag",
-  "economic_materiality",
+  "consequence",
   "novelty",
   "regional_relevance",
   "authority",

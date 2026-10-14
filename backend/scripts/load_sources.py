@@ -1,18 +1,19 @@
 """Load the catalogue ∩ live results into the sources table, and seed entities.
-Idempotent on slug; never deletes a source."""
+Idempotent on slug. A row that has left the catalogue is removed only if it never
+collected anything; a source with history stays (a dead feed is coverage evidence)."""
 from __future__ import annotations
 
 import asyncio
 import sys
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import delete, exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from mhs.db.engine import session_factory  # noqa: E402
-from mhs.db.models import Entity, Source  # noqa: E402
+from mhs.db.models import Entity, FeedItem, Source  # noqa: E402
 from mhs.entities import load_seed  # noqa: E402
 from mhs.sources.catalogue import SourceRow, load_catalogue, load_live, merge_for_load  # noqa: E402
 
@@ -46,6 +47,16 @@ async def upsert_sources(session: AsyncSession, rows: list[SourceRow]) -> tuple[
     return created, updated
 
 
+async def prune_sources(session: AsyncSession, keep_slugs: set[str]) -> int:
+    result = await session.execute(
+        delete(Source)
+        .where(Source.slug.not_in(keep_slugs))
+        .where(~exists().where(FeedItem.source_id == Source.id))
+    )
+    await session.commit()
+    return result.rowcount or 0
+
+
 async def upsert_entities(session: AsyncSession, seeds) -> int:
     existing = {e.slug: e for e in (await session.execute(select(Entity))).scalars()}
     n = 0
@@ -66,9 +77,10 @@ async def main() -> None:
     seeds = load_seed(DATA / "entities.yaml")
     async with session_factory()() as session:
         c, u = await upsert_sources(session, rows)
+        pruned = await prune_sources(session, {r.slug for r in rows})
         e = await upsert_entities(session, seeds)
     collected = sum(1 for r in rows if r.collect)
-    print(f"sources: {c} created, {u} updated, {collected}/{len(rows)} collected; entities seeded: {e} new of {len(seeds)}")
+    print(f"sources: {c} created, {u} updated, {pruned} pruned, {collected}/{len(rows)} collected; entities seeded: {e} new of {len(seeds)}")
 
 
 if __name__ == "__main__":

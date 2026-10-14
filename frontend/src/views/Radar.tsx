@@ -17,7 +17,7 @@ export function Radar({ meta }: { meta: Meta | null }) {
   const ov = useAsync(() => api.overview(), []);
   const cols = useAsync(
     async () => {
-      const out: Record<Layer, Signal[]> = { policy: [], editorial: [], innovation: [], corporate: [], infrastructure: [], funding: [] };
+      const out = Object.fromEntries(LAYERS.map((l) => [l, [] as Signal[]])) as Record<Layer, Signal[]>;
       await Promise.all(
         LAYERS.map(async (layer) => {
           const r = await api.signals({ layer, sort: "score", per_page: PER_LAYER, since: sinceDays(30) });
@@ -80,7 +80,7 @@ export function Radar({ meta }: { meta: Meta | null }) {
         </div>
       )}
 
-      {/* six layers */}
+      {/* nine layers */}
       <Section eyebrow={t("radar_lead")} title={undefined} right={<span className="eyebrow">{t("ranked_by_score")}</span>}>
         {cols.error && <ErrorBox error={cols.error} retry={cols.reload} />}
         <div className="grid gap-x-6 gap-y-8 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">

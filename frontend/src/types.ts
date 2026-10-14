@@ -1,15 +1,18 @@
 export type Lang = "en" | "de";
-export type Layer = "policy" | "editorial" | "innovation" | "corporate" | "infrastructure" | "funding";
+export type Layer = "gemeinden" | "landkreis" | "wohlfahrt" | "kirche" | "bezirk" | "freistaat" | "bund" | "medien" | "vergleich";
 
-export const LAYERS: Layer[] = ["policy", "editorial", "innovation", "corporate", "infrastructure", "funding"];
+export const LAYERS: Layer[] = ["gemeinden", "landkreis", "wohlfahrt", "kirche", "bezirk", "freistaat", "bund", "medien", "vergleich"];
 
 export const LAYER_COLOR: Record<Layer, string> = {
-  policy: "#4a5e8a",
-  editorial: "#6b6f76",
-  innovation: "#5e7f3f",
-  corporate: "#a8782a",
-  infrastructure: "#9a4b3b",
-  funding: "#6e4a8a",
+  gemeinden: "#4a5e8a",
+  landkreis: "#2f5d50",
+  wohlfahrt: "#5e7f3f",
+  kirche: "#6e4a8a",
+  bezirk: "#8a6a2a",
+  freistaat: "#3d6b8a",
+  bund: "#5a5f66",
+  medien: "#9a4b3b",
+  vergleich: "#7a7468",
 };
 
 export interface Label {
@@ -21,7 +24,7 @@ export interface Factors {
   authority: number;
   regional_relevance: number;
   novelty: number;
-  economic_materiality: number;
+  consequence: number;
   forward_lag: number;
 }
 

@@ -4,7 +4,7 @@ import type { Lang } from "./types";
 const STRINGS = {
   // masthead / nav
   app_title: { en: "Horizon Scanner Landkreis Miesbach", de: "Horizont-Scanner Landkreis Miesbach" },
-  app_sub: { en: "Six-layer signal scanner for the Metropolregion", de: "Sechs-Ebenen-Signalscanner für die Metropolregion" },
+  app_sub: { en: "Horizon scanner for social provision in Landkreis Miesbach", de: "Horizont-Scanner für die soziale Versorgung im Landkreis Miesbach" },
   nav_radar: { en: "Radar", de: "Radar" },
   nav_digest: { en: "Digest", de: "Lagebild" },
   nav_signals: { en: "Signals", de: "Signale" },
@@ -31,7 +31,7 @@ const STRINGS = {
   f_authority: { en: "Authority", de: "Autorität" },
   f_regional_relevance: { en: "Regional relevance", de: "Regionalbezug" },
   f_novelty: { en: "Novelty", de: "Neuheit" },
-  f_economic_materiality: { en: "Economic materiality", de: "Wirtschaftliche Tragweite" },
+  f_consequence: { en: "Consequence", de: "Tragweite" },
   f_forward_lag: { en: "Forward lag", de: "Vorlauf" },
   corroborations: { en: "corroborations", de: "Bestätigungen" },
   sources_n: { en: "sources", de: "Quellen" },
@@ -50,7 +50,7 @@ const STRINGS = {
   distance: { en: "distance", de: "Distanz" },
 
   // radar
-  radar_lead: { en: "This week across the six layers", de: "Diese Woche über die sechs Ebenen" },
+  radar_lead: { en: "This week across the nine layers", de: "Diese Woche über die neun Ebenen" },
   last_cycle: { en: "Last cycle", de: "Letzter Zyklus" },
   no_cycle: { en: "No cycle has run yet.", de: "Noch kein Zyklus gelaufen." },
   items_fetched: { en: "items fetched", de: "Einträge geholt" },
