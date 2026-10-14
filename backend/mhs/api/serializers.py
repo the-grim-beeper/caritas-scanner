@@ -70,7 +70,10 @@ def signal_member(s: Signal) -> dict:
 
 
 def entity_brief(e: Entity) -> dict:
-    return {"id": str(e.id), "slug": e.slug, "kind": e.kind, "name": e.name, "seeded": e.seeded}
+    return {
+        "id": str(e.id), "slug": e.slug, "kind": e.kind, "name": e.name, "seeded": e.seeded,
+        "actor_kind": e.actor_kind,
+    }
 
 
 def event_out(e: Event, signal: Signal | None = None) -> dict:
