@@ -24,3 +24,28 @@ async def test_stale_source_without_items_is_removed_and_one_with_items_is_kept(
     slugs = {s.slug for s in (await db_session.execute(select(Source))).scalars()}
     assert removed == 1
     assert slugs == {"lk-presse", "old-but-used"}
+
+
+async def test_prune_keeps_adopted_suggestion_sources(db_session):
+    # An adopted suggestion is in no catalogue and may not have collected yet; reloading the
+    # catalogue must not undo the adoption. Wrong: pruning on "not in catalogue, no items" alone.
+    adopted = Source(slug="vorschlag-gemeinde-weyarn", name="Gemeinde Weyarn", layer="gemeinden", authority="medium",
+                     scope="gemeinde", method="page", url="https://weyarn.test/aktuelles", origin="suggestion",
+                     collect=True)
+    stale = Source(slug="alt", name="Alt", layer="gemeinden", authority="high", scope="gemeinde", method="rss",
+                   url="https://alt.test/rss")
+    db_session.add_all([adopted, stale])
+    await db_session.commit()
+
+    removed = await prune_sources(db_session, keep_slugs=set())
+
+    slugs = {s.slug for s in (await db_session.execute(select(Source))).scalars()}
+    assert removed == 1
+    assert slugs == {"vorschlag-gemeinde-weyarn"}
+
+
+async def test_catalogue_sources_default_to_origin_catalogue(db_session):
+    src = Source(slug="lk", name="LK", layer="landkreis", authority="high", scope="landkreis", method="rss")
+    db_session.add(src)
+    await db_session.commit()
+    assert src.origin == "catalogue"
