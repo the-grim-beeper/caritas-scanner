@@ -66,6 +66,23 @@ def _summary_for(container: Node | None, title: str) -> str:
     return text[:1000]
 
 
+# Link texts that are page furniture, not items: image credits rendered as captions and
+# navigation/teaser links (first live run, 2026-10-15: "© Caritas Fulda/…", "Mehr Inhalte
+# anzeigen", "DZA-Newsletter abonnieren", "zu unserer digitalen Bibliothek…").
+_NOISE_TITLE = re.compile(
+    r"^(?:©|\(c\)\s)"
+    r"|^(?:mehr(?:\s+inhalte)?(?:\s+anzeigen)?|weiterlesen|mehr lesen|zur übersicht|alle\s+\S+\s+anzeigen)\W*$"
+    r"|newsletter\s+abonnieren"
+    r"|^zu unserer\s"
+    r"|^zum selberausdrucken",
+    re.IGNORECASE,
+)
+
+
+def is_noise_title(title: str) -> bool:
+    return bool(_NOISE_TITLE.search(title.strip()))
+
+
 def extract_items(html: str, base_url: str, item_selector: str | None = None) -> list[RawItem]:
     tree = HTMLParser(html)
     base_host = (urlsplit(base_url).hostname or "").lower()
@@ -86,7 +103,7 @@ def extract_items(html: str, base_url: str, item_selector: str | None = None) ->
         url = urljoin(base_url, href)
         host = (urlsplit(url).hostname or "").lower()
         if not item_selector:
-            if len(title) < _MIN_TITLE or host != base_host or _has_excluded_ancestor(a):
+            if len(title) < _MIN_TITLE or host != base_host or _has_excluded_ancestor(a) or is_noise_title(title):
                 continue
             container = _in_item_container(a)
             if container is None:

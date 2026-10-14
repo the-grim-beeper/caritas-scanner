@@ -49,9 +49,16 @@ WHAT COUNTS
   question's balance on no evidence.
 - At most one judgement per signal and question.
 - Place. q01–q14 concern Landkreis Miesbach and its municipalities, providers and bodies. A
-  signal from the Bezirk, the Freistaat or the Bund counts where the question itself names
-  that level (Bezirksumlage in q02; state programmes and grants in q12) or where the text
-  states an effect on the county. q15 concerns peer models elsewhere (Gemeindeschwester plus,
+  signal from the Bezirk, the Freistaat or the Bund counts in two cases. (a) The question
+  itself names that level (Bezirksumlage in q02; state programmes and grants in q12) or the
+  text states an effect on the county: judge it at its normal strength. (b) The text states a
+  binding change of rules, funding or refinancing that applies to the county's providers,
+  municipalities or programmes because it applies statewide or nationwide (a federal cap on
+  refinancing provider wages, a new state funding condition, a statutory change to SGB
+  benefits): judge it, but never stronger than "weak", since the local effect is not yet
+  shown. Debates, studies and opinions from those levels do not count under (b) — only
+  decided or formally proposed changes (a bill, a draft, a working paper of the ministry, a
+  regulation, a funding guideline). q15 concerns peer models elsewhere (Gemeindeschwester plus,
   Community Nursing, Präventionsketten and comparable coordination structures): "for" = a peer
   model moved into regular financing or permanent structures; "against" = it ended, shrank or
   survives only on temporary bridge money. Signals about other places count only for q15.

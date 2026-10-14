@@ -21,7 +21,7 @@ ENV PYTHONUNBUFFERED=1 \
 COPY backend/pyproject.toml ./
 RUN pip install --no-cache-dir fastapi "uvicorn[standard]" "sqlalchemy[asyncio]" greenlet asyncpg \
       alembic pgvector pydantic pydantic-settings httpx feedparser "selectolax<1.0" pyyaml anthropic \
-      fastembed numpy apscheduler itsdangerous python-dateutil pypdf
+      fastembed numpy apscheduler itsdangerous python-dateutil pypdf fonttools
 
 COPY backend/ ./
 COPY data/ /data/
