@@ -1,1 +1,1 @@
-"""Rhein-Neckar Horizon Scanner."""
+"""Horizont-Scanner Landkreis Miesbach."""
