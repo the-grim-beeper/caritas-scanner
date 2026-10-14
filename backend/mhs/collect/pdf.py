@@ -37,13 +37,21 @@ def _registrable_domain(host: str) -> str:
     return ".".join(labels[-2:]) if len(labels) >= 2 else host
 
 
+_ALLOWED_SCHEMES = ("http", "https")
+
+
 def pdf_links(html: bytes, base_url: str) -> list[tuple[str, str]]:
     """(absolute url, link text) on the same registrable domain as base_url, in
     document order, each absolute URL kept once. Kept when the href ends .pdf
     (case-insensitive, a query string allowed) OR — for the download handlers some
     sites use instead of a plain .pdf link — the href or link text contains
     "download"/"datei"/"dokument"; `fetch_pdf` is what actually confirms the latter
-    group is a PDF before reading it."""
+    group is a PDF before reading it.
+
+    http/https is an explicit, enforced invariant: a `data:`/`file:`/`ftp:` URL can
+    carry no useful host at all (so it would usually fail the domain check anyway)
+    or, for `ftp:`, could sit on the exact same host and still match .pdf — `fetch_pdf`
+    re-asserts this same invariant before it ever makes a request."""
     tree = HTMLParser(html)
     base_domain = _registrable_domain((urlsplit(base_url).hostname or "").lower())
     seen: set[str] = set()
@@ -56,7 +64,10 @@ def pdf_links(html: bytes, base_url: str) -> list[tuple[str, str]]:
         if not (_PDF_HREF.search(href) or _DOWNLOAD_HINT.search(href) or _DOWNLOAD_HINT.search(text)):
             continue
         url = urljoin(base_url, href)
-        host = (urlsplit(url).hostname or "").lower()
+        parts = urlsplit(url)
+        if parts.scheme.lower() not in _ALLOWED_SCHEMES:
+            continue
+        host = (parts.hostname or "").lower()
         if _registrable_domain(host) != base_domain:
             continue
         if url in seen:
@@ -64,11 +75,6 @@ def pdf_links(html: bytes, base_url: str) -> list[tuple[str, str]]:
         seen.add(url)
         out.append((url, text))
     return out
-
-
-def _looks_like_pdf(response: httpx.Response) -> bool:
-    ctype = response.headers.get("content-type", "")
-    return "pdf" in ctype.lower() or response.content[:5] == b"%PDF-"
 
 
 def pdf_text(data: bytes, max_pages: int, max_chars: int) -> tuple[str, datetime | None]:
@@ -90,6 +96,40 @@ def pdf_text(data: bytes, max_pages: int, max_chars: int) -> tuple[str, datetime
     return text, created
 
 
+async def _download_capped(http: httpx.AsyncClient, url: str) -> bytes | None:
+    """Stream a PDF candidate instead of buffering the whole response first, so an
+    oversized (or endless, mislabelled) response is abandoned as soon as that is
+    known — never after reading it all into memory. A content-length already over
+    the cap rejects before any body is read; otherwise the running total is
+    checked after every chunk and reading stops the instant it is exceeded. The
+    content-type/magic-bytes check also happens on the first chunk, so a stream
+    that is neither a PDF nor even claims to be one is abandoned immediately too."""
+    assert urlsplit(url).scheme.lower() in _ALLOWED_SCHEMES, f"refusing non-http(s) url: {url}"
+    async with http.stream("GET", url, follow_redirects=True) as response:
+        response.raise_for_status()
+        content_length = response.headers.get("content-length")
+        if content_length is not None:
+            try:
+                if int(content_length) > settings.max_pdf_bytes:
+                    return None
+            except ValueError:
+                pass
+        ctype_is_pdf = "pdf" in response.headers.get("content-type", "").lower()
+        chunks: list[bytes] = []
+        total = 0
+        checked_magic = False
+        async for chunk in response.aiter_bytes():
+            if not checked_magic:
+                checked_magic = True
+                if not ctype_is_pdf and not chunk.startswith(b"%PDF-"):
+                    return None
+            chunks.append(chunk)
+            total += len(chunk)
+            if total > settings.max_pdf_bytes:
+                return None
+        return b"".join(chunks)
+
+
 async def fetch_pdf(http: httpx.AsyncClient, source, seen_urls: set[str]) -> list[RawItem]:
     response = await http.get(source.url, follow_redirects=True)
     response.raise_for_status()
@@ -108,16 +148,13 @@ async def fetch_pdf(http: httpx.AsyncClient, source, seen_urls: set[str]) -> lis
             break
         attempts += 1
         try:
-            pdf_resp = await http.get(url, follow_redirects=True)
-            pdf_resp.raise_for_status()
+            data = await _download_capped(http, url)
         except httpx.HTTPError:
             continue
-        if len(pdf_resp.content) > settings.max_pdf_bytes:
-            continue
-        if not _looks_like_pdf(pdf_resp):
+        if data is None:
             continue
         try:
-            body, created = pdf_text(pdf_resp.content, settings.max_pdf_pages, settings.max_pdf_chars)
+            body, created = pdf_text(data, settings.max_pdf_pages, settings.max_pdf_chars)
         except Exception:  # noqa: BLE001 — a corrupt PDF is a skip, not a crash
             continue
         title = link_text or url.rsplit("/", 1)[-1]

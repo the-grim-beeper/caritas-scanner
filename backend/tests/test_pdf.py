@@ -14,7 +14,7 @@ import httpx
 import pytest
 import respx
 
-from mhs.collect.pdf import fetch_pdf, pdf_links, pdf_text
+from mhs.collect.pdf import _download_capped, fetch_pdf, pdf_links, pdf_text
 from mhs.config import settings
 from mhs.db.models import Source
 
@@ -247,3 +247,86 @@ async def test_fetch_pdf_sets_title_from_link_text_and_published_at_from_metadat
     first = next(i for i in items if "42" in i.canonical_url)
     assert first.title == "Amtsblatt Nr. 42"
     assert first.published_at == datetime(2026, 10, 12, 14, 5, 0, tzinfo=timezone.utc)
+
+
+class _GreedyStream(httpx.AsyncByteStream):
+    """An async byte stream with no content-length header that would keep handing
+    out chunks forever — unless the reader stops asking once it knows it is over
+    budget. Raises if asked for more than `max_chunks`, so a reader that (wrongly)
+    buffers the whole thing first is caught in the act rather than hanging."""
+
+    def __init__(self, chunk: bytes, max_chunks: int):
+        self._chunk = chunk
+        self._max_chunks = max_chunks
+        self.yielded = 0
+
+    async def __aiter__(self):
+        while True:
+            if self.yielded >= self._max_chunks:
+                raise AssertionError("read past the point the byte cap should have stopped reading")
+            self.yielded += 1
+            yield self._chunk
+
+
+async def test_download_capped_stops_reading_once_over_the_cap_with_no_content_length(monkeypatch):
+    # Wrong (the bug this guards): `await http.get(url)` buffers the entire body
+    # before the size is ever checked, so an oversized or endless response (no
+    # content-length, e.g. a misconfigured download handler) is fully read into
+    # memory regardless of max_pdf_bytes. The fix streams and checks the running
+    # total after every chunk, stopping the moment it is exceeded.
+    monkeypatch.setattr(settings, "max_pdf_bytes", 1000)
+    chunk = b"%PDF-" + b"X" * 395  # 400 bytes; starts with the magic bytes
+    stream = _GreedyStream(chunk, max_chunks=3)  # 3*400 = 1200 > 1000: tips over on #3
+
+    async def handler(request):
+        return httpx.Response(200, stream=stream)
+
+    transport = httpx.MockTransport(handler)
+    async with httpx.AsyncClient(transport=transport) as http:
+        result = await _download_capped(http, "https://www.landkreis-miesbach.de/huge.pdf")
+
+    assert result is None
+    assert stream.yielded <= 3  # never asked for a 4th chunk
+
+
+async def test_download_capped_rejects_on_content_length_header_without_reading_body(monkeypatch):
+    monkeypatch.setattr(settings, "max_pdf_bytes", 1000)
+    never_read = _GreedyStream(b"should never be read", max_chunks=0)
+
+    async def handler(request):
+        return httpx.Response(200, headers={"content-length": "1001"}, stream=never_read)
+
+    transport = httpx.MockTransport(handler)
+    async with httpx.AsyncClient(transport=transport) as http:
+        result = await _download_capped(http, "https://www.landkreis-miesbach.de/huge.pdf")
+
+    assert result is None
+    assert never_read.yielded == 0  # rejected from the header alone, body never touched
+
+
+@pytest.mark.parametrize(
+    "href",
+    [
+        "data:application/pdf;base64,JVBERi0xLjQK",
+        "file:///etc/amtsblatt.pdf",
+        "ftp://www.landkreis-miesbach.de/dokumente/geheim.pdf",
+        "javascript:alert(1)",
+    ],
+)
+def test_pdf_links_drops_non_http_schemes_even_on_the_same_domain(href):
+    # Wrong: no scheme check at all, so ftp://<same host>/x.pdf (same registrable
+    # domain, ends in .pdf) passes pdf_links and fetch_pdf would then try to open an
+    # ftp:// connection with an httpx.AsyncClient.
+    html = f'<html><body><a href="{href}">Link</a></body></html>'.encode()
+    links = pdf_links(html, BASE_URL)
+    assert links == []
+
+
+async def test_download_capped_asserts_the_scheme_before_making_any_request():
+    # Defence in depth for the same invariant, at the point a PDF would actually be
+    # fetched — exercised directly against _download_capped since pdf_links itself
+    # already filters every case above, so this is the second line of defence, not
+    # the one normally reached.
+    async with httpx.AsyncClient() as http:
+        with pytest.raises(AssertionError):
+            await _download_capped(http, "ftp://www.landkreis-miesbach.de/geheim.pdf")

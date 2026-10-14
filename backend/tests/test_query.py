@@ -112,10 +112,11 @@ async def test_query_item_matching_direct_item_is_credited_not_duplicated(db_ses
     db_session.add_all([direct, q])
     await db_session.flush()
 
-    await _store(db_session, direct, [_raw("1", "Kreistag erhöht Kreisumlage", "https://lk.test/a")])
+    headline = "Kreistag beschließt höhere Kreisumlage für das Jahr 2027"  # 8 words, specific enough to credit
+    await _store(db_session, direct, [_raw("1", headline, "https://lk.test/a")])
     n = await _store(
         db_session, q,
-        [_raw("g1", "Kreistag erhöht Kreisumlage", "https://news.google.com/rss/articles/X", outlet="Merkur")],
+        [_raw("g1", headline, "https://news.google.com/rss/articles/X", outlet="Merkur")],
     )
 
     rows = (await db_session.execute(select(FeedItem))).scalars().all()
@@ -142,6 +143,27 @@ async def test_two_different_query_headlines_both_store(db_session):
     assert len(rows) == 2
 
 
+async def test_short_generic_query_titles_are_never_merged_by_title_key(db_session):
+    # Wrong: credit any title_key match regardless of how short or generic the
+    # headline is, so two unrelated "Gemeinderatssitzung" stories from two different
+    # municipalities (different URLs, both within the 60-day window) collapse into
+    # one FeedItem — the second municipality's council meeting silently vanishes.
+    q1 = Source(slug="q-kreuth", name="Q Kreuth", layer="medien", authority="medium", scope="gemeinde",
+               method="query", query='"Kreuth"', collect=True)
+    q2 = Source(slug="q-gmund", name="Q Gmund", layer="medien", authority="medium", scope="gemeinde",
+               method="query", query='"Gmund"', collect=True)
+    db_session.add_all([q1, q2])
+    await db_session.flush()
+
+    n1 = await _store(db_session, q1, [_raw("g1", "Gemeinderatssitzung", "https://news.google.com/rss/articles/A")])
+    n2 = await _store(db_session, q2, [_raw("g2", "Gemeinderatssitzung", "https://news.google.com/rss/articles/B")])
+
+    rows = (await db_session.execute(select(FeedItem))).scalars().all()
+    assert n1 == 1 and n2 == 1
+    assert len(rows) == 2
+    assert all(row.also_seen_in == [] for row in rows)
+
+
 async def test_query_match_is_scoped_to_the_sixty_day_window(db_session, monkeypatch):
     # Wrong: match on title_key alone with no age cutoff, so an unrelated story that
     # resurfaces a headline a year later gets silently merged into the old item.
@@ -155,14 +177,15 @@ async def test_query_match_is_scoped_to_the_sixty_day_window(db_session, monkeyp
     db_session.add_all([direct, q])
     await db_session.flush()
 
-    await _store(db_session, direct, [_raw("1", "Kreistag erhöht Kreisumlage", "https://lk.test/a")])
+    headline = "Kreistag beschließt höhere Kreisumlage für das Jahr 2027"  # 8 words, specific enough to credit
+    await _store(db_session, direct, [_raw("1", headline, "https://lk.test/a")])
     old_row = (await db_session.execute(select(FeedItem))).scalars().one()
     old_row.created_at = utcnow() - timedelta(days=61)
     await db_session.flush()
 
     n = await _store(
         db_session, q,
-        [_raw("g1", "Kreistag erhöht Kreisumlage", "https://news.google.com/rss/articles/X", outlet="Merkur")],
+        [_raw("g1", headline, "https://news.google.com/rss/articles/X", outlet="Merkur")],
     )
     rows = (await db_session.execute(select(FeedItem))).scalars().all()
     assert n == 1

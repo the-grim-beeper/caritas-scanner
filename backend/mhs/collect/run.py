@@ -165,6 +165,20 @@ async def collect_all(session: AsyncSession, http: httpx.AsyncClient) -> Collect
     return stats
 
 
+# A headline this short or generic recurs across unrelated stories — "Gemeinderatssitzung"
+# is one word and names no meeting in particular. Below this bar a query item is never
+# credited to an existing row by title_key alone; canonical URL still dedups an exact
+# repeat (same article, same Google redirect, inside one crawl).
+_MIN_TITLE_KEY_CHARS = 40
+_MIN_TITLE_KEY_WORDS = 6
+
+
+def _specific_title_key(tk: str | None) -> str | None:
+    if not tk or len(tk) < _MIN_TITLE_KEY_CHARS or len(tk.split()) < _MIN_TITLE_KEY_WORDS:
+        return None
+    return tk
+
+
 async def _store(session: AsyncSession, source: Source, items: list[RawItem]) -> int:
     if not items:
         return 0
@@ -187,12 +201,15 @@ async def _store(session: AsyncSession, source: Source, items: list[RawItem]) ->
     }
 
     keys = [(_title_key(item.title) or None) if item.title else None for item in items]
+    specific_keys = [_specific_title_key(k) for k in keys]
     # A search feed's redirect URL changes on every crawl, so a query source's items
     # are matched to an existing headline instead of a canonical URL — any source,
     # within the freshness window, so the search item is credited, not duplicated.
+    # Only a specific-enough title_key (see _specific_title_key) is eligible: a short,
+    # generic one is never looked up and never offered as a match target either.
     by_title_key: dict[str, FeedItem] = {}
     if is_query:
-        wanted = {k for k in keys if k}
+        wanted = {k for k in specific_keys if k}
         if wanted:
             cutoff = utcnow() - timedelta(days=60)
             rows = (
@@ -206,9 +223,9 @@ async def _store(session: AsyncSession, source: Source, items: list[RawItem]) ->
                 by_title_key.setdefault(row.title_key, row)
 
     new = 0
-    for item, tk in zip(items, keys):
-        if is_query:
-            match = by_title_key.get(tk) if tk else None
+    for item, tk, specific_tk in zip(items, keys, specific_keys):
+        if is_query and specific_tk:
+            match = by_title_key.get(specific_tk)
             if match is not None:
                 if source.id not in (match.also_seen_in or []):
                     match.also_seen_in = [*(match.also_seen_in or []), source.id]
@@ -234,8 +251,8 @@ async def _store(session: AsyncSession, source: Source, items: list[RawItem]) ->
         )
         session.add(row)
         existing[item.canonical_url] = row
-        if tk and is_query:
-            by_title_key[tk] = row
+        if specific_tk and is_query:
+            by_title_key[specific_tk] = row
         new += 1
     await session.flush()
     return new
