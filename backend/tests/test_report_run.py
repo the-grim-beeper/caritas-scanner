@@ -62,10 +62,10 @@ async def _world(db_session, now: datetime) -> dict:
     db_session.add_all([founder, second, member, old])
     await db_session.flush()
     j_now = Judgement(signal_id=second.id, question_id="q03", direction="against", strength="moderate", weight=2,
-                      quote="Stelle bis 2027 befristet verlängert", rationale_de="r", rationale_en="r", model="mock",
+                      quote="Stelle bis 2027 befristet verlängert", rationale_de="r", rationale_en="r", model="claude-sonnet-5-5",
                       created_at=now - timedelta(days=1))
     j_old = Judgement(signal_id=old.id, question_id="q03", direction="for", strength="strong", weight=3,
-                      quote="Alte Meldung", rationale_de="r", rationale_en="r", model="mock",
+                      quote="Alte Meldung", rationale_de="r", rationale_en="r", model="claude-sonnet-5-5",
                       created_at=now - timedelta(days=9))
     a = Entity(slug="landkreis-miesbach", kind="place", name="Landkreis Miesbach")
     b = Entity(slug="sozialraumlotsen", kind="programme", name="Interkommunale Sozialraumlotsen")
