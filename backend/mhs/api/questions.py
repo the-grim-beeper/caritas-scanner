@@ -17,6 +17,7 @@ from mhs.config import settings
 from mhs.db.engine import get_session
 from mhs.db.models import Judgement, Question, Signal
 from mhs.questions.balance import WeekPoint, balance_series, movement
+from mhs.questions.judge import MOCK_MODEL
 
 router = APIRouter(dependencies=[Depends(require_session)])
 
@@ -65,6 +66,12 @@ def judgement_out(j: Judgement, s: Signal) -> dict:
     }
 
 
+def _shown() -> list:
+    """With a key set, keyword-mock judgements left from before are not evidence: they move no
+    balance and are not listed. Without one, everything there is is shown."""
+    return [Judgement.model != MOCK_MODEL] if settings.llm_enabled else []
+
+
 def _question_head(q: Question) -> dict:
     return {
         "id": q.id, "sort": q.sort,
@@ -88,7 +95,8 @@ def _tilt(series: list[WeekPoint]) -> dict:
 
 async def _series_by_question(session: AsyncSession, question_id: str | None = None) -> dict[str, list[WeekPoint]]:
     stmt = (select(Judgement.question_id, Signal.published_at, Judgement.direction, Judgement.weight)
-            .join(Signal, Signal.id == Judgement.signal_id))
+            .join(Signal, Signal.id == Judgement.signal_id)
+            .where(*_shown()))
     if question_id is not None:
         stmt = stmt.where(Judgement.question_id == question_id)
     rows: dict[str, list[tuple[date, str, int]]] = defaultdict(list)
@@ -110,6 +118,7 @@ async def _latest(session: AsyncSession) -> dict[str, list[dict]]:
     rank = func.row_number().over(partition_by=Judgement.question_id, order_by=_NEWEST_FIRST).label("rk")
     ranked = (select(Judgement.id.label("jid"), rank)
               .join(Signal, Signal.id == Judgement.signal_id)
+              .where(*_shown())
               .subquery())
     stmt = (select(Judgement, Signal)
             .join(Signal, Signal.id == Judgement.signal_id)
@@ -145,7 +154,7 @@ async def get_question(question_id: str, session: AsyncSession = Depends(get_ses
     rows = (await session.execute(
         select(Judgement, Signal)
         .join(Signal, Signal.id == Judgement.signal_id)
-        .where(Judgement.question_id == q.id)
+        .where(Judgement.question_id == q.id, *_shown())
         .options(*_with_signal())
         .order_by(*_NEWEST_FIRST)
         .limit(EVIDENCE_MAX)

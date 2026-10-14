@@ -138,6 +138,43 @@ async def test_detail_carries_the_evidence_descriptions_and_every_judgement(clie
     assert r3.json()["evidence"][0]["signal"]["url"] is None  # a signal without a feed item
 
 
+async def test_live_mode_omits_mock_judgements(client, db_session, monkeypatch):
+    # Review fix 1: once a key is set, keyword-mock judgements left from before must not move
+    # balances or appear as evidence beside the live judge's readings.
+    await upsert_questions(db_session, load_questions(DATA / "questions.yaml"))
+    src = Source(slug="lk-presse", name="Landratsamt Miesbach", layer="landkreis", authority="high",
+                 scope="landkreis", method="rss", url="https://l.test/rss", collect=True)
+    db_session.add(src)
+    await db_session.flush()
+    now = datetime.now(timezone.utc)
+    live_sig = Signal(source_id=src.id, headline_de="Kreisumlage steigt", headline_en="Levy rises", signal_type="budget",
+                      is_founder=True, regional_relevance=1.0, published_at=now, judged_by=settings.judge_model)
+    mock_sig = Signal(source_id=src.id, headline_de="Umlage abgefedert", headline_en="Levy absorbed", signal_type="budget",
+                      is_founder=True, regional_relevance=1.0, published_at=now, judged_by="mock")
+    db_session.add_all([live_sig, mock_sig])
+    await db_session.flush()
+    db_session.add_all([
+        Judgement(signal_id=live_sig.id, question_id="q02", direction="for", strength="strong", weight=3,
+                  quote="Kreisumlage steigt deutlich", rationale_de="a", rationale_en="b", model=settings.judge_model),
+        Judgement(signal_id=mock_sig.id, question_id="q02", direction="against", strength="moderate", weight=2,
+                  quote="Umlage wird abgefedert", rationale_de="a", rationale_en="b", model="mock"),
+    ])
+    await db_session.commit()
+    await _login(client)
+
+    # Mock mode shows everything there is.
+    q02 = (await client.get("/api/questions")).json()[1]
+    assert q02["counts"] == {"for": 1, "against": 1}
+
+    monkeypatch.setattr(settings, "anthropic_api_key", "sk-test")
+    q02 = (await client.get("/api/questions")).json()[1]
+    assert q02["counts"] == {"for": 1, "against": 0} and q02["movement"] == "for"
+    assert [j["model"] for j in q02["latest"]] == [settings.judge_model]
+    d = (await client.get("/api/questions/q02")).json()
+    assert [j["model"] for j in d["evidence"]] == [settings.judge_model]
+    assert d["counts"] == {"for": 1, "against": 0}
+
+
 async def test_unknown_question_is_404(client, seeded):
     await _login(client)
     assert (await client.get("/api/questions/q99")).status_code == 404

@@ -91,6 +91,17 @@ def test_decisive_balance_beats_a_stray_counter_signal():
     assert s[-1].balance >= 1 and movement(s) == "for"
 
 
+def test_recent_evidence_all_one_way_sets_the_movement_despite_an_old_balance():
+    # Review fix 2 (the probe): strong "for" weeks -9..-5, then only "against" in weeks -1 and 0.
+    # The balance is still positive from the old evidence, but everything the last four weeks
+    # brought points against — the movement must not contradict its own window.
+    js = [(TODAY - timedelta(weeks=k), "for", 3) for k in range(5, 10)]
+    js += [(TODAY - timedelta(weeks=1), "against", 2), (TODAY, "against", 2)]
+    s = balance_series(js, weeks=12, today=TODAY)
+    assert s[-1].balance > 0
+    assert movement(s) == "against"
+
+
 def test_movement_looks_at_the_last_four_weeks_only():
     s = balance_series([(TODAY - timedelta(weeks=4), "for", 3)], weeks=8, today=TODAY)
     assert s[-1].balance > 0
