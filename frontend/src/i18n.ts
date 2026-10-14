@@ -272,6 +272,7 @@ const STRINGS = {
     de: "Der Vorschlag wurde inzwischen bearbeitet. Bitte neu laden.",
     en: "This suggestion has already been resolved. Please reload.",
   },
+  src_reverify_failed: { de: "Erneute Prüfung fehlgeschlagen", en: "Re-verification failed" },
   src_show_history: { de: "Verlauf anzeigen", en: "Show history" },
   src_hide_history: { de: "Verlauf ausblenden", en: "Hide history" },
   src_history: { de: "Verlauf", en: "History" },
