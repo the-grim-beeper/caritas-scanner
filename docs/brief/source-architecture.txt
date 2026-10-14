@@ -1,0 +1,1648 @@
+Horizon-scanner source architecture for Caritas-
+Zentrum Miesbach
+Verification frame and main findings
+Research cut: 8 October 2026. The project brief says 6 October 2026; I used the current system date, 8
+October 2026, so the register includes material published through that date where it was visible.
+
+
+The territorial premise is correct: Landkreis Miesbach has 17 municipalities. The county's own directory
+confirms the set in the brief. 1 The March 2026 local elections materially changed the political layer that
+the scanner must watch. The county notes that Gmund a. Tegernsee and Kreuth did not elect mayors in
+March 2026 because their mayoral cycles are off-cycle. 2 Jens Zangenfeind was elected Landrat in the 22
+March runoff with 78.0 percent and is now shown by the Landkreis as Landrat. 3 In Miesbach, Dr. Thomas
+Acher won the mayoral runoff with 51.9 percent. 4
+
+
+The primary-source check also verifies several other post-election office-holders without relying on pre-
+election pages: Bayrischzell's current council page names Georg Kittenrainer as First Mayor; Irschenberg's
+May 2026 municipal report identifies newly elected Florian Pichler; Tegernsee's council page from May 2026
+identifies Johannes Hagn; and Waakirchen's new council page identifies Norbert Kerkel. 5 I did not obtain
+a comparably current primary-source confirmation for every one of the other municipalities, so I have not
+filled those names from memory or older pages.
+
+
+The most important substantive finding for the scanner is that the county already contains more
+coordination infrastructure than a superficial search suggests. The Fachstelle für Soziales und Senioren
+publicly associates itself with Sozialplanung und Demografie, Sozialberichterstattung, the Sozialbeirat,
+Netzwerk Ehrenamt, Netzwerk Quartiersmanagement, Netzwerk Integration and the Verbund Psychische
+Gesundheit Region 17. It also lists a broad provider and civil-society environment. 6 The Pflegestützpunkt
+provides another cross-organisational node, including regular advice from Bezirk Oberbayern, while the
+GesundheitsregionPlus is currently described as “im Aufbau” rather than as an already mature network.
+ 7 This distinction matters: the scanner should watch not just the creation of named networks, but
+
+whether they acquire mandates, recurring meetings, public work programmes and durable staffing.
+
+
+There is also unusually strong fiscal reason to monitor several government levels together. Bezirk
+Oberbayern's 2026 budget is €3.199 billion, with a 24.7-percent Bezirksumlage rate; the Bezirk says roughly
+92.8 percent of its 2026 budget goes to social services. 8 Bavaria's 2026 kommunaler Finanzausgleich is
+€12.83 billion, while the state explicitly acknowledges rapidly rising social expenditure at local and district
+levels. 9 These sources should be read together with the Landkreis and municipal budgets because a
+nominal increase in state transfers can coexist with a tightening of discretionary local social spending.
+
+
+Two 2026 policy changes deserve immediate inclusion in any horizon scan. First, the federal SGB II regime
+changed on 1 July 2026: Bürgergeld was renamed Grundsicherungsgeld and a large package of rules
+concerning activation, cooperation, housing costs and Jobcenter practice came into force. Further
+
+
+
+                                                       1
+provisions are scheduled for 1 August 2027. 10 Second, the Bavarian PflegesoNah programme remains
+active; the 2026 round runs through 31 October 2026. 11 SeLA is also current and, unusually helpfully for
+this project, explicitly requires a sustainability financing plan for many supported measures and can fund
+senior-oriented Quartierskonzepte and volunteer-based Nachbarschaftshilfen. 12
+
+
+The Catholic structural layer is also more directly relevant than a generic “church” feed would suggest. The
+present Dekanat Miesbach encompasses eleven Pfarrverbände and is explicitly intended as a middle level
+for supra-parish networking and coordination. 13 The 2024 Dekanatsreform reduced the archdiocese from
+40 to 18 deaneries and strengthened this middle level. 14 For the Protestant side, the correct scanner
+target is Evang.-Luth. Dekanat Bad Tölz, not Dekanat Rosenheim: its public material covers Miesbach-area
+congregations, and its current personnel page identifies the Miesbach pastor Erwin Sergel as deputy dean.
+ 15
+
+
+
+
+I found no sufficiently informative public project page for “Interkommunale Sozialraumlotsen” itself.
+I therefore do not infer its present steering group, project-financing arrangement, municipal commitments,
+data-sharing arrangements or intended post-project Trägerschaft from public evidence.
+
+
+The machine-readable deliverables are:
+
+
+Download the full 61-row source register
+
+
+Download the actor-network edge list
+
+
+Download the monitoring calendar
+
+
+In the register, “no feed” means that no published feed URL was exposed in the page/search material I
+opened; no RSS address has been guessed. The listing page is therefore the scraper target. “Verified”
+means the URL itself was retrieved and its current content or dated item was seen. “Archive worth keeping”
+is used where a source is older than twelve months as a news source but remains structurally important.
+“Not found” means exactly that, not that the institution or material does not exist.
+
+
+Municipal verification coverage
+
+                                                    Newest/
+                   Best verified scanner             current
+ Municipality                                                  What it gives                 Status
+                   endpoint in this pass           evidence
+                                                       seen
+
+                   municipal 2026
+                                                               leadership/election
+ Bad Wiessee       election / Rathaus press     5 Mar 2026                                   verified   16
+                                                               change
+                   page
+
+                                               current from    mayor, council
+ Bayrischzell      Gemeinderat                                                               verified   17
+                                                  May 2026     composition
+
+
+
+
+                                                     2
+                                             Newest/
+               Best verified scanner          current
+Municipality                                             What it gives                 Status
+               endpoint in this pass        evidence
+                                                seen
+
+                                                                                       verified;
+               final Gemeinderat                                                       archive
+Fischbachau                              18 Mar 2026     council composition
+               election notice                                                         endpoint
+                                                                                        18
+
+
+Gmund a.                                                 council election; no 2026
+               Kommunalwahlen 2026                2026                                 verified    19
+Tegernsee                                                mayoral election
+
+Hausham        Wahlen                             2026   election material             verified    20
+
+
+                                              current    current council/
+Holzkirchen    Marktgemeinderat                                                        verified    21
+                                             2026–32     governance
+
+                                                         decisions, finance, local
+Irschenberg    council minutes           22 Jun 2026                                   verified    22
+                                                         policy
+
+                                                         council; mayoral cycle off-
+Kreuth         Gemeinderat                    current                                  verified    23
+                                                         cycle
+
+Miesbach       Stadtratswahl 2026           Mar 2026     council composition           verified    24
+
+
+Otterfing      adopted Haushalt 2026        Apr 2026     municipal finances            verified    25
+
+
+                                                         search located election
+               no durable current
+Rottach-                                                 material, but not a           not found
+               listing endpoint pinned              —
+Egern                                                    satisfactory ongoing          for v1
+               down
+                                                         scanner page
+
+                                         2026 budget
+Schliersee     Haushalt 2026 listing                     municipal finances            verified    26
+                                                cycle
+
+                                           from May
+Tegernsee      Stadtrat                                  current mayor/council         verified    27
+                                               2026
+
+                                                                                       verified
+               2026 council-election                                                   archive
+Valley                                      Mar 2026     council composition
+               result                                                                  endpoint
+                                                                                        28
+
+
+                                            meetings
+                                                         agendas/calendar/
+Waakirchen     Gemeinderat sessions        through 8                                   verified    29
+                                                         decisions
+                                            Dec 2026
+
+                                              current
+Warngau        Gemeinderat members                       current council               verified    30
+                                             2026–32
+
+
+
+
+                                              3
+                                                      Newest/
+                    Best verified scanner              current
+ Municipality                                                    What it gives                Status
+                    endpoint in this pass            evidence
+                                                         seen
+
+                                                                 budget/election
+                    no durable current                           documents appeared in
+                                                                                              not found
+ Weyarn             listing endpoint pinned                 —    search, but not a
+                                                                                              for v1
+                    down                                         satisfactory ongoing
+                                                                 scanner page
+
+This is an important design point: do not treat a once-per-election result page as the municipality's
+long-term scanner source. For Fischbachau, Valley, Bad Wiessee, Gmund, Hausham and Miesbach in
+particular, the v1 implementation should continue looking for the municipality's durable Sitzungskalender/
+Ratsinformationssystem, finance listing and Gemeindeblatt listing rather than settling for the election page.
+Conversely, Waakirchen and Irschenberg already expose decision material in a form much closer to what a
+horizon scanner needs. 31
+
+
+Source register
+The CSV contains 61 records with all requested columns:
+
+
+name; URL; feed URL or "no feed"; operator; layer; source type; drivers and themes
+covered; change signals it reveals; update frequency; access method; date of newest
+item; reliability with reason; institutional interest; status .
+
+
+Its present coverage is 58 verified or deliberately retained archive sources, two “not found” municipal
+scanner endpoints, and one deliberately unverified Layer-8 bundle. The most important source families are
+below; the CSV is the canonical export.
+
+
+Landkreis and local-service layer
+
+                                                           Newest/
+ Source                        Layer    Signals            current item    Why it belongs
+                                                           seen
+
+                                                           structural      Best public map of the county's
+                                        Structure,
+                                                           page; newest    existing social-planning and
+ Fachstelle für Soziales                People,
+                                   2                       visible dated   coordination architecture;
+ und Senioren                           Demand/
+                                                           item 23 Dec     retain despite sparse news
+                                        supply
+                                                           2024            cadence. 32
+
+                                        Structure,                         Cross-provider navigation node
+ Pflegestützpunkt                  2    Demand/            current         and direct interface with Bezirk
+                                        supply                             Oberbayern. 33
+
+
+
+
+                                                       4
+                                                  Newest/
+Source                   Layer   Signals          current item     Why it belongs
+                                                  seen
+
+                                                                   Early signal of a new
+                                 Structure,       current, “im
+GesundheitsregionPlus       2                                      coordination structure before
+                                 People           Aufbau”
+                                                                   routines harden. 34
+
+                                 Rules,                            Local implementation
+                                                  docs visible 1
+Jobcenter – Leistung        2    Demand/                           consequences of SGB II reform.
+                                                  Oct 2026
+                                 supply                             35
+
+
+                                                                   One of the best statutory
+                                 Money,                            venues for seeing child/youth
+                                 Structure,       notice 23        demand, Kita planning and
+Jugendhilfeausschuss        2    Demand/          Sep; meeting     spending collide. Its September
+                                 supply,          30 Sep 2026      agenda included a population
+                                 Sentiment                         forecast and Kita demand
+                                                                   planning. 36
+
+                                 Rules,                            Legally consequential notices
+Landkreis Amtsblatt         2    Money,           2026 series      that ordinary press pages can
+                                 Structure                         miss. 37
+
+                                 Money,                            Hospital finance, staffing and
+                                 Structure,                        service-change signals;
+Krankenhaus Agatharied
+                            2    People,          21 Sep 2026      institutionally self-
+Presse
+                                 Demand/                           presentational, so triangulate.
+                                 supply                             38
+
+
+                                                                   Captures awards and local
+                                                                   projects that reveal where
+                                                                   municipalities and civil society
+Regionalentwicklung              Money,
+                            2                     18 Sep 2026      are building capacity. 2026
+Oberland / LEADER                Structure
+                                                                   posts included projects in
+                                                                   Warngau, Hausham and
+                                                                   Miesbach. 39
+
+                                 Money,
+                                 Structure,
+Landkreis                                                          Essential for the mobility/
+                            2    Demand/          18 Dec 2025
+Mobilitätskonzept                                                  participation driver. 40
+                                 supply,
+                                 Sentiment
+
+                                 Money,                            Seasonal but useful signal of
+                                 Structure,                        cross-jurisdiction transport
+MVV BergBus                 2                     23 May 2026
+                                 Demand/                           provision; the 2026 season runs
+                                 supply                            to 25 Oct. 41
+
+
+
+
+                                              5
+The Fachstelle page is unusually important even though its dated news is stale. It is an archive worth
+keeping because it explicitly identifies the county's coordination vocabulary—Sozialbeirat, Netzwerk
+Ehrenamt, Netzwerk Quartiersmanagement, Netzwerk Integration and Verbund Psychische Gesundheit
+Region 17—and enumerates many welfare and civic actors. 32 For horizon scanning, this is more valuable
+as a periodically diffed structural page than as a news feed.
+
+
+Welfare and civil society
+
+The public provider layer is active enough to produce useful weak signals. Diakonie Rosenheim's site had a
+5 October 2026 item and exposes a Miesbach-specific Kinder- und Jugendhilfe page; that page says its
+ambulatory services are provided on behalf of the Jugendamt, making it useful both as a service source
+and as network evidence. 42 BRK Kreisverband Miesbach's news page was current to 18 September 2026.
+ 43 Lebenshilfe Miesbach has both an active provider site and a particularly useful vacancy page, which is a
+
+direct skilled-labour signal rather than a retrospective report. 44 AWO's Miesbach senior centre was
+current to 25 September, the Hospizkreis calendar contains events through December, and
+Nachbarschaftshilfe Warngau shows active 2026 organisational updates. 45
+
+
+These should not be interpreted as neutral system reports. Their institutional interest is to explain and
+legitimate their own work. They are strongest for closures/openings, vacancies, leadership changes, new
+projects and explicit funding announcements and weaker for quantifying unmet demand, failed referrals
+or financial distress before management chooses to disclose it.
+
+
+A notable gap remains here: I did not verify a current public scanner endpoint for every VdK local
+organisation, Paritätischer member, Tafel, Mehrgenerationenhaus, volunteer agency, Bürgerstiftung,
+self-help group, Seniorenbeauftragte or Behindertenbeauftragte. The county Fachstelle page partly
+compensates as a network directory, but it does not substitute for direct monitoring of those organisations.
+ 32
+
+
+
+
+Church, Bezirk and Bavaria
+
+The Catholic scanner should have three separate levels rather than one “church” source: Dekanat
+Miesbach, the archdiocesan structure/reform source, and the diocesan Caritas organisation. Dekanat
+Miesbach currently covers eleven Pfarrverbände and has an explicit coordination function. 13 The Caritas
+München-Freising Geschäftsberichte page currently carries the 2025/2026 report and is the most useful
+public source for group-level finance, workforce and organisational restructuring. 46 The Protestant
+counterpart for the Miesbach area is Dekanat Bad Tölz. 47
+
+
+At Bezirk level, four sources form a coherent package: Sitzungstermine for decisions; Bezirkshaushalt for
+money and Bezirksumlage; Sozialplanung for institutional redesign; and Sozialberichterstattung for
+indicator trends. 48 The Sozialberichterstattung source is particularly promising because the Bezirk now
+describes interactive dashboards filterable by region and year; this is much closer to the reusable evidence
+infrastructure a scanner needs than a one-off PDF report. 49
+
+
+At Land level, SeLA remains live, with funding for senior-oriented Quartierskonzepte, Nachbarschaftshilfen
+and other local measures. 12 PflegesoNah also remains active in 2026. 11 The Bayerischer Landtag's
+live sitting page exposes plenary and committee activity and already links its 2027 sitting plan. 50 The
+
+
+
+
+                                                      6
+Landesamt für Statistik should be retained for demographic baselines; its June 2026 municipal population
+publication still identifies 17 municipalities in Landkreis Miesbach. 51
+
+
+For ministries, the current Bavarian names in the verified sources are Bayerisches Staatsministerium für
+Familie, Arbeit und Soziales (StMAS) and Bayerisches Staatsministerium für Gesundheit, Pflege und
+Prävention (StMGP). 52
+
+
+At federal level, the verified current names relevant here are Bundesministerium für Arbeit und Soziales
+(BMAS) and Bundesministerium für Bildung, Familie, Senioren, Frauen und Jugend (BMBFSFJ). The
+latter is a changed portfolio from the older “family ministry” naming and should therefore be filtered under
+both the new acronym and legacy topic terms. 53 I did not independently reopen the current
+Bundesministerium für Gesundheit landing page before the research cutoff and therefore mark that
+element of the requested federal source set as still needing verification rather than silently treating the old
+source list as current.
+
+
+Peer cases
+
+The strongest directly transferable case located is Gemeindeschwester plus in Rheinland-Pfalz. It began
+as a model project, went through a “Verstetigungsphase,” and is now a Landesprogramm. The current
+programme page says it is financed from state funds in the present 2025/26 funding period and describes
+both individual navigation and the role of the Fachkräfte in stimulating local supportive infrastructure. 54
+This is unusually relevant to Miesbach because it makes institutional anchoring itself observable: model →
+transition/continuation → regular state programme.
+
+
+Two additional peer-document sources belong in the register even though they should be treated as
+periodic research rather than weekly news: the Austrian Community Nursing continuation material, which
+explicitly addresses what happened after the 2022–24 pilot phase, and the ISA work on kommunale
+Präventionsketten, which examines resilience and institutionalisation across municipalities. 55 The
+Austrian example is useful precisely because continuation varies by Land and Träger rather than following
+one national template.
+
+
+I did not verify adequate current primary documentation in this pass for all of the other requested
+analogues—Bavarian Dorfkümmerer, rural Bavarian Quartiersmanagement cases with documented post-
+grant outcomes, English social-prescribing link workers, and Dutch neighbourhood teams. They should stay
+on the research backlog rather than being represented by unsourced textbook descriptions.
+
+
+Actor network and standing coordination
+The edge list should be read as an evidence graph, not a complete stakeholder map. I included a
+relationship only where the retrieved source supported a relation such as funding, commissioning,
+institutional membership, coordination or supervision.
+
+
+
+
+                                                       7
+Evidence-backed edges
+
+ Actor A            Actor B                Relation        Evidence              Confidence
+
+ Fachstelle für                            shared
+                                                           county Fachstelle
+ Soziales und       Sozialbeirat           committee /                           high
+                                                           page 32
+ Senioren                                  coordination
+
+ Fachstelle für
+                                                           county Fachstelle
+ Soziales und       Netzwerk Ehrenamt      coordination                          high
+                                                           page 32
+ Senioren
+
+ Fachstelle für
+                    Netzwerk                               county Fachstelle
+ Soziales und                              coordination                          high
+                    Quartiersmanagement                    page 32
+ Senioren
+
+ Fachstelle für
+                                                           county Fachstelle
+ Soziales und       Netzwerk Integration   coordination                          high
+                                                           page   32
+ Senioren
+
+ Fachstelle für
+                    Verbund Psychische                     county Fachstelle
+ Soziales und                              coordination                          high
+                    Gesundheit Region 17                   page 32
+ Senioren
+
+                                                           Bezirk advice
+ Pflegestützpunkt                          cooperation /
+                                                           offered at the
+ Landkreis          Bezirk Oberbayern      on-site                               high
+                                                           Pflegestützpunkt
+ Miesbach                                  consultation
+                                                            33
+
+
+                                                           provider states
+ Jugendamt                                 commissioned
+                    Diakonie Kinder- und                   work is carried out
+ Landkreis                                 service / SGB                         high
+                    Jugendhilfe Miesbach                   on behalf of
+ Miesbach                                  VIII
+                                                           Jugendamt 56
+
+ Lebenshilfe
+                                                           OBA funding
+ Miesbach, OBA      Bezirk Oberbayern      funding                               high
+                                                           statement 57
+ LebensMUT
+
+ Lebenshilfe
+                                                           OBA funding
+ Miesbach, OBA      Freistaat Bayern       funding                               high
+                                                           statement 57
+ LebensMUT
+
+                                           supervision /
+ Erzbistum
+                                           middle-level    archdiocesan
+ München und        Dekanat Miesbach                                             high
+                                           church          structure page   13
+ Freising
+                                           structure
+
+ Dekanat            its eleven                             archdiocesan
+                                           coordination                          high
+ Miesbach           Pfarrverbände                          Dekanat page     13
+
+
+
+
+                                            8
+ Actor A                Actor B                    Relation            Evidence                   Confidence
+
+                                                   church              Dekanat and
+ Evang.-Luth.           Miesbach-area
+                                                   structure /         Holzkirchen                high
+ Dekanat Bad Tölz       Kirchengemeinden
+                                                   cooperation         regional pages        47
+
+
+                                                   LEADER
+ Local project          Regionalentwicklung                            LAG project stream
+                                                   funding/project                                high
+ sponsors               Oberland / LAG                                  39
+                                                   selection
+
+ Landkreis                                                             2026 MVV service
+                                                   funding /                                      medium-
+ Miesbach and           MVV BergBus                                    announcement
+                                                   cooperation                                    high
+ public partners                                                        41
+
+
+
+A critical missing edge is Caritas-Zentrum Miesbach ↔ Sozialraumlotsen project ↔ Landkreis ↔
+participating municipalities. I found no public document robust enough to specify whether the relation is
+grant funding, formal Trägerschaft, delegated coordination, a cooperation agreement, merely project
+participation, or some mixture. That should be supplied internally rather than inferred.
+
+
+Standing coordination forums
+
+                             Publicly
+                             evidenced
+                                              Attendance         Public agenda/
+ Forum                       convener /                                            Scanner treatment
+                                              visible?           minutes?
+                             institutional
+                             home
+
+                             Landkreis/                                            high priority; ask
+                                              not fully
+                             Fachstelle                          no recurring      Landkreis/Caritas
+                                              enumerated
+ Sozialbeirat                für Soziales                        public agenda     for membership,
+                                              in material
+                             und                                 stream located    mandate and
+                                              retrieved
+                             Senioren                                              cadence. 32
+
+                                                                                   monitor Fachstelle
+                             Landkreis/       not fully                            and ask for mailing-
+ Netzwerk Ehrenamt                                               none located
+                             Fachstelle       public                               list/calendar
+                                                                                   metadata. 32
+
+                                                                                   directly relevant to
+                                                                                   Sozialraumlotsen;
+ Netzwerk                    Landkreis/       not fully
+                                                                 none located      treat as likely
+ Quartiersmanagement         Fachstelle       public
+                                                                                   overlap risk/
+                                                                                   opportunity. 32
+
+                                                                                   monitor for
+                                                                                   changing support
+                             Landkreis/       not fully
+ Netzwerk Integration                                            none located      needs and cross-
+                             Fachstelle       public
+                                                                                   sector coordination.
+                                                                                        32
+
+
+
+
+                                                     9
+                             Publicly
+                             evidenced
+                                              Attendance        Public agenda/
+ Forum                       convener /                                             Scanner treatment
+                                              visible?          minutes?
+                             institutional
+                             home
+
+                                              not fully
+                                                                                    monitor as mental-
+ Verbund Psychische          Landkreis/       public in
+                                                                none located        health coordination
+ Gesundheit Region 17        Fachstelle       source
+                                                                                    node. 32
+                                              retrieved
+
+                                              statutory                             ingest every agenda
+                                                                yes, public
+                                              membership;                           and minutes/
+ Jugendhilfeausschuss        Landkreis                          meeting notices/
+                                              committee                             decision document.
+                                                                agendas exist
+                                              source                                  36
+
+
+                                                                                    monitor formation:
+                                                                                    steering group,
+                                                                not yet a mature
+                                                                                    manager
+                                              still being       recurring public
+ GesundheitsregionPlus       Landkreis                                              recruitment, themes
+                                              built             record in source
+                                                                                    and membership are
+                                                                retrieved
+                                                                                    change signals in
+                                                                                    themselves. 34
+
+                                                                public
+                                                                institutional
+ Gremium Gesundheits-,                                                              useful higher-level
+                                                                description;
+ Sozial- und                 Bezirk           regional/                             network signal, not a
+                                                                local Miesbach
+ Versorgungsplanung          Oberbayern       Bezirk level                          substitute for county
+                                                                representation
+ (GSV)                                                                              coordination. 58
+                                                                not established
+                                                                here
+
+I did not find sufficiently current public evidence to assert a standing Miesbach-wide Pflegekonferenz, a
+public Bürgermeisterrunde with published minutes, or a Miesbach-specific publicly documented
+Psychosoziale Arbeitsgemeinschaft. Bezirk Oberbayern states that Psychosoziale Arbeitsgemeinschaften
+are part of its planning architecture, but that does not establish the exact Miesbach forum, membership or
+meeting cadence. 58 These are interview questions, not facts to backfill.
+
+
+The structural hypothesis to test is therefore slightly sharper than “coordination is missing”: there are
+already many named coordination structures; the unknown is whether they connect to each other,
+whether they have decision rights, whether attendance is stable, and whether information moves
+between them. That is consistent with the public institutional map but cannot be proved from it alone. 59
+
+
+Monitoring questions
+The scanner should not merely collect news. It should run a stable set of questions against the incoming
+material so that “change” means something for the 2035/2040 design problem.
+
+
+
+
+                                                    10
+                                                                                                    Evidence
+Monitoring                                                            Evidence for the concern      against /
+                   Driver / decision      Sources bearing on it
+question                                                              or transition                 stabilising
+                                                                                                    evidence
+
+                                                                                                    social/
+                                                                                                    prevention
+Are                                                                                                 lines
+                                          municipal budgets;
+municipalities                                                        Haushaltssperre, cuts in      protected or
+                                          Landkreis budget/
+losing             municipal room for                                 freiwillige Leistungen,       increased;
+                                          Amtsblatt;
+discretionary      manoeuvre;                                         higher Umlagen, deferred      multi-year
+                                          Bezirkshaushalt;
+capacity for       financing                                          co-financing, project posts   commitments;
+                                          Bavarian
+social and                                                            removed                       unrestricted
+                                          Finanzausgleich
+preventive work?                                                                                    revenues
+                                                                                                    absorb
+                                                                                                    Umlagen
+
+                                                                                                    Umlage
+                                                                                                    increases
+                                                                                                    offset by
+Are Kreisumlage
+                                                                                                    transfers/
+and
+                                                                                                    revenue
+Bezirksumlage
+                   financing;             Bezirkshaushalt, county     rising Hebesätze plus         without social-
+materially
+                   institutional          budget, 17 municipal        municipal statements that     service
+crowding out
+                   anchoring              budgets, StMFH              grants/posts must be cut      retrenchment.
+local
+                                                                                                    The Bezirk's
+coordination
+                                                                                                    2026 pressure
+capacity?
+                                                                                                    makes this a
+                                                                                                    live question.
+                                                                                                     60
+
+
+Is                                                                                                  repeated
+Sozialraumlotsen                                                      permanent budget title,       temporary
+moving from a                             Caritas internal            Stellenplan position,         extensions; no
+project into       Verstetigungsmodell;   material; Landkreis         formal mandate, Zweck-/       owner after
+regular            Trägerschaft           committees/budget; 17       Kooperationsvereinbarung,     grant; role
+governance                                councils; job pages         regular committee             disappears
+before grant                                                          reporting                     from budget/
+expiry?                                                                                             organigram
+
+Is coordination
+                                                                                                    meetings only
+being
+                                          Fachstelle, Sozialbeirat,   regular cadence, named        “bei Bedarf”;
+formalised, or
+                   steering structure;    network pages,              chair, membership rules,      no minutes;
+remaining
+                   governance             committee agendas,          minutes, work programme,      participation
+dependent on
+                                          interviews                  succession arrangements       collapses after
+personal
+                                                                                                    staff turnover
+relationships?
+
+
+
+
+                                              11
+                                                                                                   Evidence
+Monitoring                                                           Evidence for the concern      against /
+                     Driver / decision      Sources bearing on it
+question                                                             or transition                 stabilising
+                                                                                                   evidence
+
+                                                                                                   cross-party
+                                                                                                   budget votes;
+Do the 2026
+                                            council agendas/         motions to withdraw           commitments
+political changes
+                     political robustness   minutes, mayor/          funding, change Träger or     embedded in
+alter support for
+                     to 2035/40             Landrat pages, local     localise services; partisan   agreements/
+inter-municipal
+                                            media                    conflict                      administration
+coordination?
+                                                                                                   rather than
+                                                                                                   personalities
+
+Is skilled-worker                                                                                  vacancies
+scarcity                                                                                           filled rapidly;
+                                                                     recurring vacancies, long
+becoming a                                  Lebenshilfe/Caritas/                                   capacity/
+                                                                     reposting intervals,
+service-capacity                            Diakonie/BRK/AWO job                                   opening
+                     skilled workers                                 reduced hours, bed/place
+constraint rather                           boards; hospital;                                      hours
+                                                                     closures, agency
+than merely a                               council material                                       maintained
+                                                                     dependence
+recruitment                                                                                        while caseload
+problem?                                                                                           grows
+
+                                                                                                   falling waits/
+                                                                                                   cases or
+                                            Pflegestützpunkt,        waiting lists,
+Where is                                                                                           documented
+                     demographic            Jugendhilfeausschuss,    Aufnahmestopp, rising
+demand growing                                                                                     capacity
+                     change; changing       Jobcenter, hospital,     cases, Kita shortfall, more
+faster than                                                                                        additions
+                     needs                  Bezirk dashboards,       Pflegeberatung, service
+supply?                                                                                            matched to
+                                            Statistik                closures
+                                                                                                   population
+                                                                                                   change
+
+                                                                                                   new routes/
+Are mobility
+                                                                                                   tacts,
+barriers
+                                            Mobilitätskonzept,       route reductions, weak        demand-
+worsening
+                     mobility and           MVV, municipal           evening/weekend access,       responsive
+access to
+                     participation          agendas, provider/user   missed appointments,          service,
+services even
+                                            interviews               Fahrdienst shortages          measurable
+when services
+                                                                                                   accessibility
+technically exist?
+                                                                                                   gains. 61
+
+                                                                                                   demand
+Are youth/family
+                                            Jugendhilfeausschuss,                                  planning
+needs shifting                                                       population forecast shifts,
+                                            Jobcenter, Kita                                        stabilises and
+enough to            changing support                                higher HzE demand, Kita
+                                            planning, Diakonie                                     preventive
+require a            needs                                           gaps, school-avoidance/
+                                            youth services,                                        services
+different local                                                      mental-health pressures
+                                            BMBFSFJ                                                reduce
+service mix?
+                                                                                                   escalation
+
+
+
+
+                                               12
+                                                                                                     Evidence
+Monitoring                                                             Evidence for the concern      against /
+                     Driver / decision      Sources bearing on it
+question                                                               or transition                 stabilising
+                                                                                                     evidence
+
+                                                                                                     buildings/
+                                                                                                     volunteer
+Will church
+                                                                                                     networks
+restructuring
+                     organisational         Dekanat Miesbach,          property sales, parish        deliberately
+release, remove
+                     conditions; Caritas    Erzbistum, Caritas         mergers, fewer staff,         repurposed
+or repurpose
+                     role                   report, parish sources     closure of meeting space      for social
+local social
+                                                                                                     coordination
+infrastructure?
+                                                                                                     or community
+                                                                                                     use. 62
+
+                                                                                                     new long-
+Are welfare                                                                                          term service
+providers                                                                                            agreements,
+                                            provider news/jobs,        merger, insolvency,
+consolidating                                                                                        sustainable
+                     market logic vs care   Caritas reports,           transfer of Trägerschaft,
+because the local                                                                                    tariff/
+                     logic; Trägerschaft    councils, Bezirk/Bavaria   contract withdrawal,
+provider                                                                                             refinancing
+                                            funding                    closure
+economy no                                                                                           settlements,
+longer works?                                                                                        capacity
+                                                                                                     expansion
+
+                                                                                                     grant requires
+                                                                                                     and leads to
+                                                                                                     explicit follow-
+                                                                                                     on financing,
+                                                                                                     regular
+Which external                                                                                       budget or
+grants create the                                                                                    statutory
+                                                                       projects depend on 100%
+next funding cliff                          SeLA, PflegesoNah,                                       contract. SeLA
+                     financing;                                        temporary money; no post-
+—and which are                              LEADER, future ESF+/                                     is especially
+                     Verstetigung                                      grant plan; repeated
+genuinely                                   foundation sources                                       useful
+                                                                       search for successor grants
+bridgeable to                                                                                        because
+regular finance?                                                                                     sustainability
+                                                                                                     planning is
+                                                                                                     built into
+                                                                                                     parts of the
+                                                                                                     programme.
+                                                                                                      12
+
+
+
+
+                                               13
+                                                                                                        Evidence
+ Monitoring                                                             Evidence for the concern        against /
+                      Driver / decision       Sources bearing on it
+ question                                                               or transition                   stabilising
+                                                                                                        evidence
+
+                                                                                                        duplicate
+ Is the county
+                                                                                                        portals, stale
+ moving toward                                Fachstelle, Bezirk
+                                                                        shared indicators, common       directories,
+ shared data and                              dashboards,
+                                                                        taxonomy, data-sharing          incompatible
+ social reporting,    coordination; data      GesundheitsregionPlus,
+                                                                        agreements, one reporting       data, access
+ or accumulating                              internal Caritas
+                                                                        calendar                        restrictions,
+ more separate                                interviews
+                                                                                                        no named
+ platforms?
+                                                                                                        data owner
+
+                                                                                                        visible cross-
+                                                                                                        party support,
+ Is local
+                                                                                                        civic
+ legitimacy for                               council minutes, local    repeated controversy over
+                                                                                                        participation,
+ preventive           governance;             media,                    cost, duplication,
+                                                                                                        concrete
+ coordination         sentiment               Bürgerinitiativen,        “bureaucracy,” municipal
+                                                                                                        referrals/
+ strengthening or                             provider/civic sources    fairness
+                                                                                                        outcomes
+ weakening?
+                                                                                                        cited by
+                                                                                                        councillors
+
+                                                                                                        closure,
+                                                                                                        geographic
+ Which peer                                   Gemeindeschwester         movement to regular             contraction,
+ models survived      institutional           plus; Community           state/local financing,          temporary
+ project funding,     anchoring;              Nursing;                  permanent posts,                bridge
+ and what made        Trägerschaft            Präventionsketten;        integration into statutory/     funding
+ the difference?                              future peer sources       municipal structure             without
+                                                                                                        permanent
+                                                                                                        owner
+
+The peer-case question should be kept separate from “does the model work?” The more relevant question
+for Caritas is what institutional mechanism survives the grant. Rheinland-Pfalz's Gemeindeschwester
+plus is valuable because the public record explicitly distinguishes model, Verstetigungs- and current
+programme phases. 54
+
+
+German filter lexicon
+A simple scanner should combine entities + change verbs/nouns + policy terms, rather than rely on
+generic social-sector keywords. For example, Waakirchen AND (Haushalt OR Zuschuss OR
+Sozialraum OR Pflege) is substantially cleaner than a standing search for Soziales .
+
+
+
+
+                                                  14
+Governance and coordination
+
+Sozialraum , Sozialraumlotse , Sozialraumlotsen , Lotsenfunktion , Anlaufstelle ,
+Koordinationsstelle , Koordination , Vernetzung , Netzwerk , Netzwerkmanagement ,
+Steuerungsgruppe , Lenkungsgruppe , Arbeitsgruppe , Arbeitskreis , Runder Tisch ,
+Sozialbeirat , Sozialplanung , Quartiersmanagement , Quartierskonzept ,
+GesundheitsregionPlus , Versorgungskonferenz , Pflegekonferenz , Psychosoziale
+Arbeitsgemeinschaft , PSAG , interkommunal , gemeindeübergreifend ,
+ressortübergreifend , trägerübergreifend , Kooperationsvereinbarung ,
+Zweckvereinbarung , Geschäftsordnung , Trägerschaft , institutionelle Verankerung ,
+Verstetigung , Regelfinanzierung .
+
+
+Useful change terms: gründet , eingerichtet , neu aufgestellt , zusammengelegt ,
+aufgelöst , beendet , überführt , verstetigt , verlängert , neu besetzt , federführend ,
+beauftragt .
+
+
+Money and fiscal pressure
+
+Haushalt , Haushaltsplan , Nachtragshaushalt , Haushaltssperre , Konsolidierung ,
+Kürzung , Einsparung , Deckungslücke , Defizit , freiwillige Leistung , Zuschuss ,
+Zuwendung , Förderung , Förderbescheid , Förderaufruf , Förderrichtlinie ,
+Förderperiode , Kofinanzierung , Eigenanteil , Anschlussförderung , Förderende ,
+Auslaufen , Kreisumlage , Bezirksumlage , Hebesatz , Schlüsselzuweisung ,
+Finanzausgleich , Bedarfszuweisung , Stabilisierungshilfe , Stellenplan ,
+Personalkosten .
+
+
+Funding entities/programmes: SeLA , Selbstbestimmt Leben im Alter , PflegesoNah ,
+Pflege im sozialen Nahraum , LEADER , ESF Plus , Aktion Mensch , Deutsche
+Fernsehlotterie , Stiftung Deutsches Hilfswerk .
+
+
+Workforce and organisational capacity
+
+Fachkräftemangel , Personalengpass , Stellenanzeige , Stellenausschreibung , vakant ,
+unbesetzt , Nachbesetzung , Fluktuation , Kündigung , Geschäftsführung ,
+Einrichtungsleitung , Bereichsleitung , Sozialpädagoge , Sozialpädagogin ,
+Sozialarbeit , Pflegefachkraft , Erzieher , Schulbegleitung , Ehrenamtskoordination ,
+Quartiersmanager , Netzwerkmanager , Projektleitung , Krankheitsausfall ,
+Öffnungszeit , Leistungsreduzierung , Aufnahmestopp .
+
+
+Office entities to track explicitly: Landrat , Erster Bürgermeister , Bürgermeisterin ,
+Fachstelle für Soziales und Senioren , Sozialplanung , Jugendamtsleitung ,
+Jobcenterleitung , Dekan , Caritasdirektor , Geschäftsführer , Vorstand ,
+Pflegestützpunkt .
+
+
+
+
+                                                15
+Demand, care and participation
+
+Warteliste , Wartezeit , Aufnahmestopp , Versorgungslücke , Versorgungsengpass ,
+Unterversorgung , Pflegebedarf , Pflegeplatz , Kurzzeitpflege , Tagespflege ,
+ambulante Pflege , häusliche Pflege , pflegende Angehörige , Einsamkeit , Altersarmut ,
+Demenz , psychische Gesundheit , Sucht , Obdachlosigkeit , Wohnungsnot ,
+Schuldnerberatung , Erziehungsberatung , Hilfen zur Erziehung , Jugendhilfe ,
+Eingliederungshilfe , Hilfe zur Pflege , Grundsicherung , Teilhabe , Inklusion ,
+Migration , Integration , Selbsthilfe , Nachbarschaftshilfe .
+
+
+Mobility and access
+
+ÖPNV , Buslinie , Fahrplan , Takt , Taktverdichtung , Fahrtausfall , Rufbus , On-Demand ,
+FLEX , BergBus , BRB , Regionalbahn , Barrierefreiheit , Mobilitätshilfe , Fahrdienst ,
+Bürgerbus , Mitfahrbank , Erreichbarkeit , letzte Meile , Haltestelle ,
+Wochenendverkehr .
+
+
+Rules and legislation
+
+SGB II , SGB VIII , SGB IX , SGB XI , SGB XII , Gesetzentwurf , Referentenentwurf ,
+Kabinettsbeschluss , Bundestag , Bundesrat , Landtag , Ausschuss , Anhörung ,
+Änderungsantrag , Verordnung , Richtlinie , Vollzugshinweis , Inkrafttreten ,
+Rechtsanspruch , Konnexität , Leistungserbringung , Leistungsvereinbarung ,
+Vergütungsvereinbarung .
+
+
+For SGB II searches, include both Bürgergeld and Grundsicherungsgeld : the latter has been the
+official benefit name since 1 July 2026, but older documents and local debate will continue to use the
+former. 63
+
+
+Church, civil society and sentiment
+
+Church terms: Dekanat Miesbach , Pfarrverband , Pfarrei , Seelsorge , Seelsorgsraum ,
+Pastoral , Dekanatsreform , Kirchensteuer , Kirchenimmobilie , Immobilienverkauf ,
+Pfarrheim , Zusammenlegung , Stellenplan , Caritas , Gemeindecaritas .
+
+
+Sentiment terms: Bürgerinitiative , Petition , Protest , Widerstand , Kritik , umstritten ,
+Streit , kontrovers , Mehrheit , Gegenstimme , abgelehnt , vertagt , zurückgestellt ,
+Bürgerversammlung , Leserbrief .
+
+
+Geographic entities should always include all 17 municipalities plus Landkreis Miesbach ,
+Tegernseer Tal , Leitzachtal , Oberland , Region 17 , Bezirk Oberbayern ,
+Regionalentwicklung Oberland , Dekanat Miesbach and Dekanat Bad Tölz .
+
+
+
+
+                                                     16
+Core source set and operating calendar
+
+Recommended v1 core
+
+A sensible v1 is 38 sources. The point is not to monitor every potentially relevant website weekly. It is to
+catch high-consequence changes early, while relegating annual reports, specialist research and small-
+organisational calendars to slower cycles.
+
+
+  Core source                          Layer     Why it earns a v1 slot
+
+                                                 One of the 17 political/fiscal decision nodes; replace
+  Bad Wiessee municipal source              1    election page with durable council source once located.
+                                                  16
+
+
+  Bayrischzell Gemeinderat                  1    Current council/leadership baseline.    17
+
+
+                                                 Needed for full territorial coverage; current election
+  Fischbachau official municipal
+                                            1    document is a placeholder pending durable RIS/listing.
+  record
+                                                  18
+
+
+  Gmund Kommunalwahlen/                          Off-cycle mayor means council and administrative changes
+                                            1
+  current Rathaus politics                       may otherwise be overlooked. 19
+
+  Hausham Wahlen/Rathaus                         Particularly relevant because the previous mayor became
+                                            1
+  politics                                       Landrat; local leadership transition matters. 64
+
+                                                 Large municipality and important service/transport node;
+  Holzkirchen Marktgemeinderat              1
+                                                 strong governance source. 21
+
+  Irschenberg council minutes               1    Actual decision text rather than merely composition.         22
+
+
+  Kreuth Gemeinderat                        1    Full territorial coverage; off-cycle mayoral context.   23
+
+
+  Miesbach Stadtrat/Rathaus
+                                            1    County seat and post-election leadership change.        65
+  politics
+
+  Otterfing finance source                  1    Direct fiscal-room signal.   25
+
+
+                                                 Direct fiscal-room signal; also important after 2026 political
+  Schliersee finance source                 1
+                                                 turnover. 26
+
+  Tegernsee Stadtrat                        1    Current council and mayor baseline.     27
+
+
+                                                 Full territorial coverage; replace static election document
+  Valley municipal record                   1
+                                                 with recurring meeting page once verified. 28
+
+                                                 Exemplary high-value municipal endpoint: future dates
+  Waakirchen council sessions               1
+                                                 plus decision trail. 29
+
+                                                 Current political baseline; Warngau also appears in
+  Warngau Gemeinderat                       1
+                                                 LEADER and civil-society signals. 66
+
+
+
+
+                                                       17
+Core source                         Layer   Why it earns a v1 slot
+
+Fachstelle für Soziales und                 The single strongest public structural map of the county's
+                                       2
+Senioren                                    social network. 32
+
+                                            Front door to care-system navigation and a natural source
+Pflegestützpunkt                       2
+                                            of coordination/demand intelligence. 33
+
+                                            Watch institutional formation while it is still “im Aufbau.”
+GesundheitsregionPlus                  2
+                                             34
+
+
+Jobcenter                              2    Direct local exposure to the July 2026 SGB II reform.             67
+
+
+                                            Statutory, decision-relevant and already carrying
+Jugendhilfeausschuss                   2
+                                            population/Kita-demand material. 36
+
+Landkreis Amtsblatt                    2    Formal changes that press feeds can miss.         37
+
+
+Regionalentwicklung Oberland /              Funding awards reveal emerging civil-society and
+                                       2
+LEADER                                      municipal capacity. 39
+
+                                            Active cross-sector provider with seven Miesbach offers
+Diakonie Rosenheim                     3
+                                            and current news. 68
+
+BRK Kreisverband Miesbach              3    Active provider/volunteer-system signal.     43
+
+
+Lebenshilfe Miesbach jobs              3    One of the cleanest local skilled-worker indicators.             69
+
+
+                                            Parish restructuring and local church-network changes.
+Dekanat Miesbach                       4
+                                             13
+
+
+                                            Correct Protestant regional structure for the Miesbach
+Evang.-Luth. Dekanat Bad Tölz          4
+                                            area. 70
+
+Bezirk Oberbayern                           Early view of decisions affecting Eingliederungshilfe, Pflege
+                                       5
+Sitzungstermine                             and financing. 71
+
+Bezirkshaushalt                        5    Bezirksumlage/social-cost pressure.     72
+
+
+Bezirk Sozialberichterstattung         5    Regional indicator layer and emerging dashboards.                 49
+
+
+                                            Highly relevant funding route for Quartier,
+StMAS SeLA                             6
+                                            Nachbarschaftshilfe and sustainability models.              12
+
+
+StMGP funding/PflegesoNah              6    Care-infrastructure grants and rule changes.           73
+
+
+Bayerischer Landtag sessions           6    State legislation and budget/committee milestones.                50
+
+
+StMFH kommunaler
+                                       6    Upstream determinant of local room for manoeuvre.                     74
+Finanzausgleich
+
+                                            Federal rule change with direct Jobcenter implications;
+BMAS SGB II / legislation tracker      7
+                                            future dates exposed. 75
+
+
+
+
+                                                  18
+ Core source                           Layer   Why it earns a v1 slot
+
+                                               Children, youth, seniors, volunteering and Kita funding/
+ BMBFSFJ press releases                   7
+                                               regulation in one current feed-like listing. 76
+
+                                               Needed for conflict, informal politics and civil-society
+ Merkur local reporting                   8    events absent from official records; triangulate rather than
+                                               treat as authoritative. 77
+
+                                               Best verified peer for observing a model becoming a
+ Gemeindeschwester plus                   9
+                                               durable programme. 54
+
+Rottach-Egern and Weyarn should be added to the core the moment satisfactory recurring council/
+news endpoints are pinned down. Their absence above is a source-discovery gap, not a judgment that
+they matter less.
+
+
+For weekly feasibility, the scanner should poll the council/news/provider pages weekly, but only diff low-
+frequency structural pages. Budget/statistics/report pages can be checked monthly during most of the year
+and weekly during known budget or funding windows. This prevents annual reports from generating empty
+weekly noise.
+
+
+The strongest verified sources deliberately left outside the weekly core are Krankenhaus Agatharied
+Presse—important but narrower and event-driven—Caritas München-Freising Geschäftsberichte, best
+on an annual/quarterly watch; AWO Seniorenzentrum Miesbach, Hospizkreis, and Nachbarschaftshilfe
+Warngau, valuable local texture but too narrow to justify weekly priority; the Bezirk publications
+catalogue, where policy documents appear irregularly; and the official population-statistics series, which
+should be ingested when a new release appears rather than scraped weekly. 78
+
+
+Scheduled-event calendar through October 2027
+
+The public record is much better for rolling calendars than for a complete one-year forward schedule. I
+therefore distinguish actual scheduled dates from watch windows. I have not invented 2027 Kreistag/
+Bezirkstag dates that were not visible in the material retrieved.
+
+
+ Date /
+                Event                      Status                  Why the scanner cares
+ window
+
+ 13 Oct         Waakirchen                                         first post-cutoff local agenda in the
+                                           scheduled, verified
+ 2026           Gemeinderat                                        verified municipal calendar. 29
+
+                                                                   useful point for ridership/continuation
+ 25 Oct         end of 2026 MVV
+                                           scheduled, verified     decisions and seasonal-access
+ 2026           BergBus season
+                                                                   evidence. 41
+
+ 31 Oct         PflegesoNah 2026                                   last point for current-round care-
+                                           scheduled, verified
+ 2026           application deadline                               infrastructure applications. 11
+
+ 10 Nov         Waakirchen
+                                           scheduled, verified     local governance/budget signal.      29
+ 2026           Gemeinderat
+
+
+
+
+                                                     19
+  Date /
+                Event                       Status                  Why the scanner cares
+  window
+
+  8 Dec         Waakirchen
+                                            scheduled, verified     likely year-end decision point.   29
+  2026          Gemeinderat
+
+                Landkreis and               watch window,           track Kreisumlage, voluntary-service
+  Nov 2026–
+                municipal 2027 budget       exact dates not all     grants, staffing and project
+  Mar 2027
+                cycle                       published/verified      continuation.
+
+                                                                    2026 budget was adopted in December
+                Bezirk Oberbayern
+  Nov–Dec                                                           2025; use the live Sitzungstermine
+                2027 budget /               watch window
+  2026                                                              page rather than assuming the exact
+                Bezirksumlage process
+                                                                    2027 date. 79
+
+                SeLA applications after                             direct relevance to Quartier/
+                                            verified ongoing
+  rolling       mandatory prior                                     Nachbarschaftshilfe and post-project
+                                            route
+                consultation                                        financing. 12
+
+                Bayerischer Landtag         rolling official
+  through                                                           monitor SGB implementation, social
+                plenary/committee           calendar; 2027
+  2027                                                              policy and funding-rule changes. 50
+                calendar                    plan linked
+
+                further provisions of
+                                                                    second-stage implementation effects
+  1 Aug         13th SGB II
+                                            scheduled, verified     for Jobcenter and related local support
+  2027          amendment enter into
+                                                                    services. 75
+                force
+
+The 2026 Bavarian double budget for 2026/27 was already passed on 23 April 2026, so the next twelve
+months are primarily an implementation period rather than a fresh Land-level annual budget vote. 80
+That means county and municipal reactions to funding rules may be more informative than the Bavarian
+headline budget itself.
+
+
+Gaps and uncertainty
+The largest blind spot is not statistical. It is relational. Public sources can show that a Sozialbeirat or
+Netzwerk Quartiersmanagement exists, but generally do not show who actually comes, who brokers
+disagreements, who shares information by phone before a meeting, whether one organisation routinely
+blocks decisions, or whether a network survives when one key individual leaves. The county's public
+network map is therefore evidence of institutional form, not evidence of network function. 32
+
+
+Caritas and interviews need to supply the following information.
+
+
+  Public-source gap              What needs to be obtained directly
+
+                                 Current steering group, named institutional members, decision rights,
+  Actual Sozialraumlotsen
+                                 escalation path, meeting cadence, project budget, funder, grant end
+  governance
+                                 date, reporting obligations and legal/contractual basis.
+
+
+
+
+                                                      20
+Public-source gap          What needs to be obtained directly
+
+                           Which of the 17 municipalities actively participate; which send political
+Municipal commitment       versus administrative representatives; whether commitments are verbal,
+                           budgetary or contractual; and where resistance exists.
+
+                           Attendance lists for Sozialbeirat, Netzwerk Quartiersmanagement,
+Network attendance and     Ehrenamt, Integration and related forums; cancelled meetings; recurring
+quality                    absences; duplicate memberships; evidence of joint decisions rather
+                           than information exchange.
+
+                           Who sends people to whom, whether referrals are closed-loop, where
+Referral flows             hand-offs fail, how often people are sent to services with no capacity, and
+                           whether the proposed Lotsen role would duplicate existing navigation.
+
+                           Service-level waiting lists, rejected referrals, Aufnahmestopps and unmet
+Unmet demand and
+                           transport needs. Provider websites mostly advertise what is offered, not
+waiting time
+                           who could not be served.
+
+                           Vacancy age, unsuccessful recruitment rounds, sick leave, turnover, use
+                           of temporary staff and whether capacity is being reduced because posts
+Workforce persistence
+                           cannot be filled. Public job boards reveal vacancies but not the full
+                           denominator.
+
+                           Actual Leistungs-/Vergütungsvereinbarungen, deficits on commissioned
+Service-contract           services, cross-subsidy, cost-sharing among Landkreis/Bezirk/
+economics                  municipalities and what providers would cease doing without voluntary
+                           contributions.
+
+                           Which datasets exist; who owns them; aggregation level; legal bases;
+                           interoperability; update cycle; protected fields; whether Caritas can
+Data architecture
+                           receive anonymised/aggregated extracts; and which “platforms” are
+                           technically present but operationally unused.
+
+                           User numbers, update frequency, search logs and reasons professionals/
+Existing-platform use      residents bypass directories. The client's “existing platforms go unused”
+                           hypothesis cannot be verified from a public landing page.
+
+                           Private positions of new mayors/councillors and senior administrators;
+                           what each would be willing to fund after the three-year project; whether
+Political robustness
+                           there is cross-party support strong enough to survive the next election
+                           cycle.
+
+Church assets and          Planned use/sale of parish property, room availability, volunteer capacity,
+decisions below diocesan   personnel reductions and whether Pfarrverbände would host local
+headline level             coordination functions.
+
+                           Whether Caritas wants permanent Trägerschaft, a neutral moderation
+Caritas's desired end-     mandate, a commissioning role, a hosted inter-municipal office, or
+state                      eventually to hand the function to Landkreis/municipalities. These imply
+                           very different monitoring criteria.
+
+
+
+
+                                               21
+     Public-source gap              What needs to be obtained directly
+
+                                    What would demonstrate that coordination has improved: referral
+                                    completion, network density, reduced search time, fewer duplicated
+     Outcome definition
+                                    offers, improved access, increased early intervention, municipal
+                                    satisfaction, or something else.
+
+                                    Minimum permanent staffing and annual cost that the system would
+     Funding-cliff tolerance        require after project funding, and the maximum contribution each
+                                    institutional actor could realistically carry.
+
+There are also research-source gaps in this first register. Layer 8 is the weakest: I did not finish current
+endpoint verification for the requested Thünen-Institut, BBSR, DZA, IAB, DJI, Berlin-Institut, Bertelsmann
+Wegweiser Kommune and trade-press set ( neue caritas , NDV , Wohlfahrt intern ,
+Sozialwirtschaft ), nor for BR24 Oberbayern, Das Gelbe Blatt and Tegernseer Stimme as recurring
+listing pages. These are strong candidates, but because the brief explicitly says to open every listed URL and
+not invent feeds, I have left them plausible, unverified rather than presenting remembered URLs as
+checked sources.
+
+
+The same applies to several Layer-6/7 umbrella organisations requested in the brief—Bayerischer
+Landkreistag, Bayerischer Gemeindetag, Freie Wohlfahrtspflege Bayern, Landes-Caritasverband,
+Deutscher Verein, BAGFW, Deutscher Caritasverband and Deutscher Landkreistag—and to the current
+federal health-ministry endpoint. They are substantively obvious scanner candidates, but their exact current
+listing/feed endpoints were not all independently reopened here and therefore are not falsely marked
+verified.
+
+
+The peer-case layer is intentionally narrow. Gemeindeschwester plus is the strongest verified
+continuation case because the programme itself publicly documents the transition from model to
+Verstetigung to Landesprogramm. 54 Austrian Community Nursing and Präventionsketten add useful
+comparative material, but I am less certain about direct institutional transferability to rural Upper Bavaria. I
+am still less certain about the requested English link-worker and Dutch neighbourhood-team comparisons
+because I did not obtain sufficiently current primary-source evidence on post-project financing and
+institutional survival in this pass.
+
+
+Finally, the project-specific public record remains the largest factual uncertainty. I found enough evidence to
+map the landscape around “Interkommunale Sozialraumlotsen,” but not enough public material to verify
+the project's own network, contracts, financing, steering arrangements or intended
+Verstetigungsmodell. That is precisely where the horizon scanner should not substitute inference for
+interviews. The public record can tell Caritas when the environment is changing; Caritas and its partners will
+have to provide the private institutional facts needed to judge whether the coordination model is actually
+becoming durable.
+
+
+
+ 1    Gemeinden / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Landkreis/Gemeinden/
+
+ 2    Kommunalwahlen 2026 / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Landratsamt-und-Politik/Kommunalwahlen-2026/
+
+
+
+
+                                                          22
+ 3   182 Miesbach, Lkr. – Ergebnisse der Personenwahl - Kommunalwahlen 2026
+https://kommunalwahl2026.bayern.de/personenwahl/stichwahl/182.html
+
+ 4   182125 Miesbach, St. – Ergebnisse der Personenwahl - Kommunalwahlen 2026
+https://www.kommunalwahl2026.bayern.de/personenwahl/stichwahl/182125.html
+
+ 5   17   Bayrischzell | Gemeinderat |
+https://gemeinde.bayrischzell.de/de/rathaus/politik/gemeinderat
+
+ 6   32   59   Fachstelle für Soziales und Senioren / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Fachstelle-f%C3%BCr-
+Soziales-und-Senioren/index.php
+
+ 7   33   Unser Service / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Betreuung-und-FQA/
+Pflegest%C3%BCtzpunkt/Unser-Service-/index.php
+
+ 8   60   72   Bezirkshaushalt / Bezirk Oberbayern
+https://www.bezirk-oberbayern.de/Der-Bezirk-Oberbayern/Finanzen/Bezirkshaushalt
+
+ 9 74 FÜRACKER: RUND 5 MILLIARDEN EURO SCHLÜSSELZUWEISUNGEN UND RUND 3,9 MILLIARDEN
+
+EURO ZUSÄTZLICHE INVESTITIONSMITTEL FÜR BAYERNS KOMMUNEN
+https://www.stmfh.bayern.de/internet/stmf/aktuelles/pressemitteilungen/26106/
+
+10   53   63   Verbindlichkeit, Eigenverantwortung und Mitwirkung stärken - BMAS
+https://www.bmas.de/DE/Service/Presse/Pressemitteilungen/2026/umgestaltung-der-grundsicherung-tritt-in-kraft.html
+
+11 73 Gerlach: Bayern investiert weiter gezielt in den Ausbau von Pflegeplätzen – 2026 bislang 1.600
+
+Pflegeplätze mit rund 76,6 Millionen Euro über das Programm „PflegesoNah“ gefördert – Seit 2020 bereits
+über 10.000 Pflegeplätze gefördert - Bayerisches Staatsministerium für Gesundheit, Pflege und Prävention
+https://www.stmgp.bayern.de/gerlach-bayern-investiert-weiter-gezielt-in-den-ausbau-von-pflegeplaetzen-2026-bislang-1-600-
+pflegeplaetze-mit-rund-766-millionen-euro-ueber-das-programm-pflegesonah-gefo/
+
+12   52Infos zur Förderrichtlinie „Selbstbestimmt Leben im Alter“ (SeLA) - Bayerisches Staatsministerium für
+Familie, Arbeit und Soziales
+https://www.stmas.bayern.de/themen/wohnen-im-alter/SeLA/foerderrichtlinie-sela.php
+
+13   62   Dekanat Miesbach
+https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien/
+dekanat-miesbach
+
+14 https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-
+pfarrverbaende-pfarreien
+https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien
+
+15   47   70   Willkommen im Dekanat Bad Tölz | Evang.- Luth. Dekanat Bad Tölz
+https://www.evangelisch-im-oberland.de/
+
+16   Links zu Ergebnissen der Kommunalwahl 2026 / Gemeinde Bad Wiessee
+https://www.gemeinde.bad-wiessee.de/Aktuelles/Pressemitteilungen/Links-zu-Ergebnissen-der-Kommunalwahl-2026.php?
+FID=3732.2690.1&ModID=255
+
+18   gemeinde.fischbachau.de
+https://gemeinde.fischbachau.de/fileadmin/Dateien/Dateien/Rathaus/Bekanntmachung_Wahlergebnis_GR.pdf
+
+
+
+
+                                                             23
+19   Ergebnisse und Informationen zu den Kommunalwahlen 2026 / Gemeinde Gmund
+https://www.gemeinde.gmund.de/Rathaus-B%C3%BCrgerservice/Politik/Kommunalwahlen-2026/index.php
+
+20   64   Gemeinde Hausham | Wahlen |
+https://www.hausham.de/de/rathaus/gemeindeverwaltung/wahlen
+
+21   Markt Holzkirchen - Rathaus | Markt Holzkirchen - Wir liegen richtig
+https://www.holzkirchen.de/de/Ihr-Rathaus/Kommunalpolitik/Gemeinderat
+
+22   Niederschrift
+https://irschenberg.de/sitzungsprotokoll-juni-2026
+
+23   Gemeinderat / Gemeinde Kreuth
+https://gemeinde.kreuth.de/Rathaus-B%C3%BCrgerservice/Politik/Gemeinderat/index.php
+
+24   65   Ergebnisse Stadtratswahl in Stadt Miesbach
+https://www.miesbach.de/wahlen/kommunalwahl2026/stadtratswahl/index.html
+
+25   Haushalt der Gemeinde Otterfing Gemeinde Otterfing 2026
+https://www.otterfing.de/wp-content/uploads/2026/04/Haushalt-2026-rechtskraeftig.pdf
+
+26   Rathaus Schliersee | Haushalt 2026 – Vorbericht
+https://rathaus.schliersee.de/marktverwaltung/finanzverwaltung/haushalt-2026-vorbericht/
+
+27   Stadtrat / Stadt Tegernsee
+https://www.stadt.tegernsee.de/Rathaus-B%C3%BCrgerservice/Politik-Stadtrat/Stadtrat/?La=1
+
+28   gemeinde-valley.de
+https://www.gemeinde-valley.de/fileadmin/Gemeinde/downloads/bekanntmachungen/Wahlen/Kommunalwahl_2026/
+Gemeinderat_Ergebnis.pdf
+
+29   31   Gemeinde Waakirchen | Sitzungen Gemeinderat |
+https://www.waakirchen.de/de/rathaus/politik/sitzungen-gemeinderat-1
+
+30   66   Warngau: Mitglieder
+https://www.warngau.de/buergerservice-politik/gemeinderat/mitglieder
+
+34   GesundheitsregionPlus / Landkreis Miesbach
+https://www.landkreis-miesbach.de/index.php?NavID=2823.780
+
+35   67   Jobcenter - Leistung / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Arbeit-und-Soziales/
+Jobcenter-Leistung/
+
+36   Sitzung des Jugendhilfeausschusses / Landkreis Miesbach
+https://www.landkreis-miesbach.de/index.php?FID=2823.5993.1&ModID=7&object=tx%2C2716.5
+
+37   Amtsblatt / Landkreis Miesbach
+https://www.landkreis-miesbach.de/index.php?NavID=2716.26
+
+38   78   Presse
+https://www.khagatharied.de/news/presse/
+
+39   LEADER | Regionalentwicklung Oberland
+https://www.regionalentwicklung-oberland.de/leader/
+
+
+
+
+                                                            24
+40   61   Pressemitteilungen / Landkreis Miesbach
+https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Aktuelles-und-Presse-/Pressemitteilungen/
+Mobilit%C3%A4tskonzept-Jetzt-wird-s-konkret.php?FID=2823.5195.1&ModID=7&NavID=2716.7.1&object=tx%2C2716.5
+
+41  Der Berg ruft? Der BergBus kommt! Münchner BergBus fährt auch im Jahr 2026 und wird immer
+beliebter
+https://www.mvv-muenchen.de/mvv-im-ueberblick/die-gesellschaft/presse/pressemeldung/10-jahre-mvv-handy-und-onlineticket-
+eine-echte-erfolgsstory-1/
+
+42   68   Diakonisches Werk des Evang.-Luth- Dekanatsbezirks Rosenheim e. V.
+https://dwro.de/
+
+43   Aktuelles - Kreisverband Miesbach
+https://www.kvmiesbach.brk.de/start/aktuelles/aktuelle-meldungen/aktuelles.html
+
+44   Lebenshilfe Miesbach
+https://www.lebenshilfe-miesbach.de/
+
+45   AWO-Seniorenzentrum Miesbach | AWO Oberbayern e.V.
+https://www.gesundheitsportal.awo-obb.de/mehr/senioren/einrichtung/awo-seniorenzentrum-miesbach
+
+46   Geschäftsberichte | Caritas München und Oberbayern
+https://der-caritasverband.caritas-nah-am-naechsten.de/de/geschaeftsberichte
+
+48   71   79   Sitzungen / Bezirk Oberbayern
+https://www.bezirk-oberbayern.de/Sitzungstermine
+
+49   Sozialberichterstattung_1 / Bezirk Oberbayern
+https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung/?La=1
+
+50   Sitzungen | Bayerischer Landtag
+https://www.bayern.landtag.de/en/aktuelles/sitzungen/
+
+51   A1200C 202642
+https://www.statistik.bayern.de/mam/produkte/veroffentlichungen/statistische_berichte/a1200c_202642.pdf
+
+ 54 Das Landesprogramm Gemeindeschwester plus . Ministerium für Arbeit, Soziales, Frauen, Familie und
+
+Jugend
+https://masffj.rlp.de/themen/soziales/gut-leben-im-alter/gemeindeschwester-plus
+
+55   4661637473686565742057656974657266FC6872756E6720434E32303235
+https://cn-oesterreich.at/system/files/inline-files/Factsheet_Weiterf%C3%BChrungCN2025_v2.pdf
+
+56   Kinder- und Jugendhilfe Miesbach
+https://dwro.de/standorte/einrichtung/kinder-und-jugendhilfe-miesbach/
+
+57   Lebenshilfe Miesbach
+https://www.lebenshilfe-miesbach.de/einrichtungen/offene-behindertenarbeit-lebensmut
+
+58   Sozialplanung / Bezirk Oberbayern
+https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung-neu/
+
+69   Lebenshilfe Miesbach
+https://www.lebenshilfe-miesbach.de/jobs/
+
+
+
+
+                                                             25
+75   Gesetz zur Umgestaltung der Grundsicherung für Arbeitsuchende - BMAS
+https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/13-gesetz-zur-aenderung-zweiten-buch-sozialgesetzbuch-und-
+anderer-gesetze.html
+
+76   Pressemitteilungen - BMBFSFJ
+https://www.bmbfsfj.bund.de/bmbfsfj/aktuelles/pressemitteilungen
+
+77   15 Initiativen erhalten den Sozialpreis des Landkreises
+https://www.merkur.de/lokales/region-miesbach/schliersee-ort29415/15-initiativen-erhalten-den-sozialpreis-des-
+landkreises-94135389.html
+
+80 FÜRACKER: 168,5 MILLIARDEN EURO FÜR BAYERNS ZUKUNFT – DOPPELHAUSHALT 2026/2027 IM
+LANDTAG BESCHLOSSEN
+https://www.stmfh.bayern.de/internet/stmf/aktuelles/pressemitteilungen/26225/
+
+
+
+
+                                                              26
+
