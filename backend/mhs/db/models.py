@@ -79,9 +79,47 @@ class Source(Base):
     # method=diff: the normalised main text last seen, and its hash. First sight is a baseline.
     snapshot_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     snapshot_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # "catalogue" (data/sources.yaml) | "suggestion" (adopted from a SourceSuggestion). The
+    # catalogue loader never prunes a suggestion source: it is in no catalogue by design.
+    origin: Mapped[str] = mapped_column(String(12), default="catalogue", server_default="catalogue")
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
 
     feed_items: Mapped[list["FeedItem"]] = relationship(back_populates="source")
+
+
+class SourceSuggestion(Base):
+    """A source proposed by the weekly web-searching scout. Stored only after a live
+    verification verdict: "pending" (verified, adopted at adopt_after unless declined) or
+    "rejected" (did not verify; reason says why). Adoption re-verifies: "adopted" or "failed".
+    Declined is final. Every row, whatever its status, keeps its URL out of later proposals."""
+
+    __tablename__ = "source_suggestions"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=new_uuid)
+    # Canonical form (mhs.collect.canonical.canonical_url) of the URL the scout proposed.
+    url: Mapped[str] = mapped_column(String(2048), unique=True)
+    name: Mapped[str] = mapped_column(String(300))
+    layer: Mapped[str] = mapped_column(String(32))  # vocab.LAYERS
+    scope: Mapped[str] = mapped_column(String(16))  # vocab.SCOPES
+    authority: Mapped[str] = mapped_column(String(16), default="medium")
+    places: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)  # seeded place names only
+    rationale_de: Mapped[str] = mapped_column(Text)
+    rationale_en: Mapped[str] = mapped_column(Text)
+    method: Mapped[str | None] = mapped_column(String(16), nullable=True)  # rss | page, from the verdict
+    feed_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    items_at_check: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # pending | adopted | declined | rejected | failed
+    status: Mapped[str] = mapped_column(String(12), default="pending", index=True)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    model: Mapped[str] = mapped_column(String(64))
+    suggested_at: Mapped[datetime] = mapped_column(default=utcnow)
+    adopt_after: Mapped[datetime] = mapped_column(index=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    source_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("sources.id", ondelete="SET NULL"), nullable=True
+    )
+
+    source: Mapped["Source | None"] = relationship()
 
 
 class FeedItem(Base):

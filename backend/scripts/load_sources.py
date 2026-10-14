@@ -48,9 +48,12 @@ async def upsert_sources(session: AsyncSession, rows: list[SourceRow]) -> tuple[
 
 
 async def prune_sources(session: AsyncSession, keep_slugs: set[str]) -> int:
+    # Adopted suggestions are in no catalogue by design (mhs.suggest); only the catalogue's own
+    # rows are pruned.
     result = await session.execute(
         delete(Source)
         .where(Source.slug.not_in(keep_slugs))
+        .where(Source.origin != "suggestion")
         .where(~exists().where(FeedItem.source_id == Source.id))
     )
     await session.commit()

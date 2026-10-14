@@ -38,6 +38,18 @@ class Settings(BaseSettings):
     report_hour_local: int = 18
     report_timezone: str = "Europe/Berlin"
 
+    # --- self-updating sources (weekly suggestions) ---------------------------
+    # Verified live 2026-10-14: claude-sonnet-5-5 + web_search_20260209 + output_config json_schema
+    # in one call (29 s, 3 searches). Proposals are verified by fetching them; a pending
+    # suggestion is re-verified and adopted after suggest_adopt_after_days unless declined.
+    suggest_model: str = "claude-sonnet-5-5"  # verified 2026-10-14
+    suggest_web_search_tool: str = "web_search_20260209"  # verified 2026-10-14
+    suggest_max_candidates: int = 8
+    suggest_web_search_max_uses: int = 8
+    suggest_adopt_after_days: int = 7
+    suggest_weekday: str = "mon"
+    suggest_hour_local: int = 6  # report_timezone (Europe/Berlin)
+
     # --- analysis -----------------------------------------------------------
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     # Cosine distance under which two signals are the same story from different
