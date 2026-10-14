@@ -164,3 +164,34 @@ async def test_digests_latest(client, seeded):
     assert r.status_code == 200
     body = r.json()
     assert body["sections"][0]["items"][0]["signal"]["headline_en"] == "New SeLA call"
+
+
+async def test_run_cycle_button_says_running_while_another_process_holds_the_cycle(client, engine, monkeypatch):
+    # Wrong: the button only knows its own process's task, so while the scheduler or the CLI
+    # runs a cycle it says "Zyklus gestartet" and the started cycle silently does nothing.
+    from sqlalchemy import text
+
+    from mhs import cycle as cycle_mod
+
+    started = []
+
+    async def fake_cycle(factory):
+        started.append(True)
+
+    monkeypatch.setattr(cycle_mod, "run_cycle", fake_cycle)
+    await _login(client)
+    other = await (await engine.connect()).execution_options(isolation_level="AUTOCOMMIT")
+    try:
+        assert await other.scalar(text("SELECT pg_try_advisory_lock(:k)"), {"k": cycle_mod.CYCLE_LOCK})
+        r = await client.post("/api/cycle/run")
+        assert r.status_code == 200 and r.json()["started"] is False
+    finally:
+        await other.invalidate()
+        await other.close()
+    import asyncio
+    await asyncio.sleep(0)
+    assert started == []
+    r = await client.post("/api/cycle/run")
+    assert r.json()["started"] is True
+    await asyncio.sleep(0)
+    assert started == [True]

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from mhs import cycle as cycle_mod
 from mhs.db.models import Cycle, Signal, Source, Story
@@ -69,3 +69,64 @@ async def test_next_cycle_repairs_a_signal_written_with_a_future_date(db_session
     await cycle_mod.run_cycle(session_factory)
     assert await _published(db_session, sig.id) == created
     assert len((await db_session.execute(select(Cycle))).scalars().all()) == 2
+
+
+# --- one cycle at a time, across processes (API task, scheduler job, CLI) -------------------
+
+async def _hold(engine, key):
+    """Take the advisory lock the way another process would: on a connection of its own."""
+    conn = await engine.connect()
+    conn = await conn.execution_options(isolation_level="AUTOCOMMIT")
+    assert await conn.scalar(text("SELECT pg_try_advisory_lock(:k)"), {"k": key})
+    return conn
+
+
+async def _drop(conn):
+    """End that session as a crashed process would (back in the pool, it would keep the lock)."""
+    await conn.invalidate()
+    await conn.close()
+
+
+async def test_a_cycle_does_not_start_while_another_process_runs_one(db_session, session_factory, engine, stub_stages):
+    # Wrong: only the API's in-process guard; the scheduler job or the CLI would collect and pay
+    # for extraction a second time and write every new item's signal twice.
+    other = await _hold(engine, cycle_mod.CYCLE_LOCK)
+    try:
+        c = await cycle_mod.run_cycle(session_factory)
+        assert stub_stages == []
+        assert c.error == "another cycle is running" and c.finished_at is not None
+        assert (await db_session.execute(select(Cycle))).scalars().all() == []  # nothing to show as "last cycle"
+    finally:
+        await _drop(other)
+
+    c = await cycle_mod.run_cycle(session_factory)
+    assert c.error is None and "collect" in stub_stages
+
+
+async def test_the_cycle_lock_is_released_after_a_run(db_session, session_factory, engine, stub_stages):
+    await cycle_mod.run_cycle(session_factory)
+    probe = await _hold(engine, cycle_mod.CYCLE_LOCK)  # asserts the try-lock succeeds
+    await _drop(probe)
+
+
+async def test_a_report_does_not_start_while_another_report_runs_but_a_cycle_does_not_block_it(
+        db_session, session_factory, engine, monkeypatch):
+    calls = []
+
+    async def fake_report(session):
+        calls.append("report")
+        return None
+
+    monkeypatch.setattr(cycle_mod, "write_report", fake_report)
+    other = await _hold(engine, cycle_mod.REPORT_LOCK)
+    try:
+        assert await cycle_mod.run_report(session_factory) is None
+        assert calls == []
+    finally:
+        await _drop(other)
+    cycle_running = await _hold(engine, cycle_mod.CYCLE_LOCK)
+    try:
+        await cycle_mod.run_report(session_factory)
+        assert calls == ["report"]
+    finally:
+        await _drop(cycle_running)

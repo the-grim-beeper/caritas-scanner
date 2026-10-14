@@ -438,14 +438,19 @@ def _spawn(name: str, coro) -> dict:
 
 
 @router.post("/cycle/run")
-async def trigger_cycle() -> dict:
-    from mhs.cycle import run_cycle
+async def trigger_cycle(session: AsyncSession = Depends(get_session)) -> dict:
+    from mhs import cycle
 
-    return _spawn("cycle", run_cycle(session_factory()))
+    # The scheduler and scripts/run_cycle.py run cycles outside _running; the lock sees them.
+    if await cycle.lock_held(session, cycle.CYCLE_LOCK):
+        return {"started": False, "reason": "cycle already running"}
+    return _spawn("cycle", cycle.run_cycle(session_factory()))
 
 
 @router.post("/cycle/report")
-async def trigger_report() -> dict:
-    from mhs.cycle import run_report
+async def trigger_report(session: AsyncSession = Depends(get_session)) -> dict:
+    from mhs import cycle
 
-    return _spawn("report", run_report(session_factory()))
+    if await cycle.lock_held(session, cycle.REPORT_LOCK):
+        return {"started": False, "reason": "report already running"}
+    return _spawn("report", cycle.run_report(session_factory()))
