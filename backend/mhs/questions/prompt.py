@@ -58,9 +58,11 @@ WHAT COUNTS
 
 QUOTE — checked by machine: a judgement whose quote is not found verbatim in that signal's
 text is discarded.
-- Copy `quote` verbatim from the signal: one contiguous passage, character for character, at
-  least a full clause. No ellipses, no paraphrase, no translation, no corrected spelling, no
-  added quotation marks.
+- Copy `quote` verbatim from the signal: one contiguous passage from ONE of its texts (the
+  original title, the original text, the scanner headline or the scanner summary — never
+  joined across two of them), character for character, at least a full clause of three words
+  or more. No ellipses, no paraphrase, no translation, no corrected spelling, no added
+  quotation marks.
 - The quote must itself show the evidence. Quote the original title or text wherever it
   states it; quote the scanner's German headline or summary only when the original shown
   does not. The quote is in the language of the text, normally German.

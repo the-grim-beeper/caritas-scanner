@@ -83,6 +83,48 @@ def test_too_short_quote_rejected():
     assert kept == [] and problems
 
 
+@pytest.mark.parametrize("quote", ["DES LANDKREISES", "Kreisumlageerhöhung beschlossen", "Die Umlage steigt"])
+def test_generic_or_short_phrases_rejected(quote):
+    # Review fix 5: a two-word phrase or a stub under 20 characters is a keyword hit, not evidence.
+    text = "Im Haushalt DES LANDKREISES: Kreisumlageerhöhung beschlossen. Die Umlage steigt um zwei Punkte."
+    kept, problems = validate_judgements({"judgements": [_j(quote=quote)]}, signal_texts={"s1": text},
+                                         question_ids={"q01"})
+    assert kept == [] and problems
+    kept, _ = validate_judgements({"judgements": [_j(quote="Die Umlage steigt um zwei Punkte")]},
+                                  signal_texts={"s1": text}, question_ids={"q01"})
+    assert len(kept) == 1
+
+
+def test_quote_straddling_two_fields_rejected():
+    # Review fix 3: the end of the headline glued to the start of the summary is not a passage
+    # of the source, even though the joined text contains it.
+    fields = ["Gemeinde verhängt Haushaltssperre", "Für freiwillige Leistungen gibt es kein Geld."]
+    raw = {"judgements": [_j(quote="verhängt Haushaltssperre Für freiwillige Leistungen")]}
+    kept, problems = validate_judgements(raw, signal_texts={"s1": fields}, question_ids={"q01"})
+    assert kept == [] and problems
+    raw = {"judgements": [_j(quote="Für freiwillige Leistungen gibt es kein Geld")]}
+    kept, problems = validate_judgements(raw, signal_texts={"s1": fields}, question_ids={"q01"})
+    assert len(kept) == 1 and not problems
+
+
+def test_stored_quote_is_the_source_span_not_the_models_spelling():
+    # Review fix 4: the client sees the quote as verbatim evidence, so it must be the source's
+    # characters (ß, case, „“), not the model's normalised-equal rendering of them.
+    text = "Der Gemeinderat nennt die Hauptstraße „gefährlich für Senioren“ und fordert Tempo 30."
+    raw = {"judgements": [_j(question_id="q08", quote='die hauptstrasse "gefährlich für senioren"')]}
+    kept, problems = validate_judgements(raw, signal_texts={"s1": text}, question_ids={"q08"})
+    assert not problems
+    assert kept[0].quote == "die Hauptstraße „gefährlich für Senioren“"
+
+
+def test_source_span_survives_line_breaks_ligatures_and_decomposed_umlauts():
+    text = "Die Stelle der Koordinatorin\nbleibt  seit März unbesetzt; die Ofﬁce-Zeiten sinken."
+    raw = {"judgements": [_j(question_id="q06", quote="bleibt seit März unbesetzt; die Office-Zeiten sinken")]}
+    kept, problems = validate_judgements(raw, signal_texts={"s1": text}, question_ids={"q06"})
+    assert not problems
+    assert kept[0].quote == "bleibt  seit März unbesetzt; die Ofﬁce-Zeiten sinken"
+
+
 def test_bad_direction_strength_and_missing_language_rejected():
     raw = {"judgements": [_j(direction="up"), _j(strength="huge"), _j(rationale_de=" "), _j(rationale_en="")]}
     kept, problems = validate_judgements(raw, signal_texts={"s1": TEXT}, question_ids={"q01"})

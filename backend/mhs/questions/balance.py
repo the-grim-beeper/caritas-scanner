@@ -68,14 +68,22 @@ def balance_series(judgements: list[tuple[date, str, int]], *, weeks: int, today
 
 
 def movement(series: list[WeekPoint]) -> str:
-    """"for" | "against" | "mixed" | "quiet", read over the last four weeks: quiet without
-    evidence; mixed when both directions arrived and the balance is still under 1; otherwise
-    the sign of the latest balance."""
+    """"for" | "against" | "mixed" | "quiet", read from the judgements of the last four weeks:
+    none → quiet; all one way → that way (whatever older evidence left in the balance); both
+    ways → mixed while the balance is under 1, otherwise the balance's sign."""
     recent = series[-MOVEMENT_WEEKS:]
     if not recent or sum(p.n for p in recent) == 0:
         return "quiet"
+    n_for = sum(p.n_for for p in recent)
+    n_against = sum(p.n_against for p in recent)
+    if n_for and not n_against:
+        return "for"
+    if n_against and not n_for:
+        return "against"
     b = recent[-1].balance
-    both = sum(p.n_for for p in recent) > 0 and sum(p.n_against for p in recent) > 0
-    if (both and abs(b) < MIXED_BELOW) or b == 0:
+    if n_for and n_against:
+        if abs(b) < MIXED_BELOW:
+            return "mixed"
+    elif b == 0:  # points built without sign counts: only the balance is known
         return "mixed"
     return "for" if b > 0 else "against"

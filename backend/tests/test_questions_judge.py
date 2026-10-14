@@ -250,6 +250,65 @@ async def test_new_judge_model_rereads_and_replaces_the_old_reading(db_session, 
     assert sig.judged_by == settings.judge_model
 
 
+async def test_mock_run_never_touches_a_live_judged_signal(db_session):
+    # Review fix 1: with no key the current model is "mock"; "judged_by != mock" would select
+    # every live-judged signal, delete its paid judgements and write keyword ones instead.
+    await _questions(db_session)
+    sig = await _signal(db_session, "Kreistag Miesbach beschließt höhere Kreisumlage für 2027")
+    sig.judged_by, sig.judged_at = settings.judge_model, datetime.now(timezone.utc)
+    db_session.add(Judgement(signal_id=sig.id, question_id="q01", direction="against", strength="strong", weight=3,
+                             quote="beschließt höhere Kreisumlage für 2027", rationale_de="a", rationale_en="b",
+                             model=settings.judge_model))
+    await db_session.commit()
+    stats = await judge_pending(db_session)  # conftest: no key, mock mode
+    assert stats.judged == 0
+    js = await _judgements(db_session)
+    assert [(j.model, j.question_id, j.direction) for j in js] == [(settings.judge_model, "q01", "against")]
+    await db_session.refresh(sig)
+    assert sig.judged_by == settings.judge_model
+
+
+async def test_live_quote_straddling_headline_and_summary_is_dropped(db_session, monkeypatch):
+    # Review fix 3: each field is a separate text; a quote must lie wholly within one of them.
+    from mhs.questions import judge
+
+    await _questions(db_session)
+    await _signal(db_session, "Gemeinde verhängt Haushaltssperre", "Für freiwillige Leistungen gibt es kein Geld.",
+                  title="Haushalt 2027", text="Der Gemeinderat tagte am Montag.")
+    _live(monkeypatch)
+
+    async def fake_live(system, user):
+        return {"judgements": [{"signal_id": "s1", "question_id": "q01", "direction": "for", "strength": "strong",
+                                "quote": "verhängt Haushaltssperre Für freiwillige Leistungen",
+                                "rationale_de": "a", "rationale_en": "b"}]}
+
+    monkeypatch.setattr(judge, "_judge_live", fake_live)
+    stats = await judge_pending(db_session)
+    assert stats.judged == 1 and stats.judgements == 0 and stats.dropped == 1
+    assert await _judgements(db_session) == []
+
+
+async def test_live_stores_the_source_span_verbatim(db_session, monkeypatch):
+    # Review fix 4: the stored quote is the source's own characters, not the model's string.
+    from mhs.questions import judge
+
+    await _questions(db_session)
+    await _signal(db_session, "Hauptstraße bleibt ohne Busanbindung",
+                  text="Der Gemeinderat nennt die Hauptstraße „gefährlich für Senioren“ und fordert einen Rufbus.")
+    _live(monkeypatch)
+
+    async def fake_live(system, user):
+        return {"judgements": [{"signal_id": "s1", "question_id": "q08", "direction": "for", "strength": "weak",
+                                "quote": 'die hauptstrasse "gefährlich für senioren"',
+                                "rationale_de": "a", "rationale_en": "b"}]}
+
+    monkeypatch.setattr(judge, "_judge_live", fake_live)
+    stats = await judge_pending(db_session)
+    assert stats.judgements == 1
+    (j,) = await _judgements(db_session)
+    assert j.quote == "die Hauptstraße „gefährlich für Senioren“"
+
+
 async def test_wrong_shape_is_retried_once(db_session, monkeypatch):
     from mhs.questions import judge
 

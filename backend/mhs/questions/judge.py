@@ -31,6 +31,7 @@ log = logging.getLogger(__name__)
 ALWAYS_JUDGED_LAYERS: tuple[str, ...] = ("vergleich", "bund", "freistaat")
 JUDGE_CONCURRENCY = 4
 SHAPE_ATTEMPTS = 2  # a wrong-shape payload is retried once
+MOCK_MODEL = "mock"
 
 
 @dataclass
@@ -43,16 +44,23 @@ class JudgeStats:
 
 
 def current_model() -> str:
-    return settings.judge_model if settings.llm_enabled else "mock"
+    return settings.judge_model if settings.llm_enabled else MOCK_MODEL
+
+
+def signal_fields(s: Signal) -> list[str]:
+    """Every text a quote may come from, each on its own: a quote must lie wholly within one.
+    The source item's own title and text first, so the stored span is the source's wherever
+    it says the same thing; then the scanner's headline and summary in both languages.
+    Needs `feed_item` loaded."""
+    item = s.feed_item
+    parts = (item.title if item else None, item.summary if item else None,
+             s.headline_de, s.summary_de, s.headline_en, s.summary_en)
+    return [p for p in parts if p]
 
 
 def signal_text(s: Signal) -> str:
-    """Everything a quote may come from: the scanner's headline and summary in both
-    languages and the source item's own title and text. Needs `feed_item` loaded."""
-    item = s.feed_item
-    parts = (s.headline_de, s.summary_de, s.headline_en, s.summary_en,
-             item.title if item else None, item.summary if item else None)
-    return "\n".join(p for p in parts if p)
+    """The fields joined with newlines — what the mock reads, sentence by sentence."""
+    return "\n".join(signal_fields(s))
 
 
 async def _judge_live(system: list[dict], user: str) -> dict:
@@ -83,7 +91,7 @@ class _Outcome:
 
 
 async def _run_batch(
-    batch: list[tuple[str, Signal]], texts: dict[str, str], system: list[dict], question_ids: set[str],
+    batch: list[tuple[str, Signal]], fields: dict[str, list[str]], system: list[dict], question_ids: set[str],
     sem: asyncio.Semaphore, abort: _Abort,
 ) -> _Outcome:
     user = prompt.user_message(batch)
@@ -92,7 +100,10 @@ async def _run_batch(
             if abort.reason:
                 return _Outcome(batch)
             try:
-                raw = await _judge_live(system, user) if settings.llm_enabled else mock_judge(texts)
+                if settings.llm_enabled:
+                    raw = await _judge_live(system, user)
+                else:
+                    raw = mock_judge({lid: "\n".join(f) for lid, f in fields.items()})
             except (LLMAuthError, LLMRequestError) as exc:
                 abort.reason = f"{type(exc).__name__}: {exc}"
                 log.error("judge aborted: %s", exc)
@@ -101,7 +112,7 @@ async def _run_batch(
                 log.warning("judge batch failed: %s", exc)
                 return _Outcome(batch)
             try:
-                kept, problems = validate_judgements(raw, signal_texts=texts, question_ids=question_ids)
+                kept, problems = validate_judgements(raw, signal_texts=fields, question_ids=question_ids)
             except JudgementShapeError as exc:
                 log.warning("judge payload in the wrong shape (attempt %d/%d): %s", attempt, SHAPE_ATTEMPTS, exc)
                 continue
@@ -110,13 +121,18 @@ async def _run_batch(
 
 
 async def _pending(session: AsyncSession, model: str, limit: int) -> list[Signal]:
+    # A new live model re-reads what an older model (or the mock) judged. The mock re-reads
+    # nothing: run without a key, it must never replace a paid reading with keyword hits.
+    unread = Signal.judged_by.is_(None)
+    if model != MOCK_MODEL:
+        unread = or_(unread, Signal.judged_by != model)
     stmt = (
         select(Signal)
         .outerjoin(Source, Source.id == Signal.source_id)
         .options(selectinload(Signal.source), selectinload(Signal.feed_item))
         .where(
             Signal.is_founder.is_(True),
-            or_(Signal.judged_by.is_(None), Signal.judged_by != model),
+            unread,
             or_(Signal.regional_relevance >= settings.judge_min_relevance,
                 Source.layer.in_(ALWAYS_JUDGED_LAYERS)),
         )
@@ -145,16 +161,16 @@ async def judge_pending(session: AsyncSession, *, limit: int | None = None) -> J
     system = prompt.system_blocks(questions)
     question_ids = {q.id for q in questions}
     size = max(1, settings.judge_batch_size)
-    batches: list[tuple[list[tuple[str, Signal]], dict[str, str]]] = []
+    batches: list[tuple[list[tuple[str, Signal]], dict[str, list[str]]]] = []
     for start in range(0, len(signals), size):
         # Batch-local ids (s1, s2, …): nothing for the model to mistype, and an id from
         # another batch cannot validate.
         batch = [(f"s{i}", s) for i, s in enumerate(signals[start:start + size], start=1)]
-        batches.append((batch, {lid: signal_text(s) for lid, s in batch}))
+        batches.append((batch, {lid: signal_fields(s) for lid, s in batch}))
 
     sem = asyncio.Semaphore(JUDGE_CONCURRENCY if settings.llm_enabled else 64)
     abort = _Abort()
-    outcomes = await asyncio.gather(*(_run_batch(b, t, system, question_ids, sem, abort) for b, t in batches))
+    outcomes = await asyncio.gather(*(_run_batch(b, f, system, question_ids, sem, abort) for b, f in batches))
     stats.aborted = abort.reason
 
     now = utcnow()
