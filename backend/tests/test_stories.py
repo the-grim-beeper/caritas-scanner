@@ -21,7 +21,7 @@ def _near(vec: list[float], eps: float = 0.02) -> list[float]:
 
 
 async def _src(db_session, slug):
-    s = Source(slug=slug, name=slug, layer="editorial", authority="high", scope="region", method="rss",
+    s = Source(slug=slug, name=slug, layer="medien", authority="high", scope="landkreis", method="rss",
                url=f"https://{slug}.test/f", collect=True)
     db_session.add(s)
     await db_session.flush()
@@ -30,7 +30,7 @@ async def _src(db_session, slug):
 
 async def _signal(db_session, src, vec, headline="x", when=None):
     sig = Signal(source_id=src.id, headline_en=headline, headline_de=headline, signal_type="announcement",
-                 authority=1.0, regional_relevance=1.0, economic_materiality=0.5, forward_lag=0.7,
+                 authority=1.0, regional_relevance=1.0, consequence=0.5, forward_lag=0.7,
                  embedding=vec, published_at=when or utcnow())
     db_session.add(sig)
     await db_session.flush()
@@ -40,17 +40,17 @@ async def _signal(db_session, src, vec, headline="x", when=None):
 async def test_near_signal_joins_story_and_distinct_sources_counts_only_new_outlets(db_session):
     # Wrong: corroboration_count and distinct_sources both increment on every join,
     # so two items from the same outlet look like independent confirmation.
-    a, b = await _src(db_session, "mm"), await _src(db_session, "rnz")
+    a, b = await _src(db_session, "merkur"), await _src(db_session, "br24")
     base = _unit(1)
-    s1 = await _signal(db_session, a, base, "BASF investiert")
+    s1 = await _signal(db_session, a, base, "Kreisumlage steigt")
     d1 = await stories.assign(db_session, s1, threshold=0.22)
     assert d1.founded and s1.is_founder
 
-    s2 = await _signal(db_session, b, _near(base), "BASF kündigt Investition an")
+    s2 = await _signal(db_session, b, _near(base), "Kreistag erhöht Kreisumlage")
     d2 = await stories.assign(db_session, s2, threshold=0.22)
     assert not d2.founded and d2.story_id == d1.story_id and not s2.is_founder
 
-    s3 = await _signal(db_session, b, _near(base, 0.03), "BASF-Investition: Details")
+    s3 = await _signal(db_session, b, _near(base, 0.03), "Kreisumlage: Details")
     await stories.assign(db_session, s3, threshold=0.22)
 
     story = await db_session.get(Story, d1.story_id)
@@ -60,7 +60,7 @@ async def test_near_signal_joins_story_and_distinct_sources_counts_only_new_outl
 
 
 async def test_far_signal_founds_a_new_story_with_full_novelty(db_session):
-    a = await _src(db_session, "mm")
+    a = await _src(db_session, "merkur")
     s1 = await _signal(db_session, a, _unit(1))
     await stories.assign(db_session, s1, threshold=0.22)
     s2 = await _signal(db_session, a, _unit(2))
@@ -70,7 +70,7 @@ async def test_far_signal_founds_a_new_story_with_full_novelty(db_session):
 
 
 async def test_corroboration_has_zero_novelty_and_story_score_is_max_of_members(db_session):
-    a, b = await _src(db_session, "mm"), await _src(db_session, "rnz")
+    a, b = await _src(db_session, "merkur"), await _src(db_session, "br24")
     base = _unit(3)
     s1 = await _signal(db_session, a, base)
     await stories.assign(db_session, s1, threshold=0.22)
@@ -82,7 +82,7 @@ async def test_corroboration_has_zero_novelty_and_story_score_is_max_of_members(
 
 
 async def test_old_signals_outside_window_do_not_absorb_new_ones(db_session):
-    a = await _src(db_session, "mm")
+    a = await _src(db_session, "merkur")
     base = _unit(4)
     old = await _signal(db_session, a, base, when=utcnow() - timedelta(days=40))
     await stories.assign(db_session, old, threshold=0.22)

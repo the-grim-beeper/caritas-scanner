@@ -6,7 +6,7 @@ from mhs import vocab
 DIGEST_SCHEMA = {
     "type": "object",
     "properties": {
-        "lead_en": {"type": "string", "description": "3–4 sentences: what moved this cycle and why it matters for the region. English."},
+        "lead_en": {"type": "string", "description": "3–4 sentences: what moved this cycle and why it matters for social provision in the county. English."},
         "lead_de": {"type": "string", "description": "Same lead in German."},
         "sections": {
             "type": "array",
@@ -34,7 +34,7 @@ DIGEST_SCHEMA = {
         },
         "chains": {
             "type": "array",
-            "description": "Cross-layer links the analyst sees between signals (e.g. research → incubator → funding → corporate).",
+            "description": "Cross-layer links the analyst sees between signals (e.g. Bezirksumlage → county budget → municipal grant cut).",
             "items": {
                 "type": "object",
                 "properties": {

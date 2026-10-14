@@ -14,15 +14,29 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://mhs:mhs@localhost:5441/mhs"
 
     # --- models -------------------------------------------------------------
+    # Verified 2026-10-14 against models.list plus one structured-output call each.
+    # Re-check before changing: `.venv/bin/python scripts/check_models.py`.
     anthropic_api_key: str | None = None
     # One call per feed item, so price dominates here.
-    extraction_model: str = "claude-haiku-4-5"
-    # One call per cycle, and the thing the reader actually reads.
-    digest_model: str = "claude-opus-5"
-    digest_fallback_model: str = "claude-sonnet-5"
-    # Guards a runaway bill on a bad feed day rather than tuning throughput.
-    max_extractions_per_cycle: int = 1500
+    extraction_model: str = "claude-haiku-5-5"  # verified 2026-10-14 (models.list + structured call)
+    # Batches of signals against the 15 questions; over-inclusion is the failure to avoid.
+    judge_model: str = "claude-sonnet-5-5"  # verified 2026-10-14
+    # One call per week (the Lagebericht), and the thing the reader actually reads.
+    digest_model: str = "claude-opus-5-5"  # verified 2026-10-14
+    digest_fallback_model: str = "claude-sonnet-5-5"  # verified 2026-10-14
+    # Guards a runaway bill on a bad feed day (and the 60-day first backfill).
+    max_extractions_per_cycle: int = 600
     extraction_concurrency: int = 8
+
+    # --- judge (the 15 monitoring questions) ---------------------------------
+    judge_batch_size: int = 10
+    # Founders below this regional relevance are not judged (vergleich/bund/freistaat excepted).
+    judge_min_relevance: float = 0.3
+
+    # --- weekly report (Lagebericht) -----------------------------------------
+    report_weekday: str = "thu"
+    report_hour_local: int = 18
+    report_timezone: str = "Europe/Berlin"
 
     # --- analysis -----------------------------------------------------------
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -44,6 +58,15 @@ class Settings(BaseSettings):
     # items (list pages) are kept — a missing date is not evidence of age.
     max_item_age_days: int = 60
     user_agent: str = "Mozilla/5.0 (compatible; MiesbachScanner/0.1; +https://pharosfutures.com)"
+    # method=query: Google News RSS search; {q} is the URL-encoded query.
+    query_url_template: str = "https://news.google.com/rss/search?q={q}+when:60d&hl=de&gl=DE&ceid=DE:de"
+    # method=pdf: new PDFs per source per cycle, and how much of each is read.
+    max_pdfs_per_source: int = 5
+    max_pdf_bytes: int = 15_000_000
+    max_pdf_pages: int = 12
+    max_pdf_chars: int = 20_000
+    # method=diff: the added/removed lines handed to extraction.
+    max_diff_chars: int = 6000
 
     # --- data ---------------------------------------------------------------
     # Repo-relative by default; the Docker image sets DATA_DIR=/data.

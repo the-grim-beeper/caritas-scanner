@@ -13,7 +13,7 @@ from pydantic import BaseModel, ValidationError, field_validator, model_validato
 
 from mhs import vocab
 
-COLLECTED_METHODS = ("rss", "page")
+COLLECTED_METHODS = vocab.COLLECTED_METHODS
 
 
 class CatalogueError(ValueError):
@@ -36,6 +36,7 @@ class CatalogueEntry(BaseModel):
     notes: str | None = None
     brief_ref: str | None = None
     item_selector: str | None = None
+    query: str | None = None
 
     @field_validator("layer")
     @classmethod
@@ -73,8 +74,16 @@ class CatalogueEntry(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _needs_a_url(self) -> "CatalogueEntry":
-        if self.method in COLLECTED_METHODS and not (self.url or self.homepage):
+    def _needs_a_target(self) -> "CatalogueEntry":
+        # query searches for its expression; diff and pdf watch one exact page; rss and page
+        # may still be autodiscovered from a homepage.
+        if self.method == "query":
+            if not (self.query and self.query.strip()):
+                raise ValueError(f"{self.slug}: query source needs a query")
+        elif self.method in ("diff", "pdf"):
+            if not self.url:
+                raise ValueError(f"{self.slug}: {self.method} source needs a url")
+        elif self.method in COLLECTED_METHODS and not (self.url or self.homepage):
             raise ValueError(f"{self.slug}: {self.method} source needs a url or a homepage")
         return self
 
@@ -82,7 +91,7 @@ class CatalogueEntry(BaseModel):
 @dataclass(frozen=True)
 class LiveResult:
     slug: str
-    method: str  # what actually resolved: rss or page
+    method: str  # what actually resolved
     resolved_url: str
     item_count: int
     checked_at: datetime | None = None
@@ -107,6 +116,7 @@ class SourceRow:
     notes: str | None
     brief_ref: str | None
     item_selector: str | None
+    query: str | None
     collect: bool
     not_collected_reason: str | None
     items_at_check: int | None
@@ -156,6 +166,7 @@ def merge_for_load(entries: list[CatalogueEntry], live: dict[str, LiveResult]) -
             slug=e.slug, name=e.name, layer=e.layer, authority=e.authority, scope=e.scope,
             places=list(e.places), language=e.language, homepage=e.homepage, priority=e.priority,
             cadence=e.cadence, notes=e.notes, brief_ref=e.brief_ref, item_selector=e.item_selector,
+            query=e.query,
         )
         if e.method not in COLLECTED_METHODS:
             rows.append(SourceRow(**common, method=e.method, url=e.url, collect=False,

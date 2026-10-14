@@ -21,7 +21,7 @@ DATA = Path(__file__).resolve().parents[2] / "data"
 _FIELDS = (
     "name", "layer", "authority", "scope", "places", "language", "method", "url", "homepage",
     "priority", "cadence", "notes", "brief_ref", "item_selector", "collect",
-    "not_collected_reason", "items_at_check",
+    "not_collected_reason", "items_at_check", "query",
 )
 
 
@@ -56,6 +56,7 @@ async def upsert_entities(session: AsyncSession, seeds) -> int:
             session.add(ent)
             n += 1
         ent.kind, ent.name, ent.aliases, ent.seeded = s.kind, s.name, list(s.aliases), True
+        ent.actor_kind = s.actor_kind
     await session.commit()
     return n
 

@@ -5,6 +5,7 @@ from pathlib import Path
 import httpx
 import respx
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from mhs.cycle import run_cycle
 from mhs.db.models import Cycle, Digest, Signal, Source, Story, TrendCell
@@ -17,13 +18,15 @@ DATA = Path(__file__).resolve().parents[2] / "data"
 @respx.mock
 async def test_mock_cycle_produces_signals_stories_trends_and_a_digest(db_session, session_factory, monkeypatch):
     from scripts.load_sources import upsert_entities
+    from mhs import config
     from mhs.analyse import embedding
 
+    monkeypatch.setattr(config.settings, "max_item_age_days", 36500)  # fixed fixture dates must not age out
     await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
-    a = Source(slug="mm-wirtschaft", name="MM Wirtschaft", layer="editorial", authority="high", scope="region",
-               method="rss", url="https://mm.test/a.xml", collect=True)
-    b = Source(slug="mm-unternehmen", name="MM Unternehmen", layer="editorial", authority="high", scope="region",
-               method="rss", url="https://mm.test/b.xml", collect=True)
+    a = Source(slug="merkur-miesbach", name="Merkur Region Miesbach", layer="medien", authority="medium",
+               scope="landkreis", method="rss", url="https://mm.test/a.xml", collect=True)
+    b = Source(slug="merkur-holzkirchen", name="Merkur Holzkirchen", layer="medien", authority="medium",
+               scope="landkreis", method="rss", url="https://mm.test/b.xml", collect=True)
     db_session.add_all([a, b])
     await db_session.commit()
     respx.get("https://mm.test/a.xml").mock(return_value=httpx.Response(200, content=(FIX / "feed_a.xml").read_bytes()))
@@ -48,8 +51,11 @@ async def test_mock_cycle_produces_signals_stories_trends_and_a_digest(db_sessio
     assert cycle.signals == 2 and cycle.stories_new == 2
     assert cycle.digest_ok is True and cycle.finished_at is not None
 
-    signals = (await db_session.execute(select(Signal))).scalars().all()
+    signals = (await db_session.execute(select(Signal).options(selectinload(Signal.topics)))).scalars().all()
     assert all(s.embedding is not None and s.story_id is not None for s in signals)
+    by_topic = {t.topic_code: s for s in signals for t in s.topics}
+    assert "umlagen" in by_topic and "pflege" in by_topic
+    assert by_topic["umlagen"].consequence > 0 and by_topic["umlagen"].regional_relevance == 1.0
     assert (await db_session.execute(select(Story))).scalars().all()
     assert (await db_session.execute(select(TrendCell))).scalars().all()
     digest = (await db_session.execute(select(Digest))).scalar_one()

@@ -1,12 +1,19 @@
 from mhs.analyse.scoring import ScoreComponents, score, story_confidence
 
 
-def test_score_is_the_briefs_product_and_zero_when_any_factor_is_zero():
+def test_score_is_the_specs_product_and_zero_when_any_factor_is_zero():
     # Wrong: a weighted sum, which would let a retrospective item (forward_lag=0) score.
-    c = ScoreComponents(authority=1.0, regional_relevance=0.8, novelty=0.5, economic_materiality=0.5, forward_lag=0.0)
+    c = ScoreComponents(authority=1.0, regional_relevance=0.8, novelty=0.5, consequence=0.5, forward_lag=0.0)
     assert score(c) == 0.0
-    c2 = ScoreComponents(authority=0.7, regional_relevance=1.0, novelty=1.0, economic_materiality=0.5, forward_lag=1.0)
+    c2 = ScoreComponents(authority=0.7, regional_relevance=1.0, novelty=1.0, consequence=0.5, forward_lag=1.0)
     assert abs(score(c2) - 0.35) < 1e-9
+
+
+def test_consequence_is_a_factor_not_a_bonus():
+    # Wrong: consequence left out of the product after the rename.
+    lo = ScoreComponents(authority=1.0, regional_relevance=1.0, novelty=1.0, consequence=0.3, forward_lag=1.0)
+    hi = ScoreComponents(authority=1.0, regional_relevance=1.0, novelty=1.0, consequence=0.9, forward_lag=1.0)
+    assert abs(score(hi) / score(lo) - 3.0) < 1e-9
 
 
 def test_confidence_halves_the_remaining_doubt_per_distinct_source():

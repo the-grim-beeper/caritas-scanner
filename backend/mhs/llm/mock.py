@@ -1,6 +1,7 @@
 """Deterministic mock extraction and digest, used when no API key is set and by
-the tests. Rules, not guesses: vocabulary keywords, the entity dictionary, the
-forward-lag rubric and the police-blotter rule from the brief."""
+the tests. Rules, not guesses: keywords from the brief's German filter lexicon
+(docs/brief/source-architecture.txt, pp. 14–16), the entity dictionary, and the
+not-a-signal guard (sport, leisure, police blotter, weather, church services)."""
 from __future__ import annotations
 
 import re
@@ -11,55 +12,112 @@ from mhs.config import settings
 from mhs.entities import load_seed
 from mhs.extract.schema import EventDraft, ExtractionResult
 
-# --- topic keywords (lower-cased substring match, DE + EN) ----------------------
-TOPIC_KEYWORDS: dict[str, tuple[str, ...]] = {
-    "CAPEX": ("investiert", "investition", "capex", "neue anlage", "neubau", "ausbau", "errichtet"),
-    "FDI": ("ausländische", "foreign investment", "ansiedlung", "siedelt sich an", "headquarter"),
-    "corporate-expansion": ("expansion", "erweitert", "expandiert", "neuer standort", "vergrößert", "wächst"),
-    "corporate-contraction": ("stellenabbau", "abgebaut", "schließt", "schließung", "verkauft", "divestment", "veräußert", "stilllegung"),
-    "jobs": ("arbeitsplätze", "stellen", "beschäftigte", "jobs", "fachkräfte", "mitarbeiter"),
-    "startup": ("start-up", "startup", "gründer", "gründung", "spin-off", "ausgründung", "inkubator", "accelerator", "roadshow"),
-    "funding-round": ("finanzierungsrunde", "seed", "series a", "series b", "venture", "investoren", "wagniskapital", "business angel"),
-    "grant": ("zuschuss", "förderung", "fördermittel", "gefördert", "förderprogramm", "stipendium", "preis "),
-    "EU-funding": ("eu-förder", "efre", "horizon europe", "eic ", "cordis", "europäische kommission", "eu-mittel"),
-    "public-procurement": ("ausschreibung", "vergabe", "auftrag vergeben", "tender", "procurement"),
-    "commercial-real-estate": ("gewerbefläche", "büro", "logistikimmobilie", "gewerbegebiet", "immobilienmarkt", "mietfläche", "gewerbeimmobilie"),
-    "housing": ("wohnungen", "wohnungsbau", "wohnraum", "mieten", "housing"),
-    "planning-permit": ("bebauungsplan", "genehmigung", "planfeststellung", "flächennutzungsplan", "baugenehmigung", "planverfahren"),
-    "brownfield": ("konversion", "brachfläche", "patrick-henry", "franklin", "phv", "ehemalige kaserne", "conversion"),
-    "rail": ("bahn", "schiene", "gleis", "riedbahn", "s-bahn", "ice", "bahnhof"),
-    "road": ("autobahn", "bundesstraße", "b37", "b38", "a5", "a6", "a61", "a65", "straßenbau"),
-    "bridge": ("brücke", "bruecke", "bridge"),
-    "public-transport": ("öpnv", "straßenbahn", "stadtbahn", "rnv", "vrn", "buslinie", "nahverkehr"),
-    "port-logistics": ("hafen", "logistik", "umschlag", "binnenschiff", "container"),
-    "energy": ("energie", "strom", "gaskraftwerk", "solar", "windkraft", "erneuerbare", "energy", "netzausbau"),
-    "hydrogen": ("wasserstoff", "hydrogen", "elektrolyse", "h2 "),
-    "CCS": ("ccs", "ccus", "co2-abscheidung", "carbon capture", "kohlenstoffabscheidung"),
-    "district-heating": ("fernwärme", "wärmenetz", "flusswärmepumpe", "district heating", "wärmeplanung"),
-    "digital-infrastructure": ("glasfaser", "breitband", "rechenzentrum", "5g", "digitalisierung", "smart region", "data center"),
-    "life-sciences": ("biotech", "pharma", "klinische", "onkologie", "krebs", "life science", "medizin", "therapie", "labor"),
-    "chemicals": ("chemie", "basf", "chemiekonzern", "verbund", "chemical"),
-    "AI": ("künstliche intelligenz", "ki-", "ki ", " ki", "artificial intelligence", " ai ", "machine learning"),
-    "public-policy": ("gesetz", "verordnung", "regulierung", "bundesregierung", "landesregierung", "politik", "gemeinderat", "kreistag", "beschließt", "beschluss", "haushalt"),
-    "tax": ("steuer", "gewerbesteuer", "abgabe", "tax"),
-    "skills": ("ausbildung", "fachkräftemangel", "qualifizierung", "weiterbildung", "hochschule", "studiengang", "upskilling"),
-    "research-infrastructure": ("forschungszentrum", "forschungsbau", "labor", "institut", "exzellenz", "reallabor", "campus"),
+# --- topic keywords (lower-cased, prefix-bounded: see _has) ---------------------
+# A keyword matches at the start of a word, so compounds that END in it need their own
+# entry ("kreisumlage" beside "umlage"); in return "kita" does not fire inside "Skitag".
+_TOPIC_KEYWORDS: dict[str, tuple[str, ...]] = {
+    # struktur
+    "koordination": ("koordination", "koordinierung", "vernetzung", "netzwerk", "runder tisch", "runden tisch",
+                     "arbeitskreis", "sozialbeirat", "steuerungsgruppe", "lenkungsgruppe", "versorgungskonferenz",
+                     "pflegekonferenz", "psag"),
+    "steuerung": ("trägerschaft", "mandat", "zweckvereinbarung", "kooperationsvereinbarung", "geschäftsordnung",
+                  "federführend", "institutionelle verankerung"),
+    "verstetigung": ("verstetig", "regelfinanzierung", "dauerhaft", "überführt", "regelangebot"),
+    "interkommunal": ("interkommunal", "gemeindeübergreifend", "trägerübergreifend", "ressortübergreifend",
+                      "zweckverband"),
+    "quartier": ("quartier", "sozialraum", "nachbarschaft", "dorfgemeinschaft"),
+    "daten": ("sozialbericht", "sozialplanung", "statistik", "bedarfsanalyse", "bedarfsplanung", "erhebung",
+              "monitoring"),
+    "kirchenstruktur": ("dekanat", "pfarrverband", "pfarrverbände", "pfarrei", "seelsorgsraum", "kirchenimmobilie",
+                        "pfarrheim", "kirchensteuer"),
+    "traegerwandel": ("fusion", "fusioniert", "zusammengelegt", "zusammenlegung", "schließung", "schließt",
+                      "insolvenz", "neugründung", "aufgelöst", "trägerwechsel"),
+    # personal
+    "fachkraefte": ("fachkräfte", "fachkraft", "personalmangel", "personalengpass", "pflegefachkraft",
+                    "pflegefachkräfte", "sozialpädagog", "erzieher", "krankheitsausfall", "fluktuation"),
+    "stellen": ("stellenanzeige", "stellenausschreibung", "stellenplan", "stellenstreichung", "vakant", "unbesetzt",
+                "nachbesetzung", "neu besetzt", "projektstelle"),
+    "leitung": ("leitungswechsel", "neue leitung", "geschäftsführung", "geschäftsführer", "einrichtungsleitung",
+                "bereichsleitung", "ruhestand", "amtsantritt", "nachfolger"),
+    "ehrenamt": ("ehrenamt", "nachbarschaftshilfe", "freiwillig", "bürgerschaftlich"),
+    # bedarf
+    "pflege": ("pflege", "senioren", "tagespflege", "kurzzeitpflege", "pflegestützpunkt", "pflegeheim",
+               "altenheim", "demenz", "pflegende angehörige", "häusliche pflege", "ambulante pflege", "hospiz"),
+    "jugend-familie": ("jugendhilfe", "jugendamt", "kita", "kinderbetreuung", "hilfen zur erziehung",
+                       "erziehungsberatung", "familienstützpunkt", "jugendarbeit", "schulbegleitung",
+                       "kindergarten", "krippe"),
+    "eingliederung": ("eingliederungshilfe", "inklusion", "inklusiv", "behinderung", "behindertenarbeit", "bthg"),
+    "psyche": ("psychisch", "psychiatr", "psychosozial", "suchtberatung", "suchthilfe", "suchtkrank",
+               "krisendienst", "depression"),
+    "armut": ("armut", "altersarmut", "grundsicherung", "bürgergeld", "tafel", "schuldnerberatung",
+              "sozialhilfe", "wohngeld"),
+    "wohnen": ("wohnungsnot", "wohnraum", "sozialwohnung", "wohnungsbau", "obdachlos", "wohnungslos",
+               "betreutes wohnen"),
+    "integration": ("integration", "migration", "geflüchtete", "flüchtling", "asyl", "zuwander", "sprachkurs"),
+    "teilhabe": ("teilhabe", "einsamkeit", "einsam", "begegnungsstätte", "seniorentreff", "mehrgenerationenhaus"),
+    "gesundheit": ("krankenhaus", "klinik", "hausarzt", "hausärzt", "ärztemangel", "gesundheitsversorgung",
+                   "gesundheitsregion", "notaufnahme", "community nurs", "gemeindeschwester"),
+    "mobilitaet": ("öpnv", "buslinie", "rufbus", "mvv", "bergbus", "fahrdienst", "barrierefrei", "bürgerbus",
+                   "mitfahrbank", "fahrplan", "taktverdichtung", "fahrtausfall", "on-demand", "erreichbarkeit"),
+    "demografie": ("demograf", "demograph", "bevölkerungsentwicklung", "bevölkerungsprognose", "alterung",
+                   "überalterung", "geburtenzahl"),
+    # geld
+    "haushalt": ("haushalt", "kreishaushalt", "nachtragshaushalt", "defizit", "konsolidierung", "kürzung",
+                 "kürzt", "kürzen", "gekürzt", "einsparung", "deckungslücke", "freiwillige leistung"),
+    "umlagen": ("kreisumlage", "bezirksumlage", "umlage", "hebesatz", "hebesätz", "schlüsselzuweisung",
+                "finanzausgleich"),
+    "foerderung": ("förder", "zuschuss", "zuschüss", "zuwendung", "sela", "pflegesonah", "leader", "esf",
+                   "aktion mensch", "kofinanzierung", "eigenanteil"),
+    "foerderende": ("förderende", "auslauf", "läuft aus", "anschlussförderung", "anschlussfinanzierung",
+                    "befristet", "förderperiode"),
+    "vereinbarungen": ("leistungsvereinbarung", "vergütungsvereinbarung", "vergütung", "pflegesatz", "pflegesätze",
+                       "rahmenvertrag", "entgelt"),
+    # regeln
+    "gesetzgebung": ("gesetz", "referentenentwurf", "verordnung", "richtlinie", "inkrafttreten", "tritt in kraft",
+                     "rechtsanspruch", "konnexität", "kabinettsbeschluss", "bundestag", "bundesrat"),
+    "sgb": ("sgb", "bürgergeld", "grundsicherung", "sozialgesetzbuch", "pflegereform", "bthg"),
+    "landesprogramm": ("landesprogramm", "staatsministerium", "stmas", "stmgp", "sela", "pflegesonah"),
+    # stimmung
+    "politik": ("kommunalwahl", "bürgermeisterwahl", "landratswahl", "stichwahl", "gewählt", "wahlkampf",
+                "fraktion"),
+    "kontroverse": ("bürgerinitiative", "bürgerbegehren", "petition", "protest", "widerstand", "kritik",
+                    "kritisiert", "umstritten", "streit", "kontrovers", "abgelehnt", "vertagt"),
 }
 
-# Road/bridge/disruption items count only when they name an artery on the project list.
-_CONDITIONAL_TOPICS = {"road", "bridge"}
-_LEISURE = ("krimi", "spiel", "konzert", "festival", "fußball", "fussball", "derby", "kino", "theater",
-            "wandern", "tanzen", "sprechstunde", "ausstellung", "fest ", "kirmes", "weihnacht")
-_DISRUPTION = ("gesperrt", "sperrung", "vollsperrung", "störung", "ausfall", "unfall", "brand")
-_PAST = ("rückblick", "bilanz", "hat ", "hatte", "wurde", "wurden", "abgeschlossen", "eröffnet worden")
+# Any of these and the item is not a signal, whatever else it mentions.
+_NOT_A_SIGNAL = ("fußball", "fussball", "tsv ", "derby", "konzert", "festival", "polizei", "unfall", "wetter",
+                 "gottesdienst")
+
+# Ahead of the decision (forward_lag 0.7) rather than an ongoing or past matter (0.4).
+_FORWARD = ("beschließt", "plant", "soll", "künftig", "ab 2027", "antrag", "frist")
+_FORWARD_YEAR = re.compile(r"\bab 20\d\d\b")
+
+# The form of the development; first match wins.
+_TYPE_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("funding_call", ("förderaufruf", "antragsfrist", "bewerbungsfrist", "bewerbungsschluss", "förderrichtlinie")),
+    ("budget", ("haushalt", "kreishaushalt", "nachtragshaushalt", "kreisumlage", "bezirksumlage", "umlage",
+                "hebesatz")),
+    ("service_change", ("öffnungszeit", "aufnahmestopp", "warteliste", "verkürzt", "schließt", "schließung",
+                        "eröffnet", "eröffnung", "neues angebot", "eingestellt")),
+    ("staffing", ("personalmangel", "fachkräftemangel", "stellenanzeige", "stellenausschreibung", "nachbesetzung",
+                  "vakant", "unbesetzt", "neue leitung", "leitungswechsel", "ruhestand", "nachfolger")),
+    ("decision", ("beschließt", "beschluss", "beschlossen", "verabschiedet", "genehmigt", "abgelehnt")),
+    ("planning", ("plant", "planung", "konzept", "entwurf")),
+    ("disruption", ("fahrtausfall", "ausfall", "streik", "störung", "notstand")),
+    ("data_release", ("sozialbericht", "statistik", "zahlen", "bericht", "erhebung")),
+    ("research", ("studie", "forschung", "untersuchung", "evaluation")),
+    ("position", ("fordert", "warnt", "kritisiert", "positionspapier", "stellungnahme", "appell")),
+)
 
 _DATE_RE = re.compile(r"(\d{1,2})\.(\d{1,2})\.(\d{4})")
-_DEADLINE_CUES = ("bewerbungsschluss", "bewerbungsfrist", "frist", "bis zum", "deadline", "einsendeschluss", "anmeldeschluss", "endet am")
-_EVENT_CUES = ("roadshow", "veranstaltung", "konferenz", "kongress", "messe", "tag ", "investor", "pitch", "sitzung", "forum", "summit", "workshop")
+_DEADLINE_CUES = ("anmeldeschluss", "antragsfrist", "bewerbungsfrist", "bewerbungsschluss", "einsendeschluss",
+                  "frist", "bis zum", "endet am", "deadline")
+_EVENT_CUES = ("sitzung", "tagt", "fachtag", "veranstaltung", "konferenz", "workshop", "infoabend",
+               "informationsabend", "bürgerversammlung", "versammlung", "treffen", "forum")
 
 
 def _has(text: str, kw: str) -> bool:
-    """Prefix-bounded: "bahn" matches "Bahnhof" but not "Fahrbahn" or "Autobahn"."""
+    """Prefix-bounded: "pflege" matches "Pflegestützpunkt" but not "Landschaftspflege"."""
     return re.search(rf"(?<![\wäöüß]){re.escape(kw.strip())}", text) is not None
 
 
@@ -68,28 +126,28 @@ def _any(text: str, kws) -> bool:
 
 
 @lru_cache
-def _dictionary() -> dict[str, list[tuple[str, str]]]:
-    """kind -> [(lowercased alias, canonical name)], longest alias first."""
-    out: dict[str, list[tuple[str, str]]] = {}
+def _dictionary() -> list[tuple[str, str, str]]:
+    """[(lower-cased name or alias, kind, canonical name)] across all kinds, longest first."""
+    out: list[tuple[str, str, str]] = []
     for seed in load_seed(settings.resolved_data_dir() / "entities.yaml"):
-        names = [seed.name, *seed.aliases]
-        for n in names:
-            out.setdefault(seed.kind, []).append((n.lower(), seed.name))
-    for kind in out:
-        out[kind].sort(key=lambda t: -len(t[0]))
+        for n in (seed.name, *seed.aliases):
+            if len(n) >= 3:
+                out.append((n.lower(), seed.kind, seed.name))
+    out.sort(key=lambda t: -len(t[0]))
     return out
 
 
-def _find_entities(text: str, kind: str) -> list[str]:
-    """Aliases are lower-cased; match against lower-cased text, word-bounded."""
+def _find_entities(text: str) -> dict[str, list[str]]:
+    """Exact name/alias matches, word-bounded. Longest first, and a matched span is blanked
+    so "Miesbach" is not found again inside "Landkreis Miesbach" or "Caritas-Zentrum Miesbach"."""
     text = text.lower()
-    found: list[str] = []
-    for alias, name in _dictionary().get(kind, []):
-        if len(alias) < 3:
-            continue
-        if re.search(rf"(?<![\w-]){re.escape(alias)}(?![\w-])", text):
-            if name not in found:
-                found.append(name)
+    found: dict[str, list[str]] = {}
+    for alias, kind, name in _dictionary():
+        pattern = rf"(?<![\w-]){re.escape(alias)}(?![\w-])"
+        if re.search(pattern, text):
+            if name not in found.setdefault(kind, []):
+                found[kind].append(name)
+            text = re.sub(pattern, lambda m: " " * len(m.group(0)), text)
     return found
 
 
@@ -112,14 +170,13 @@ def _events(text_lower: str, text_orig: str, title: str) -> tuple[EventDraft, ..
     start: date | None = None
     for pos, d in dates:
         window = text_lower[max(0, pos - 40):pos]
-        if any(c in window for c in _DEADLINE_CUES) and deadline is None:
-            deadline = d
+        if any(c in window for c in _DEADLINE_CUES):
+            deadline = deadline or d
         elif start is None:
             start = d
     if start is None and deadline is None:
         return ()
-    is_eventish = any(c in text_lower for c in _EVENT_CUES)
-    if not is_eventish and deadline is None:
+    if deadline is None and not _any(text_lower, _EVENT_CUES):
         return ()
     return (EventDraft(name=title[:400], start_date=start, deadline=deadline),)
 
@@ -128,51 +185,20 @@ def mock_extract(title: str, summary: str, source_layer: str) -> ExtractionResul
     text_orig = f"{title}\n{summary or ''}"
     text = text_orig.lower()
 
-    hits = [code for code, kws in TOPIC_KEYWORDS.items() if _any(text, kws)]
-    projects = _find_entities(text_orig, "project")
-    places = _find_entities(text_orig, "place")
-    organisations = _find_entities(text_orig, "organisation")
-
-    # The police-blotter rule: road/bridge/disruption items need a named artery.
-    if not projects:
-        hits = [h for h in hits if h not in _CONDITIONAL_TOPICS]
-    disrupted = _any(text, _DISRUPTION)
-    leisure = _any(text, _LEISURE)
-    substantive = [h for h in hits if h not in ("public-policy",)] or projects
-    is_signal = bool(substantive) and not (leisure and len(hits) <= 1 and not projects)
-    if disrupted and not projects and not [h for h in hits if h not in _CONDITIONAL_TOPICS]:
-        is_signal = False
-    if not is_signal:
+    topics = [code for code, kws in _TOPIC_KEYWORDS.items() if _any(text, kws)]
+    if not topics or _any(text, _NOT_A_SIGNAL):
         return ExtractionResult(is_signal=False)
 
-    # signal type
-    if _any(text, ("förderaufruf", "bewerbungsfrist", "bewerbungsschluss", "call for", "stipendium", "ausschreibung der förderung")):
-        stype, lag = "funding_call", 1.0
-    elif _any(text, ("ausschreibung", "vergabe", "tender")):
-        stype, lag = "tender", 1.0
-    elif _any(text, ("bebauungsplan", "planfeststellung", "planverfahren", "genehmigung")):
-        stype, lag = "planning", 0.9
-    elif _any(text, ("beschließt", "beschluss", "gemeinderat", "kreistag", "verabschiedet")):
-        stype, lag = "decision", 0.6
-    elif disrupted:
-        stype, lag = "disruption", 0.4
-    elif _any(text, ("investiert", "investition", "millionen", "milliarden")):
-        stype, lag = "investment", 0.7
-    elif _any(text, _EVENT_CUES) and _dates(text_orig):
-        stype, lag = "event", 0.7
-    elif _any(text, ("studie", "forschung", "forscher", "wissenschaftler", "veröffentlicht in")):
-        stype, lag = "research", 0.4
-    elif _any(text, ("warnt", "fordert", "kritisiert", "positionspapier")):
-        stype, lag = "position", 0.5
-    elif _any(text, ("konjunktur", "umfrage", "bericht", "zahlen", "statistik")):
-        stype, lag = "data_release", 0.3
+    entities = _find_entities(text_orig)
+    places = entities.get("place", [])
+    events = _events(text, text_orig, title)
+    if any(ev.start_date for ev in events) and _any(text, _EVENT_CUES):
+        stype = "event"
     else:
-        stype, lag = "announcement", 0.5
-    if _any(text, _PAST) and stype in ("announcement", "investment", "research", "data_release"):
-        lag = 0.1
-
-    regional = 1.0 if (places or projects) else (0.6 if source_layer in ("policy", "editorial", "infrastructure") else 0.4)
-    materiality = 0.8 if _any(text, ("millionen", "milliarden", "million")) else min(0.9, 0.35 + 0.1 * len(hits))
+        stype = next((t for t, kws in _TYPE_RULES if _any(text, kws)), "announcement")
+    if stype == "event" and _any(text, _TYPE_RULES[0][1]):
+        stype = "funding_call"  # a call with a date is still a call
+    forward = _any(text, _FORWARD) or _FORWARD_YEAR.search(text) is not None
 
     return ExtractionResult(
         is_signal=True,
@@ -181,14 +207,16 @@ def mock_extract(title: str, summary: str, source_layer: str) -> ExtractionResul
         summary_en=(summary or "").strip()[:600],
         summary_de=(summary or "").strip()[:600],
         signal_type=stype,
-        topics=tuple(hits),
+        topics=tuple(topics),
         places=tuple(places),
-        organisations=tuple(organisations),
-        projects=tuple(projects),
-        regional_relevance=regional,
-        economic_materiality=materiality,
-        forward_lag=lag,
-        events=_events(text, text_orig, title),
+        organisations=tuple(entities.get("organisation", [])),
+        forums=tuple(entities.get("forum", [])),
+        programmes=tuple(entities.get("programme", [])),
+        offices=tuple(entities.get("office", [])),
+        regional_relevance=1.0 if places else 0.4,
+        consequence=min(1.0, 0.3 + 0.15 * len(topics)),
+        forward_lag=0.7 if forward else 0.4,
+        events=events,
     )
 
 

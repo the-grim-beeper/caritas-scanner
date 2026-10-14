@@ -13,7 +13,7 @@ FIX = Path(__file__).parent / "fixtures"
 
 
 def _source(slug, method, url, **kw):
-    return Source(slug=slug, name=slug, layer="editorial", authority="high", scope="region",
+    return Source(slug=slug, name=slug, layer="medien", authority="high", scope="landkreis",
                   method=method, url=url, collect=True, **kw)
 
 
@@ -23,11 +23,13 @@ def http():
 
 
 @respx.mock
-async def test_same_canonical_url_from_two_sources_is_one_item_with_also_seen_in(db_session, http):
-    # Wrong: unique on (source, external_id) only, so MM Wirtschaft and MM Unternehmen
-    # der Region produce two feed items for one article.
-    a = _source("mm-wirtschaft", "rss", "https://mm.test/a.xml")
-    b = _source("mm-unternehmen", "rss", "https://mm.test/b.xml")
+async def test_same_canonical_url_from_two_sources_is_one_item_with_also_seen_in(db_session, http, monkeypatch):
+    # Wrong: unique on (source, external_id) only, so Merkur Region Miesbach and Merkur
+    # Holzkirchen produce two feed items for one article.
+    from mhs import config
+    monkeypatch.setattr(config.settings, "max_item_age_days", 36500)  # not a freshness test
+    a = _source("merkur-miesbach", "rss", "https://mm.test/a.xml")
+    b = _source("merkur-holzkirchen", "rss", "https://mm.test/b.xml")
     db_session.add_all([a, b])
     await db_session.commit()
     respx.get("https://mm.test/a.xml").mock(return_value=httpx.Response(200, content=(FIX / "feed_a.xml").read_bytes()))
@@ -38,9 +40,9 @@ async def test_same_canonical_url_from_two_sources_is_one_item_with_also_seen_in
     items = (await db_session.execute(select(FeedItem))).scalars().all()
     assert stats.fetched == 3 and stats.new_items == 2
     assert len(items) == 2
-    basf = next(i for i in items if "BASF" in (i.title or ""))
-    assert basf.source_id == a.id
-    assert basf.also_seen_in == [b.id]
+    umlage = next(i for i in items if "Kreisumlage" in (i.title or ""))
+    assert umlage.source_id == a.id
+    assert umlage.also_seen_in == [b.id]
 
 
 @respx.mock
@@ -101,9 +103,14 @@ async def test_items_older_than_the_freshness_window_are_not_stored(db_session, 
     s = _source("mvv", "rss", "https://mvv.test/feed.xml")
     db_session.add(s)
     await db_session.commit()
-    old = (FIX / "feed_a.xml").read_text().replace("Mon, 24 Aug 2026 06:30:00 +0200", "Tue, 23 Dec 2025 06:30:00 +0100")
+    from email.utils import format_datetime
+    from datetime import datetime, timedelta, timezone
+    recent = format_datetime(datetime.now(timezone.utc) - timedelta(days=1))
+    old = ((FIX / "feed_a.xml").read_text()
+           .replace("Mon, 12 Oct 2026 06:30:00 +0200", "Tue, 23 Dec 2025 06:30:00 +0100")
+           .replace("Mon, 12 Oct 2026 08:00:00 +0200", recent))
     respx.get("https://mvv.test/feed.xml").mock(return_value=httpx.Response(200, content=old.encode()))
     stats = await collect_all(db_session, http)
     titles = [i.title for i in (await db_session.execute(select(FeedItem))).scalars()]
-    assert stats.new_items == 1 and "BASF" not in " ".join(titles)
+    assert stats.new_items == 1 and "Kreisumlage" not in " ".join(titles)
     assert stats.skipped_old == 1

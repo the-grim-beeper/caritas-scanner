@@ -24,22 +24,24 @@ log = logging.getLogger(__name__)
 MAX_SIGNALS = 60
 MAX_EVENTS = 20
 
-SYSTEM = f"""You write the daily digest of a horizon scanner for the Metropolregion
-Rhein-Neckar, read by regional economic-development and investment stakeholders.
+SYSTEM = f"""You write the daily digest of a horizon scanner for social provision in
+Landkreis Miesbach (Upper Bavaria), read by Caritas-Zentrum Miesbach and a foresight team
+asking whether an inter-municipal coordination structure ("Interkommunale Sozialraumlotsen")
+can be anchored so that it still works in 2035 and 2040.
 
 You receive this cycle's founding signals (one per story, ranked by the scanner's
 score), the upcoming events and deadlines, and the topics whose volume moved most over
 the last four weeks. Write, in English AND German:
 
-- lead: 3–4 sentences on what moved this cycle and why it matters for the region.
-  Concrete, no throat-clearing.
+- lead: 3–4 sentences on what moved this cycle and why it matters for social provision
+  in the county. Concrete, no throat-clearing.
 - sections: per layer ({", ".join(vocab.LAYERS)}), the signals worth the reader's
   minute, each with a one- or two-sentence note on why it matters — not a restatement
   of the headline. Omit layers with nothing worth saying. Cite signals by their id.
-- chains: cross-layer links you can see between signals in this batch — the brief's
-  central claim is that regional shifts cascade (a research result → an incubator
-  tenant → a funding round → a corporate move; a bridge closure → a chamber warning →
-  a council decision). Only cite ids you were given; two or more per chain.
+- chains: cross-layer links you can see between signals in this batch — changes cascade
+  across levels (a Bezirksumlage rise → a county budget → a municipal grant cut; a state
+  programme ending → a provider's post left empty → a service cutting its hours). Only
+  cite ids you were given; two or more per chain.
 - watch: the events and deadlines that deserve attention, with why. Cite event ids.
 
 Cite only ids that appear in the input. Do not invent signals, events or numbers."""
@@ -94,7 +96,7 @@ async def _inputs(session: AsyncSession, since: datetime, signal_ids: list[UUID]
     events = [
         {"id": str(e.id), "name": e.name, "start_date": e.start_date.isoformat() if e.start_date else None,
          "deadline": e.deadline.isoformat() if e.deadline else None, "organizer": e.organizer,
-         "funding_program": e.funding_program, "signal_id": str(e.signal_id)}
+         "funding_program": e.funding_program, "signal_id": str(e.signal_id) if e.signal_id else None}
         for e in ev_rows
     ]
     movers = [m.__dict__ for m in (await trends.movers(session))[:10]]

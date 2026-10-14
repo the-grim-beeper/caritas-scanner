@@ -1,6 +1,7 @@
 """What one extraction returns — the same shape from Claude and from the mock."""
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -27,6 +28,20 @@ EVENT_SCHEMA = {
     "additionalProperties": False,
 }
 
+RELATION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "a": {"type": "string", "description": "First actor, as named in the text"},
+        "b": {"type": "string", "description": "Second actor, as named in the text"},
+        "relation": {"type": "string", "enum": list(vocab.RELATIONS), "description": "Reads: a <relation> b"},
+        "quote": {"type": "string", "description": "The verbatim phrase of the text that states the relation"},
+    },
+    "required": ["a", "b", "relation", "quote"],
+    "additionalProperties": False,
+}
+
+_NAMES = {"type": "array", "items": {"type": "string"}}
+
 EXTRACTION_SCHEMA = {
     "type": "object",
     "properties": {
@@ -37,18 +52,21 @@ EXTRACTION_SCHEMA = {
         "summary_de": {"type": "string", "description": "2–3 sentences of substance, German."},
         "signal_type": {"type": "string", "enum": vocab.SIGNAL_TYPES},
         "topics": {"type": "array", "items": {"type": "string", "enum": list(vocab.TOPICS)}},
-        "places": {"type": "array", "items": {"type": "string"}},
-        "organisations": {"type": "array", "items": {"type": "string"}},
-        "projects": {"type": "array", "items": {"type": "string"}},
-        # No minimum/maximum: structured outputs reject numeric bounds; from_payload clamps.
+        "places": _NAMES,
+        "organisations": _NAMES,
+        "forums": _NAMES,
+        "programmes": _NAMES,
+        "offices": {**_NAMES, "description": "Roles only (e.g. Erster Bürgermeister Waakirchen), never a person's name"},
+        # No minimum/maximum/maxItems: structured outputs reject them; from_payload clamps and caps.
         "regional_relevance": {"type": "number", "description": "0–1"},
-        "economic_materiality": {"type": "number", "description": "0–1"},
+        "consequence": {"type": "number", "description": "0–1"},
         "forward_lag": {"type": "number", "description": "0–1"},
         "events": {"type": "array", "items": EVENT_SCHEMA},
+        "relations": {"type": "array", "items": RELATION_SCHEMA},
     },
     "required": ["is_signal", "headline_en", "headline_de", "summary_en", "summary_de", "signal_type",
-                 "topics", "places", "organisations", "projects", "regional_relevance",
-                 "economic_materiality", "forward_lag", "events"],
+                 "topics", "places", "organisations", "forums", "programmes", "offices",
+                 "regional_relevance", "consequence", "forward_lag", "events", "relations"],
     "additionalProperties": False,
 }
 
@@ -68,6 +86,14 @@ class EventDraft:
 
 
 @dataclass(frozen=True)
+class RelationDraft:
+    a: str
+    b: str
+    relation: str
+    quote: str
+
+
+@dataclass(frozen=True)
 class ExtractionResult:
     is_signal: bool
     headline_en: str = ""
@@ -78,11 +104,14 @@ class ExtractionResult:
     topics: tuple[str, ...] = ()
     places: tuple[str, ...] = ()
     organisations: tuple[str, ...] = ()
-    projects: tuple[str, ...] = ()
+    forums: tuple[str, ...] = ()
+    programmes: tuple[str, ...] = ()
+    offices: tuple[str, ...] = ()
     regional_relevance: float = 0.0
-    economic_materiality: float = 0.0
+    consequence: float = 0.0
     forward_lag: float = 0.0
     events: tuple[EventDraft, ...] = field(default_factory=tuple)
+    relations: tuple[RelationDraft, ...] = field(default_factory=tuple)
 
 
 def _date(value) -> date | None:
@@ -99,6 +128,45 @@ def _clamp(x) -> float:
         return max(0.0, min(1.0, float(x)))
     except (TypeError, ValueError):
         return 0.0
+
+
+MAX_NAMES = 10
+MAX_RELATIONS = 8
+
+# An office is a role. A string with none of these stems names a person, and persons are
+# never entities (spec §1, non-goals), whatever the model was told.
+_ROLE_STEMS = (
+    "bürgermeister", "landrat", "landrät", "dekan", "direktor", "leitung", "leiter", "vorsitz", "vorstand",
+    "geschäftsführ", "präsident", "minister", "beauftragt", "referent", "kämmer", "pfarrer", "sprecher",
+    "abgeordnet", "koordinator", "manager", "lotse", "lotsin", "seelsorge", "chef", "head", "mayor",
+    "director",
+)
+# Kreisrat, Gemeinderätin, Stadträte — "rat" closing a compound, so neither "Strathmann" nor
+# "Murat" is a role.
+_COUNCILLOR = re.compile(r"\w{3,}r[aä]t(?:in|innen|e)?\b")
+
+
+def _names(data: dict, key: str) -> tuple[str, ...]:
+    out = [str(p).strip() for p in (data.get(key) or []) if p is not None and str(p).strip()]
+    return tuple(dict.fromkeys(out))[:MAX_NAMES]
+
+
+def _is_office(name: str) -> bool:
+    low = name.lower()
+    return any(stem in low for stem in _ROLE_STEMS) or _COUNCILLOR.search(low) is not None
+
+
+def _relations(data: dict) -> tuple[RelationDraft, ...]:
+    out: list[RelationDraft] = []
+    for r in data.get("relations") or []:
+        if not isinstance(r, dict) or r.get("relation") not in vocab.RELATIONS:
+            continue
+        a, b, quote = (str(r.get(k) or "").strip() for k in ("a", "b", "quote"))
+        # A relation without both ends, or without the words that state it, is not evidence.
+        if not a or not b or not quote:
+            continue
+        out.append(RelationDraft(a=a[:300], b=b[:300], relation=r["relation"], quote=quote))
+    return tuple(out[:MAX_RELATIONS])
 
 
 def from_payload(data: dict) -> ExtractionResult:
@@ -129,11 +197,14 @@ def from_payload(data: dict) -> ExtractionResult:
         summary_de=str(data.get("summary_de") or ""),
         signal_type=signal_type,
         topics=topics,
-        places=tuple(str(p) for p in (data.get("places") or []))[:10],
-        organisations=tuple(str(p) for p in (data.get("organisations") or []))[:10],
-        projects=tuple(str(p) for p in (data.get("projects") or []))[:10],
+        places=_names(data, "places"),
+        organisations=_names(data, "organisations"),
+        forums=_names(data, "forums"),
+        programmes=_names(data, "programmes"),
+        offices=tuple(o for o in _names(data, "offices") if _is_office(o)),
         regional_relevance=_clamp(data.get("regional_relevance")),
-        economic_materiality=_clamp(data.get("economic_materiality")),
+        consequence=_clamp(data.get("consequence")),
         forward_lag=_clamp(data.get("forward_lag")),
         events=events,
+        relations=_relations(data),
     )

@@ -38,7 +38,7 @@ def _score_signal(signal: Signal) -> float:
         authority=signal.authority,
         regional_relevance=signal.regional_relevance,
         novelty=signal.novelty,
-        economic_materiality=signal.economic_materiality,
+        consequence=signal.consequence,
         forward_lag=signal.forward_lag,
     ))
 

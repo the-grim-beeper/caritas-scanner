@@ -1,5 +1,6 @@
 """extract_pending — turn unprocessed feed items into signals (or discard them),
-writing topics, resolved entities and events. Live (Claude) or mock, same shape."""
+writing topics, resolved entities, events and relation candidates. Live (Claude) or
+mock, same shape."""
 from __future__ import annotations
 
 import asyncio
@@ -12,7 +13,7 @@ from sqlalchemy.orm import selectinload
 
 from mhs import vocab
 from mhs.config import settings
-from mhs.db.models import Event, FeedItem, Signal, SignalEntity, SignalTopic, Source, utcnow
+from mhs.db.models import Event, FeedItem, RelationCandidate, Signal, SignalEntity, SignalTopic, Source, utcnow
 from mhs.entities import resolve
 from mhs.extract import prompt
 from mhs.extract.schema import EXTRACTION_SCHEMA, ExtractionResult, from_payload
@@ -83,7 +84,7 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
         places_text=list(result.places),
         authority=vocab.AUTHORITY_WEIGHTS.get(source.authority, 0.4),
         regional_relevance=result.regional_relevance,
-        economic_materiality=result.economic_materiality,
+        consequence=result.consequence,
         forward_lag=result.forward_lag,
         published_at=item.published_at or item.created_at or utcnow(),
     )
@@ -92,19 +93,31 @@ async def _persist(session: AsyncSession, item: FeedItem, source: Source, result
     for code in dict.fromkeys(result.topics):
         session.add(SignalTopic(signal_id=signal.id, topic_code=code))
     seen: set = set()
-    for kind, names in (("place", result.places), ("organisation", result.organisations), ("project", result.projects)):
+    for kind, names in (
+        ("place", result.places),
+        ("organisation", result.organisations),
+        ("forum", result.forums),
+        ("programme", result.programmes),
+        ("office", result.offices),
+    ):
         for ent in await resolve(session, list(names), kind=kind):
             if ent.id in seen:
                 continue
             seen.add(ent.id)
             session.add(SignalEntity(signal_id=signal.id, entity_id=ent.id, role="mentioned"))
     for ev in result.events:
+        only_deadline = ev.deadline is not None and ev.start_date is None and ev.end_date is None
         session.add(Event(
-            signal_id=signal.id, name=ev.name, organizer=ev.organizer, location=ev.location,
+            signal_id=signal.id, origin="signal", kind="deadline" if only_deadline else "event",
+            name=ev.name, organizer=ev.organizer, location=ev.location,
             start_date=ev.start_date, end_date=ev.end_date, deadline=ev.deadline, topic=ev.topic,
             registration_url=ev.registration_url, funding_program=ev.funding_program,
             target_audience=ev.target_audience,
         ))
+    # Endpoints stay free text here; the network stage resolves them (or drops the candidate).
+    for rel in result.relations:
+        session.add(RelationCandidate(signal_id=signal.id, a_text=rel.a, b_text=rel.b,
+                                      relation=rel.relation, quote=rel.quote))
     return signal
 
 

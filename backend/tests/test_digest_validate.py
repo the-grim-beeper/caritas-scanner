@@ -5,7 +5,7 @@ from mhs.digest.validate import DigestProvenanceError, validate_digest
 
 GOOD = {
     "lead_en": "Two developments moved.", "lead_de": "Zwei Entwicklungen.",
-    "sections": [{"layer": "corporate", "items": [{"signal_id": "s1", "note_en": "n", "note_de": "n"}]}],
+    "sections": [{"layer": "landkreis", "items": [{"signal_id": "s1", "note_en": "n", "note_de": "n"}]}],
     "chains": [{"title_en": "Lab to market", "title_de": "Labor zu Markt", "signal_ids": ["s1", "s2"]}],
     "watch": [{"event_id": "e1", "why_en": "deadline", "why_de": "Frist"}],
 }

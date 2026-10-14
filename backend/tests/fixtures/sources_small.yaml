@@ -1,35 +1,45 @@
-- slug: mannheim-presse
-  name: Stadt Mannheim — Pressemeldungen
-  layer: policy
+- slug: lk-miesbach-presse
+  name: Landratsamt Miesbach — Pressemitteilungen
+  layer: landkreis
   authority: high
-  scope: city
-  places: [Mannheim]
+  scope: landkreis
+  places: [Landkreis Miesbach]
   method: rss
-  url: https://www.mannheim.de/de/rss/pressemeldungen
-  homepage: https://www.mannheim.de/de/presse
+  url: https://www.landkreis-miesbach.de/rss/presse
+  homepage: https://www.landkreis-miesbach.de/presse
   priority: core
-- slug: rnz-heidelberg
-  name: RNZ — Heidelberg
-  layer: editorial
-  authority: high
-  scope: city
-  places: [Heidelberg]
+- slug: merkur-miesbach
+  name: Merkur — Region Miesbach
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places: [Landkreis Miesbach]
   method: rss
-  url: https://www.rnz.de/feed/139-RL_Heidelberg_free.xml
+  url: https://www.merkur.de/lokales/region-miesbach/rssfeed.rdf
   priority: core
-- slug: rnk-presse
-  name: Rhein-Neckar-Kreis — Pressemeldungen
-  layer: policy
+- slug: waakirchen-sitzungen
+  name: Gemeinde Waakirchen — Sitzungskalender
+  layer: gemeinden
   authority: high
-  scope: district
+  scope: gemeinde
+  places: [Waakirchen]
   method: page
-  url: https://www.rhein-neckar-kreis.de/startseite/aktuelles/pressemeldungen.html
+  url: https://www.waakirchen.de/sitzungen
   priority: core
-- slug: biorn-newsletter
-  name: BioRN — newsletter
-  layer: innovation
+- slug: caritas-muenchen-newsletter
+  name: Caritas München-Freising — Newsletter
+  layer: wohlfahrt
   authority: high
-  scope: region
+  scope: bezirk
   method: newsletter
-  homepage: https://biorn.org/newsletter/
-  priority: core
+  homepage: https://www.caritas-muenchen.de/newsletter
+  priority: thematic
+- slug: q-waakirchen
+  name: Google News — Waakirchen
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places: [Waakirchen]
+  method: query
+  query: '"Waakirchen" (Gemeinderat OR Haushalt OR Pflege)'
+  priority: thematic

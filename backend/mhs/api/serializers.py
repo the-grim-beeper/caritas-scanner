@@ -9,7 +9,7 @@ def factors(s: Signal) -> dict:
         "authority": s.authority,
         "regional_relevance": s.regional_relevance,
         "novelty": s.novelty,
-        "economic_materiality": s.economic_materiality,
+        "consequence": s.consequence,
         "forward_lag": s.forward_lag,
     }
 
@@ -86,7 +86,7 @@ def event_out(e: Event, signal: Signal | None = None) -> dict:
         "registration_url": e.registration_url,
         "funding_program": e.funding_program,
         "target_audience": e.target_audience,
-        "signal_id": str(e.signal_id),
+        "signal_id": str(e.signal_id) if e.signal_id else None,
     }
     if signal is not None:
         out["signal"] = {
