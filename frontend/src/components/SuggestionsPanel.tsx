@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { api, errorDetail, HttpError } from "../api";
 import { layerLabel, METHOD_LABELS } from "../domain";
 import { daysUntil, fmtDate, pick, useLang, useT, type Key } from "../i18n";
@@ -13,6 +13,9 @@ const HISTORY_STATUS_KEY: Record<string, Key> = {
   failed: "src_status_failed",
 };
 
+/** A row-level failure: a translated headline, plus (for a failed re-verification) the backend's own reason, shown quieter. */
+type RowError = { text: string; detail?: string };
+
 /**
  * The weekly source-discovery run proposes new sources; a pending one is adopted automatically
  * after seven days unless declined. This panel shows what is open, lets staff act on it, and
@@ -25,7 +28,10 @@ export function SuggestionsPanel({ meta }: { meta: Meta | null }) {
   const [runNotice, setRunNotice] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [busy, setBusy] = useState<Record<string, boolean>>({});
-  const [rowError, setRowError] = useState<Record<string, string>>({});
+  const [rowError, setRowError] = useState<Record<string, RowError | undefined>>({});
+  // Checked and set synchronously (before the first state update lands) so a second click
+  // on the same suggestion, fired before React re-renders the disabled button, is a no-op.
+  const inFlight = useRef<Set<string>>(new Set());
 
   async function run() {
     setRunning(true);
@@ -42,16 +48,25 @@ export function SuggestionsPanel({ meta }: { meta: Meta | null }) {
   }
 
   async function act(id: string, kind: "decline" | "adopt") {
+    if (inFlight.current.has(id)) return;
+    inFlight.current.add(id);
     setBusy((b) => ({ ...b, [id]: true }));
-    setRowError((r) => ({ ...r, [id]: "" }));
+    setRowError((r) => ({ ...r, [id]: undefined }));
     try {
       if (kind === "decline") await api.declineSuggestion(id);
       else await api.adoptSuggestion(id);
       res.reload();
     } catch (e) {
-      const msg = e instanceof HttpError && e.status === 409 && !e.detail ? t("src_conflict") : errorDetail(e);
-      setRowError((r) => ({ ...r, [id]: msg }));
+      // 409 always means someone else already resolved it (the router's own English detail
+      // string is not meant for display); 422 is a failed re-verification, with a reason worth
+      // showing, quieter, after a translated headline.
+      let err: RowError;
+      if (e instanceof HttpError && e.status === 409) err = { text: t("src_conflict") };
+      else if (e instanceof HttpError && e.status === 422) err = { text: t("src_reverify_failed"), detail: errorDetail(e) };
+      else err = { text: errorDetail(e) };
+      setRowError((r) => ({ ...r, [id]: err }));
     } finally {
+      inFlight.current.delete(id);
       setBusy((b) => ({ ...b, [id]: false }));
     }
   }
@@ -136,7 +151,7 @@ function SuggestionCard({
   s: Suggestion;
   meta: Meta | null;
   busy: boolean;
-  error: string | undefined;
+  error: RowError | undefined;
   onDecline: () => void;
   onAdopt: () => void;
 }) {
@@ -172,7 +187,7 @@ function SuggestionCard({
       <p className="text-sm mt-2 max-w-[70ch] leading-relaxed">{pick(s, "rationale", lang)}</p>
 
       <p className="text-xs text-ink-3 mt-1.5 num">
-        {METHOD_LABELS[s.method]?.[lang] ?? s.method}
+        {s.method ? METHOD_LABELS[s.method]?.[lang] ?? s.method : "–"}
         {typeof s.items_at_check === "number" && (
           <>
             {" "}
@@ -181,7 +196,12 @@ function SuggestionCard({
         )}
       </p>
 
-      {error && <p className="text-xs mt-2 font-medium max-w-[50ch]">{error}</p>}
+      {error && (
+        <p className="text-xs mt-2 max-w-[50ch]">
+          <span className="font-medium">{error.text}</span>
+          {error.detail && <span className="text-ink-3"> – {error.detail}</span>}
+        </p>
+      )}
 
       <div className="mt-3 flex gap-2">
         <button className="btn btn-quiet" onClick={onDecline} disabled={busy}>

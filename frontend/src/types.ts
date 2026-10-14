@@ -396,7 +396,7 @@ export interface Suggestion {
   places?: string[];
   rationale_de: string;
   rationale_en: string;
-  method: string;
+  method: string | null;
   feed_url: string | null;
   items_at_check: number | null;
   status: SuggestionStatus;
