@@ -1,0 +1,112 @@
+# Scheduled events and watch windows — transcribed from the brief ("Scheduled-event
+# calendar through October 2027", pp. 19–20). The report distinguishes actual scheduled
+# dates from watch windows and invents no 2027 Kreistag/Bezirkstag dates; neither do we.
+# kind ∈ event | deadline | window. A window has start and end; a deadline has only deadline.
+
+- slug: waakirchen-gr-2026-10-13
+  kind: event
+  start: 2026-10-13
+  place: waakirchen
+  brief_ref: "29"
+  name_de: "Gemeinderat Waakirchen"
+  name_en: "Waakirchen municipal council"
+  note_de: "Erste örtliche Tagesordnung nach dem Recherchestand im verifizierten Sitzungskalender."
+  note_en: "First post-cutoff local agenda in the verified municipal calendar."
+
+- slug: bergbus-saisonende-2026
+  kind: event
+  start: 2026-10-25
+  place: landkreis-miesbach
+  programme: bergbus
+  brief_ref: "41"
+  name_de: "Ende der BergBus-Saison 2026"
+  name_en: "End of the 2026 MVV BergBus season"
+  note_de: "Anlass für Fahrgastzahlen und Entscheidungen über die Fortführung; Beleg für saisonale Erreichbarkeit."
+  note_en: "Useful point for ridership/continuation decisions and seasonal-access evidence."
+
+- slug: pflegesonah-frist-2026
+  kind: deadline
+  deadline: 2026-10-31
+  place: bayern
+  programme: pflegesonah
+  brief_ref: "11"
+  name_de: "PflegesoNah 2026 – Antragsfrist"
+  name_en: "PflegesoNah 2026 application deadline"
+  note_de: "Letzter Termin für Anträge auf Pflegeinfrastruktur in der laufenden Runde."
+  note_en: "Last point for current-round care-infrastructure applications."
+
+- slug: waakirchen-gr-2026-11-10
+  kind: event
+  start: 2026-11-10
+  place: waakirchen
+  brief_ref: "29"
+  name_de: "Gemeinderat Waakirchen"
+  name_en: "Waakirchen municipal council"
+  note_de: "Signal zu örtlicher Steuerung und Haushalt."
+  note_en: "Local governance/budget signal."
+
+- slug: waakirchen-gr-2026-12-08
+  kind: event
+  start: 2026-12-08
+  place: waakirchen
+  brief_ref: "29"
+  name_de: "Gemeinderat Waakirchen"
+  name_en: "Waakirchen municipal council"
+  note_de: "Wahrscheinlicher Entscheidungspunkt zum Jahresende."
+  note_en: "Likely year-end decision point."
+
+- slug: haushalte-2027-landkreis-gemeinden
+  kind: window
+  start: 2026-11-01
+  end: 2027-03-31
+  place: landkreis-miesbach
+  brief_ref: "calendar"
+  name_de: "Haushaltsberatungen 2027 in Landkreis und Gemeinden"
+  name_en: "Landkreis and municipal 2027 budget cycle"
+  note_de: "Kreisumlage, Zuschüsse für freiwillige Leistungen, Stellen und Projektfortführung beobachten. Genaue Termine sind nicht alle veröffentlicht."
+  note_en: "Track Kreisumlage, voluntary-service grants, staffing and project continuation. Exact dates not all published/verified."
+
+- slug: bezirk-haushalt-2027
+  kind: window
+  start: 2026-11-01
+  end: 2026-12-31
+  place: oberbayern
+  brief_ref: "79"
+  name_de: "Bezirk Oberbayern – Haushalt 2027 und Bezirksumlage"
+  name_en: "Bezirk Oberbayern 2027 budget / Bezirksumlage process"
+  note_de: "Der Haushalt 2026 wurde im Dezember 2025 beschlossen; die Sitzungstermine-Seite nutzen statt ein Datum anzunehmen."
+  note_en: "The 2026 budget was adopted in December 2025; use the live Sitzungstermine page rather than assuming the 2027 date."
+
+- slug: sela-laufend
+  kind: window
+  start: 2026-10-08
+  end: 2027-10-31
+  place: bayern
+  programme: sela
+  brief_ref: "12"
+  name_de: "SeLA-Anträge (nach verpflichtender Vorabberatung)"
+  name_en: "SeLA applications after mandatory prior consultation"
+  note_de: "Laufend; direkt relevant für Quartier, Nachbarschaftshilfe und Finanzierung nach Projektende."
+  note_en: "Rolling; direct relevance to Quartier/Nachbarschaftshilfe and post-project financing."
+
+- slug: landtag-kalender-2027
+  kind: window
+  start: 2026-10-08
+  end: 2027-10-31
+  place: bayern
+  brief_ref: "50"
+  name_de: "Bayerischer Landtag – Plenar- und Ausschusskalender"
+  name_en: "Bayerischer Landtag plenary/committee calendar"
+  note_de: "SGB-Umsetzung, Sozialpolitik und Änderungen von Förderregeln beobachten."
+  note_en: "Monitor SGB implementation, social policy and funding-rule changes."
+
+- slug: sgb2-stufe2-2027-08-01
+  kind: deadline
+  deadline: 2027-08-01
+  place: bayern
+  programme: grundsicherungsgeld
+  brief_ref: "75"
+  name_de: "Weitere Vorschriften des 13. SGB-II-Änderungsgesetzes treten in Kraft"
+  name_en: "Further provisions of the 13th SGB II amendment enter into force"
+  note_de: "Zweite Umsetzungsstufe für das Jobcenter und angrenzende örtliche Hilfen."
+  note_en: "Second-stage implementation effects for Jobcenter and related local support services."

@@ -1,132 +1,121 @@
-# Entity dictionary — seeded from the brief's "useful entity dictionaries" list and
-# the catalogue's issuers. Places are a closed set (the extractor may not invent a
-# place); organisations and projects grow as extraction meets new ones.
+# Entity dictionary — seeded from the brief (docs/brief/source-architecture.txt): the 17
+# municipalities, the geographic entities of its filter lexicon, and the organisations,
+# forums, programmes and offices it names. Places are a closed set (the extractor may not
+# invent a place); every other kind grows as extraction meets new ones.
+#
+# Offices are roles, never people: "Erster Bürgermeister Waakirchen", not a name.
+# actor_kind (organisations, forums, programmes) places an entity in the network graph:
+#   authority | provider | forum | church | funder | programme | media | peer | other
 
 places:
-  - {slug: mannheim, name: Mannheim}
-  - {slug: heidelberg, name: Heidelberg}
-  - {slug: ludwigshafen, name: Ludwigshafen, aliases: [Ludwigshafen am Rhein, LU]}
-  - {slug: rhein-neckar-kreis, name: Rhein-Neckar-Kreis, aliases: [RNK]}
-  - {slug: rhein-neckar, name: Rhein-Neckar (Metropolregion), aliases: [Metropolregion Rhein-Neckar, MRN, Rhein-Neckar-Region, Rhine-Neckar, Metropolregion]}
-  - {slug: bergstrasse, name: Bergstraße, aliases: [Kreis Bergstraße, Bergstrasse]}
-  - {slug: pfalz, name: Pfalz, aliases: [Vorderpfalz, Palatinate]}
-  - {slug: odenwald, name: Odenwald, aliases: [Neckar-Odenwald, Neckar-Odenwald-Kreis]}
-  - {slug: viernheim, name: Viernheim}
-  - {slug: weinheim, name: Weinheim}
-  - {slug: walldorf, name: Walldorf}
-  - {slug: schwetzingen, name: Schwetzingen}
-  - {slug: sinsheim, name: Sinsheim}
-  - {slug: speyer, name: Speyer}
-  - {slug: frankenthal, name: Frankenthal}
-  - {slug: worms, name: Worms}
-  - {slug: heppenheim, name: Heppenheim}
-  - {slug: bensheim, name: Bensheim}
-  - {slug: wiesloch, name: Wiesloch}
-  - {slug: hockenheim, name: Hockenheim}
-  - {slug: neustadt-weinstrasse, name: Neustadt an der Weinstraße, aliases: [Neustadt]}
-  - {slug: landau, name: Landau}
-  - {slug: kaiserslautern, name: Kaiserslautern}
-  - {slug: darmstadt, name: Darmstadt}
-  - {slug: baden-wuerttemberg, name: Baden-Württemberg, aliases: [BW, Baden-Wuerttemberg]}
-  - {slug: rheinland-pfalz, name: Rheinland-Pfalz, aliases: [RLP, Rhineland-Palatinate]}
-  - {slug: hessen, name: Hessen, aliases: [Hesse]}
-
-projects:
-  - {slug: franklin, name: FRANKLIN (Mannheim conversion), aliases: [Franklin, Benjamin Franklin Village]}
-  - {slug: patrick-henry-village, name: Patrick-Henry-Village, aliases: [PHV, Patrick Henry Village]}
-  - {slug: bahnstadt, name: Bahnstadt Heidelberg, aliases: [Bahnstadt]}
-  - {slug: hochstrasse, name: Hochstraße Ludwigshafen, aliases: [Hochstraße Nord, Hochstraße Süd, Hochstrasse, Helmut-Kohl-Allee]}
-  - {slug: kurt-schumacher-bruecke, name: Kurt-Schumacher-Brücke, aliases: [Kurt-Schumacher-Bruecke, KSB]}
-  - {slug: riedbahn, name: Riedbahn}
-  - {slug: hospital-areal, name: Hospital-Areal Heidelberg, aliases: [Hospital Areal, Hospital-Gelände]}
-  - {slug: heidelberg-innovation-park, name: Heidelberg Innovation Park, aliases: [Innovation Park Heidelberg]}
-  - {slug: lab22, name: LAB22}
-  - {slug: ki-lab-kurpfalz, name: KI Lab Kurpfalz}
-  - {slug: gameshub-heidelberg, name: GamesHub Heidelberg}
-  - {slug: westbruecke, name: Westbrücke Ludwigshafen, aliases: [Westbruecke]}
-  - {slug: b37, name: B37}
-  - {slug: a5, name: A5, aliases: [Autobahn 5]}
-  - {slug: a6, name: A6, aliases: [Autobahn 6]}
-  - {slug: a61, name: A61}
-  - {slug: a65, name: A65}
-  - {slug: mannheim-hbf, name: Hauptbahnhof Mannheim, aliases: [Mannheim Hbf]}
-  - {slug: verbund-ludwigshafen, name: BASF Verbund Ludwigshafen, aliases: [Verbundstandort, Stammwerk Ludwigshafen]}
+  - {slug: bad-wiessee, name: Bad Wiessee}
+  - {slug: bayrischzell, name: Bayrischzell}
+  - {slug: fischbachau, name: Fischbachau}
+  - {slug: gmund, name: Gmund a. Tegernsee, aliases: [Gmund, Gmund am Tegernsee]}
+  - {slug: hausham, name: Hausham}
+  - {slug: holzkirchen, name: Holzkirchen, aliases: [Markt Holzkirchen]}
+  - {slug: irschenberg, name: Irschenberg}
+  - {slug: kreuth, name: Kreuth}
+  - {slug: miesbach, name: Miesbach, aliases: [Stadt Miesbach]}
+  - {slug: otterfing, name: Otterfing}
+  - {slug: rottach-egern, name: Rottach-Egern}
+  - {slug: schliersee, name: Schliersee, aliases: [Markt Schliersee]}
+  - {slug: tegernsee, name: Tegernsee, aliases: [Stadt Tegernsee]}
+  - {slug: valley, name: Valley}
+  - {slug: waakirchen, name: Waakirchen}
+  - {slug: warngau, name: Warngau}
+  - {slug: weyarn, name: Weyarn}
+  - {slug: landkreis-miesbach, name: Landkreis Miesbach, aliases: [Kreis Miesbach, Lkr. Miesbach, Landkreis MB, Miesbacher Land]}
+  - {slug: tegernseer-tal, name: Tegernseer Tal, aliases: [Tegernseer Land]}
+  - {slug: leitzachtal, name: Leitzachtal}
+  - {slug: oberland, name: Oberland, aliases: [Bayerisches Oberland]}
+  - {slug: region-17, name: Region 17, aliases: [Planungsregion Oberland]}
+  - {slug: oberbayern, name: Oberbayern, aliases: [Upper Bavaria]}
+  - {slug: bayern, name: Bayern, aliases: [Freistaat, Bavaria]}
+  - {slug: rheinland-pfalz, name: Rheinland-Pfalz, aliases: [RLP]}
+  - {slug: oesterreich, name: Österreich, aliases: [Austria]}
 
 organisations:
-  - {slug: basf, name: BASF, aliases: [BASF SE, BASF Ludwigshafen]}
-  - {slug: sap, name: SAP, aliases: [SAP SE]}
-  - {slug: heidelberg-materials, name: Heidelberg Materials, aliases: [HeidelbergCement, Heidelberg Cement]}
-  - {slug: mvv, name: MVV Energie, aliases: [MVV]}
-  - {slug: ihk-rhein-neckar, name: IHK Rhein-Neckar}
-  - {slug: ihk-pfalz, name: IHK Pfalz, aliases: [IHK für die Pfalz]}
-  - {slug: ihk-darmstadt, name: IHK Darmstadt Rhein Main Neckar, aliases: [IHK Darmstadt]}
-  - {slug: hwk-mannheim, name: Handwerkskammer Mannheim Rhein-Neckar-Odenwald, aliases: [HWK Mannheim, Handwerkskammer Mannheim]}
-  - {slug: biorn, name: BioRN, aliases: [BioRN Cluster, Life Science Cluster Rhein-Neckar]}
-  - {slug: 5-ht, name: 5-HT Digital Hub, aliases: [5-HT]}
-  - {slug: dkfz, name: DKFZ, aliases: [Deutsches Krebsforschungszentrum, German Cancer Research Center]}
-  - {slug: dktk, name: DKTK, aliases: [Deutsches Konsortium für Translationale Krebsforschung, German Cancer Consortium]}
-  - {slug: embl, name: EMBL, aliases: [European Molecular Biology Laboratory, EMBL Heidelberg]}
-  - {slug: zew, name: ZEW, aliases: [ZEW Mannheim, Leibniz-Zentrum für Europäische Wirtschaftsforschung]}
-  - {slug: hits, name: HITS, aliases: [Heidelberg Institute for Theoretical Studies, Heidelberger Institut für Theoretische Studien]}
-  - {slug: biomed-x, name: BioMed X, aliases: [BioMed X Institute]}
-  - {slug: uni-heidelberg, name: Universität Heidelberg, aliases: [Heidelberg University, Ruprecht-Karls-Universität, Uni Heidelberg]}
-  - {slug: uni-mannheim, name: Universität Mannheim, aliases: [University of Mannheim, Uni Mannheim]}
-  - {slug: ukhd, name: Universitätsklinikum Heidelberg, aliases: [UKHD, Uniklinik Heidelberg]}
-  - {slug: umm, name: Universitätsmedizin Mannheim, aliases: [UMM]}
-  - {slug: hei-innovation, name: hei_INNOVATION, aliases: [heiINNOVATION]}
-  - {slug: health-life-science-alliance, name: Health + Life Science Alliance Heidelberg Mannheim}
-  - {slug: technologiepark-heidelberg, name: Technologiepark Heidelberg}
-  - {slug: next-mannheim, name: NEXT MANNHEIM, aliases: [NEXT Mannheim, Next Mannheim]}
-  - {slug: mafinex, name: MAFINEX}
-  - {slug: ki-garage, name: KI-Garage}
-  - {slug: start-up-bw, name: Start-up BW, aliases: [Startup BW, Start-up BW]}
-  - {slug: palatina-angels, name: PALATINA Business Angels, aliases: [Palatina]}
-  - {slug: htgf, name: High-Tech Gründerfonds, aliases: [HTGF]}
-  - {slug: mbg-bw, name: MBG Baden-Württemberg, aliases: [MBG]}
-  - {slug: mrn-gmbh, name: Metropolregion Rhein-Neckar GmbH, aliases: [MRN GmbH]}
-  - {slug: vrrn, name: Verband Region Rhein-Neckar, aliases: [VRRN]}
-  - {slug: zmrn, name: Zukunft Metropolregion Rhein-Neckar e.V., aliases: [ZMRN]}
-  - {slug: stadt-mannheim, name: Stadt Mannheim}
-  - {slug: stadt-heidelberg, name: Stadt Heidelberg}
-  - {slug: stadt-ludwigshafen, name: Stadt Ludwigshafen}
-  - {slug: weg-ludwigshafen, name: W.E.G. Ludwigshafen, aliases: [W.E.G., WEG Ludwigshafen, Wirtschaftsentwicklungsgesellschaft Ludwigshafen]}
-  - {slug: mwsp, name: MWSP Mannheim, aliases: [MWS Projektentwicklungsgesellschaft, MWSP]}
-  - {slug: wirtschaftsregion-bergstrasse, name: Wirtschaftsregion Bergstraße, aliases: [WFB]}
-  - {slug: vrn, name: Verkehrsverbund Rhein-Neckar, aliases: [VRN]}
-  - {slug: rnv, name: rnv, aliases: [Rhein-Neckar-Verkehr]}
-  - {slug: deutsche-bahn, name: Deutsche Bahn, aliases: [DB, DB InfraGO, DB Netz]}
-  - {slug: autobahn-gmbh, name: Autobahn GmbH, aliases: [Die Autobahn GmbH des Bundes]}
-  - {slug: hafen-mannheim, name: Hafen Mannheim, aliases: [Staatliche Rhein-Neckar-Hafengesellschaft]}
-  - {slug: chemieverbaende-rlp, name: Chemieverbände Rheinland-Pfalz}
-  - {slug: bauwirtschaft-bw, name: Bauwirtschaft Baden-Württemberg}
-  - {slug: l-bank, name: L-Bank}
-  - {slug: isb, name: ISB Rheinland-Pfalz, aliases: [ISB, Investitions- und Strukturbank]}
-  - {slug: wibank, name: WIBank}
-  - {slug: kfw, name: KfW}
-  - {slug: eic, name: European Innovation Council, aliases: [EIC]}
-  - {slug: eu-commission, name: European Commission, aliases: [EU-Kommission, Europäische Kommission]}
-  - {slug: land-bw, name: Land Baden-Württemberg, aliases: [Landesregierung Baden-Württemberg]}
-  - {slug: land-rlp, name: Land Rheinland-Pfalz, aliases: [Landesregierung Rheinland-Pfalz]}
-  - {slug: land-hessen, name: Land Hessen, aliases: [Landesregierung Hessen]}
-  - {slug: bundesregierung, name: Bundesregierung, aliases: [Federal Government]}
-  - {slug: roche, name: Roche, aliases: [Roche Diagnostics]}
-  - {slug: abbvie, name: AbbVie, aliases: [AbbVie Ludwigshafen]}
-  - {slug: boehringer-ingelheim, name: Boehringer Ingelheim}
-  - {slug: freudenberg, name: Freudenberg, aliases: [Freudenberg Gruppe]}
-  - {slug: john-deere, name: John Deere, aliases: [John Deere Mannheim]}
-  - {slug: daimler-truck, name: Daimler Truck, aliases: [Mercedes-Benz Werk Mannheim, Daimler Truck Mannheim]}
-  - {slug: heidelberger-druckmaschinen, name: Heidelberger Druckmaschinen, aliases: [Heidelberg Druck, Heidelberger Druck]}
-  - {slug: sas-institute, name: SAS Institute}
-  - {slug: tsg-hoffenheim, name: TSG Hoffenheim}
-  - {slug: sv-waldhof, name: SV Waldhof Mannheim, aliases: [Waldhof Mannheim]}
+  - {slug: caritas-zentrum-miesbach, name: Caritas-Zentrum Miesbach, actor_kind: provider, aliases: [Caritas Miesbach, Caritaszentrum Miesbach]}
+  - {slug: caritasverband-muenchen-freising, name: Caritasverband der Erzdiözese München und Freising, actor_kind: provider, aliases: [Caritas München-Freising, Caritas München und Oberbayern, Diözesan-Caritasverband]}
+  - {slug: landratsamt-miesbach, name: Landratsamt Miesbach, actor_kind: authority, aliases: [Landratsamt]}
+  - {slug: fachstelle-soziales-senioren, name: Fachstelle für Soziales und Senioren, actor_kind: authority, aliases: [Fachstelle Soziales und Senioren, Sozialplanung Landkreis Miesbach]}
+  - {slug: jugendamt-miesbach, name: Jugendamt Landkreis Miesbach, actor_kind: authority, aliases: [Jugendamt, Kreisjugendamt Miesbach]}
+  - {slug: jobcenter-miesbach, name: Jobcenter Landkreis Miesbach, actor_kind: authority, aliases: [Jobcenter Miesbach, Jobcenter]}
+  - {slug: pflegestuetzpunkt-miesbach, name: Pflegestützpunkt Landkreis Miesbach, actor_kind: authority, aliases: [Pflegestützpunkt]}
+  - {slug: bezirk-oberbayern, name: Bezirk Oberbayern, actor_kind: authority, aliases: [Bezirk]}
+  - {slug: freistaat-bayern, name: Freistaat Bayern (Staatsregierung), actor_kind: funder, aliases: [Bayerische Staatsregierung]}
+  - {slug: stmas, name: "Bayerisches Staatsministerium für Familie, Arbeit und Soziales", actor_kind: authority, aliases: [StMAS, Sozialministerium]}
+  - {slug: stmgp, name: "Bayerisches Staatsministerium für Gesundheit, Pflege und Prävention", actor_kind: authority, aliases: [StMGP, Gesundheitsministerium Bayern]}
+  - {slug: stmfh, name: Bayerisches Staatsministerium der Finanzen und für Heimat, actor_kind: authority, aliases: [StMFH, Finanzministerium Bayern]}
+  - {slug: bayerischer-landtag, name: Bayerischer Landtag, actor_kind: authority, aliases: [Landtag]}
+  - {slug: bmas, name: Bundesministerium für Arbeit und Soziales, actor_kind: authority, aliases: [BMAS]}
+  - {slug: bmbfsfj, name: "Bundesministerium für Bildung, Familie, Senioren, Frauen und Jugend", actor_kind: authority, aliases: [BMBFSFJ, Familienministerium, BMFSFJ]}
+  - {slug: bmg, name: Bundesministerium für Gesundheit, actor_kind: authority, aliases: [BMG]}
+  - {slug: diakonie-rosenheim, name: Diakonisches Werk des Evang.-Luth. Dekanatsbezirks Rosenheim, actor_kind: provider, aliases: [Diakonie Rosenheim, Diakonisches Werk Rosenheim]}
+  - {slug: diakonie-jugendhilfe-miesbach, name: Diakonie Kinder- und Jugendhilfe Miesbach, actor_kind: provider, aliases: [Kinder- und Jugendhilfe Miesbach]}
+  - {slug: brk-miesbach, name: BRK Kreisverband Miesbach, actor_kind: provider, aliases: [BRK Miesbach, Bayerisches Rotes Kreuz Miesbach, Rotes Kreuz Miesbach]}
+  - {slug: lebenshilfe-miesbach, name: Lebenshilfe Miesbach, actor_kind: provider, aliases: [Lebenshilfe, OBA LebensMUT]}
+  - {slug: awo-seniorenzentrum-miesbach, name: AWO-Seniorenzentrum Miesbach, actor_kind: provider, aliases: [AWO Miesbach, AWO Oberbayern]}
+  - {slug: hospizkreis-miesbach, name: Hospizkreis im Landkreis Miesbach, actor_kind: provider, aliases: [Hospizkreis]}
+  - {slug: nachbarschaftshilfe-warngau, name: Nachbarschaftshilfe Warngau, actor_kind: provider}
+  - {slug: krankenhaus-agatharied, name: Krankenhaus Agatharied, actor_kind: provider, aliases: [Klinikum Agatharied, KH Agatharied]}
+  - {slug: erzbistum-muenchen-freising, name: Erzbistum München und Freising, actor_kind: church, aliases: [Erzdiözese München und Freising, Erzbistum]}
+  - {slug: dekanat-miesbach, name: Dekanat Miesbach, actor_kind: church}
+  - {slug: pfarrverbaende-dekanat-miesbach, name: Pfarrverbände im Dekanat Miesbach, actor_kind: church, aliases: [Pfarrverbände]}
+  - {slug: dekanat-bad-toelz, name: Evang.-Luth. Dekanat Bad Tölz, actor_kind: church, aliases: [Dekanat Bad Tölz, Evangelisch im Oberland]}
+  - {slug: evang-gemeinden-miesbach, name: Evangelische Kirchengemeinden im Raum Miesbach, actor_kind: church}
+  - {slug: regionalentwicklung-oberland, name: Regionalentwicklung Oberland (LAG LEADER), actor_kind: funder, aliases: [Regionalentwicklung Oberland, LAG Oberland]}
+  - {slug: lokale-projekttraeger, name: Lokale Projektträger (LEADER), actor_kind: other}
+  - {slug: mvv, name: Münchner Verkehrs- und Tarifverbund, actor_kind: provider, aliases: [MVV]}
+  - {slug: statistik-bayern, name: Bayerisches Landesamt für Statistik, actor_kind: authority, aliases: [Landesamt für Statistik, LfStat]}
+  - {slug: merkur-miesbach, name: Merkur (Region Miesbach), actor_kind: media, aliases: [Miesbacher Merkur, Tegernseer Zeitung, Holzkirchner Merkur]}
 
-funds:
-  - {slug: efre-bw, name: EFRE Baden-Württemberg, aliases: [EFRE, ERDF]}
-  - {slug: exist, name: EXIST}
-  - {slug: zim, name: ZIM, aliases: [Zentrales Innovationsprogramm Mittelstand]}
-  - {slug: foerderdatenbank, name: Förderdatenbank des Bundes}
-  - {slug: horizon-europe, name: Horizon Europe, aliases: [Horizont Europa]}
-  - {slug: eic-accelerator, name: EIC Accelerator}
-  - {slug: mexi, name: Mannheimer Existenzgründungspreis, aliases: [MEXI]}
-  - {slug: life-science-accelerator-bw, name: Life Science Accelerator Baden-Württemberg}
-  - {slug: regiowin, name: RegioWIN}
+forums:
+  - {slug: sozialbeirat, name: Sozialbeirat des Landkreises Miesbach, actor_kind: forum, aliases: [Sozialbeirat]}
+  - {slug: netzwerk-ehrenamt, name: Netzwerk Ehrenamt, actor_kind: forum}
+  - {slug: netzwerk-quartiersmanagement, name: Netzwerk Quartiersmanagement, actor_kind: forum}
+  - {slug: netzwerk-integration, name: Netzwerk Integration, actor_kind: forum}
+  - {slug: verbund-psychische-gesundheit, name: Verbund Psychische Gesundheit Region 17, actor_kind: forum, aliases: [Verbund Psychische Gesundheit]}
+  - {slug: jugendhilfeausschuss, name: Jugendhilfeausschuss des Landkreises Miesbach, actor_kind: forum, aliases: [Jugendhilfeausschuss]}
+  - {slug: gesundheitsregionplus, name: GesundheitsregionPlus Landkreis Miesbach, actor_kind: forum, aliases: [GesundheitsregionPlus, Gesundheitsregion Plus]}
+  - {slug: gsv-gremium, name: "Gremium Gesundheits-, Sozial- und Versorgungsplanung (Bezirk Oberbayern)", actor_kind: forum, aliases: [GSV, GSV-Gremium]}
+  - {slug: kreistag-miesbach, name: Kreistag Miesbach, actor_kind: forum, aliases: [Kreistag]}
+  - {slug: bezirkstag-oberbayern, name: Bezirkstag Oberbayern, actor_kind: forum, aliases: [Bezirkstag]}
+
+programmes:
+  - {slug: sozialraumlotsen, name: Interkommunale Sozialraumlotsen, actor_kind: programme, aliases: [Sozialraumlotsen, Sozialraumlotse, Soziallotsen, Lotsenprojekt]}
+  - {slug: sela, name: Selbstbestimmt Leben im Alter (SeLA), actor_kind: programme, aliases: [SeLA]}
+  - {slug: pflegesonah, name: PflegesoNah – Pflege im sozialen Nahraum, actor_kind: programme, aliases: [PflegesoNah, Pflege im sozialen Nahraum]}
+  - {slug: leader, name: LEADER, actor_kind: programme}
+  - {slug: esf-plus, name: ESF Plus, actor_kind: programme, aliases: [ESF+, Europäischer Sozialfonds Plus]}
+  - {slug: mobilitaetskonzept-miesbach, name: Mobilitätskonzept Landkreis Miesbach, actor_kind: programme, aliases: [Mobilitätskonzept]}
+  - {slug: bergbus, name: MVV BergBus, actor_kind: programme, aliases: [BergBus]}
+  - {slug: gemeindeschwester-plus, name: Gemeindeschwester plus (Rheinland-Pfalz), actor_kind: peer, aliases: [Gemeindeschwester plus, Gemeindeschwesterplus]}
+  - {slug: community-nursing, name: Community Nursing (Österreich), actor_kind: peer, aliases: [Community Nurses, Community Nursing]}
+  - {slug: praeventionsketten, name: Kommunale Präventionsketten, actor_kind: peer, aliases: [Präventionsketten]}
+  - {slug: grundsicherungsgeld, name: Grundsicherungsgeld (SGB II), actor_kind: programme, aliases: [Bürgergeld, Grundsicherung für Arbeitsuchende]}
+
+offices:
+  - {slug: landrat-miesbach, name: Landrat (Landkreis Miesbach), aliases: [Landrat]}
+  - {slug: dekan-miesbach, name: Dekan (Dekanat Miesbach)}
+  - {slug: caritasdirektor, name: Caritasdirektor (Erzdiözese München und Freising), aliases: [Caritasdirektor, Caritasdirektorin]}
+  - {slug: jugendamtsleitung-miesbach, name: Jugendamtsleitung Miesbach, aliases: [Jugendamtsleitung, Leitung des Jugendamts]}
+  - {slug: jobcenterleitung-miesbach, name: Jobcenterleitung Miesbach, aliases: [Jobcenterleitung]}
+  - {slug: buergermeister-bad-wiessee, name: Erster Bürgermeister Bad Wiessee}
+  - {slug: buergermeister-bayrischzell, name: Erster Bürgermeister Bayrischzell}
+  - {slug: buergermeister-fischbachau, name: Erster Bürgermeister Fischbachau}
+  - {slug: buergermeister-gmund, name: Erster Bürgermeister Gmund a. Tegernsee}
+  - {slug: buergermeister-hausham, name: Erster Bürgermeister Hausham}
+  - {slug: buergermeister-holzkirchen, name: Erster Bürgermeister Holzkirchen}
+  - {slug: buergermeister-irschenberg, name: Erster Bürgermeister Irschenberg}
+  - {slug: buergermeister-kreuth, name: Erster Bürgermeister Kreuth}
+  - {slug: buergermeister-miesbach, name: Erster Bürgermeister Miesbach}
+  - {slug: buergermeister-otterfing, name: Erster Bürgermeister Otterfing}
+  - {slug: buergermeister-rottach-egern, name: Erster Bürgermeister Rottach-Egern}
+  - {slug: buergermeister-schliersee, name: Erster Bürgermeister Schliersee}
+  - {slug: buergermeister-tegernsee, name: Erster Bürgermeister Tegernsee}
+  - {slug: buergermeister-valley, name: Erster Bürgermeister Valley}
+  - {slug: buergermeister-waakirchen, name: Erster Bürgermeister Waakirchen}
+  - {slug: buergermeister-warngau, name: Erster Bürgermeister Warngau}
+  - {slug: buergermeister-weyarn, name: Erster Bürgermeister Weyarn}

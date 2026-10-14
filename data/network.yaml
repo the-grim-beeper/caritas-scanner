@@ -1,0 +1,146 @@
+# The evidence graph seed — transcribed from the brief ("Actor network and standing
+# coordination", pp. 7–10; "Gaps and uncertainty", pp. 20–22).
+#
+# The report: "The edge list should be read as an evidence graph, not a complete stakeholder
+# map. I included a relationship only where the retrieved source supported a relation such as
+# funding, commissioning, institutional membership, coordination or supervision."
+# Endpoints are entity slugs from data/entities.yaml. Direction reads "a <relation> b".
+# relation ∈ funding | commissioning | membership | coordination | supervision | cooperation |
+#            consultation | transfer
+# brief_ref is the report's footnote number.
+
+edges:
+  - {a: fachstelle-soziales-senioren, b: sozialbeirat, relation: coordination, confidence: high, brief_ref: "32",
+     evidence_de: "Die Fachstelle nennt den Sozialbeirat als gemeinsames Gremium (Fachstellenseite des Landkreises).",
+     evidence_en: "Shared committee / coordination named on the county Fachstelle page."}
+  - {a: fachstelle-soziales-senioren, b: netzwerk-ehrenamt, relation: coordination, confidence: high, brief_ref: "32",
+     evidence_de: "Fachstellenseite des Landkreises.", evidence_en: "County Fachstelle page."}
+  - {a: fachstelle-soziales-senioren, b: netzwerk-quartiersmanagement, relation: coordination, confidence: high, brief_ref: "32",
+     evidence_de: "Fachstellenseite des Landkreises.", evidence_en: "County Fachstelle page."}
+  - {a: fachstelle-soziales-senioren, b: netzwerk-integration, relation: coordination, confidence: high, brief_ref: "32",
+     evidence_de: "Fachstellenseite des Landkreises.", evidence_en: "County Fachstelle page."}
+  - {a: fachstelle-soziales-senioren, b: verbund-psychische-gesundheit, relation: coordination, confidence: high, brief_ref: "32",
+     evidence_de: "Fachstellenseite des Landkreises.", evidence_en: "County Fachstelle page."}
+  - {a: bezirk-oberbayern, b: pflegestuetzpunkt-miesbach, relation: consultation, confidence: high, brief_ref: "33",
+     evidence_de: "Der Bezirk berät regelmäßig vor Ort im Pflegestützpunkt.", evidence_en: "Bezirk advice offered at the Pflegestützpunkt (cooperation / on-site consultation)."}
+  - {a: jugendamt-miesbach, b: diakonie-jugendhilfe-miesbach, relation: commissioning, confidence: high, brief_ref: "56",
+     evidence_de: "Der Träger gibt an, im Auftrag des Jugendamts zu arbeiten (SGB VIII).", evidence_en: "Provider states its work is carried out on behalf of the Jugendamt (SGB VIII)."}
+  - {a: bezirk-oberbayern, b: lebenshilfe-miesbach, relation: funding, confidence: high, brief_ref: "57",
+     evidence_de: "Förderhinweis der Offenen Behindertenarbeit LebensMUT.", evidence_en: "OBA LebensMUT funding statement."}
+  - {a: freistaat-bayern, b: lebenshilfe-miesbach, relation: funding, confidence: high, brief_ref: "57",
+     evidence_de: "Förderhinweis der Offenen Behindertenarbeit LebensMUT.", evidence_en: "OBA LebensMUT funding statement."}
+  - {a: erzbistum-muenchen-freising, b: dekanat-miesbach, relation: supervision, confidence: high, brief_ref: "13",
+     evidence_de: "Strukturseite des Erzbistums: das Dekanat als mittlere Ebene.", evidence_en: "Archdiocesan structure page: supervision / middle-level church structure."}
+  - {a: dekanat-miesbach, b: pfarrverbaende-dekanat-miesbach, relation: coordination, confidence: high, brief_ref: "13",
+     evidence_de: "Das Dekanat umfasst elf Pfarrverbände und soll überpfarrlich vernetzen.", evidence_en: "The Dekanat covers eleven Pfarrverbände and is meant for supra-parish coordination."}
+  - {a: dekanat-bad-toelz, b: evang-gemeinden-miesbach, relation: cooperation, confidence: high, brief_ref: "47",
+     evidence_de: "Seiten des Dekanats und der Region Holzkirchen.", evidence_en: "Dekanat and Holzkirchen regional pages (church structure / cooperation)."}
+  - {a: regionalentwicklung-oberland, b: lokale-projekttraeger, relation: funding, confidence: high, brief_ref: "39",
+     evidence_de: "LEADER-Projektauswahl der LAG.", evidence_en: "LAG LEADER funding / project selection stream."}
+  - {a: landratsamt-miesbach, b: bergbus, relation: funding, confidence: medium, brief_ref: "41",
+     evidence_de: "MVV-Meldung 2026 zum BergBus (Förderung / Kooperation des Landkreises und öffentlicher Partner).", evidence_en: "2026 MVV service announcement (funding / cooperation, medium-high)."}
+  # Conveners of the standing forums (forum table, pp. 9–10).
+  - {a: landratsamt-miesbach, b: jugendhilfeausschuss, relation: coordination, confidence: high, brief_ref: "36",
+     evidence_de: "Gesetzlicher Ausschuss des Landkreises; öffentliche Sitzungen und Tagesordnungen.", evidence_en: "Statutory county committee; public meeting notices and agendas."}
+  - {a: landratsamt-miesbach, b: gesundheitsregionplus, relation: coordination, confidence: high, brief_ref: "34",
+     evidence_de: "Landkreis baut die GesundheitsregionPlus auf („im Aufbau“).", evidence_en: "County is building the GesundheitsregionPlus (“im Aufbau”)."}
+  - {a: bezirk-oberbayern, b: gsv-gremium, relation: coordination, confidence: high, brief_ref: "58",
+     evidence_de: "Öffentliche Beschreibung des Gremiums durch den Bezirk.", evidence_en: "Public institutional description by the Bezirk."}
+  - {a: landratsamt-miesbach, b: fachstelle-soziales-senioren, relation: supervision, confidence: high, brief_ref: "6",
+     evidence_de: "Die Fachstelle ist Teil des Landratsamts.", evidence_en: "The Fachstelle is part of the Landratsamt."}
+
+forums:
+  - {slug: sozialbeirat, convener_de: Landkreis / Fachstelle für Soziales und Senioren, attendance_visible: false, public_minutes: false, brief_ref: "32",
+     treatment_de: "Hohe Priorität; Landkreis und Caritas nach Mitgliedern, Mandat und Turnus fragen.",
+     treatment_en: "High priority; ask Landkreis/Caritas for membership, mandate and cadence."}
+  - {slug: netzwerk-ehrenamt, convener_de: Landkreis / Fachstelle, attendance_visible: false, public_minutes: false, brief_ref: "32",
+     treatment_de: "Fachstelle beobachten; nach Verteiler und Terminen fragen.", treatment_en: "Monitor Fachstelle and ask for mailing-list/calendar metadata."}
+  - {slug: netzwerk-quartiersmanagement, convener_de: Landkreis / Fachstelle, attendance_visible: false, public_minutes: false, brief_ref: "32",
+     treatment_de: "Direkt relevant für die Sozialraumlotsen: wahrscheinliche Überschneidung – Risiko und Chance.",
+     treatment_en: "Directly relevant to Sozialraumlotsen; treat as likely overlap risk/opportunity."}
+  - {slug: netzwerk-integration, convener_de: Landkreis / Fachstelle, attendance_visible: false, public_minutes: false, brief_ref: "32",
+     treatment_de: "Auf veränderte Bedarfe und sektorübergreifende Koordination achten.", treatment_en: "Monitor for changing support needs and cross-sector coordination."}
+  - {slug: verbund-psychische-gesundheit, convener_de: Landkreis / Fachstelle, attendance_visible: false, public_minutes: false, brief_ref: "32",
+     treatment_de: "Als Knoten der psychosozialen Koordination beobachten.", treatment_en: "Monitor as mental-health coordination node."}
+  - {slug: jugendhilfeausschuss, convener_de: Landkreis, attendance_visible: true, public_minutes: true, brief_ref: "36",
+     treatment_de: "Jede Tagesordnung und jedes Protokoll einlesen.", treatment_en: "Ingest every agenda and minutes/decision document."}
+  - {slug: gesundheitsregionplus, convener_de: Landkreis, attendance_visible: false, public_minutes: false, brief_ref: "34",
+     treatment_de: "Entstehung beobachten: Steuerungsgruppe, Stellenbesetzung, Themen und Mitglieder sind selbst Signale.",
+     treatment_en: "Monitor formation: steering group, manager recruitment, themes and membership are change signals in themselves."}
+  - {slug: gsv-gremium, convener_de: Bezirk Oberbayern, attendance_visible: false, public_minutes: false, brief_ref: "58",
+     treatment_de: "Nützliches Signal auf Bezirksebene, kein Ersatz für Koordination im Landkreis.",
+     treatment_en: "Useful higher-level network signal, not a substitute for county coordination."}
+
+gaps:
+  - kind: missing_edge
+    actors: [caritas-zentrum-miesbach, sozialraumlotsen, landratsamt-miesbach]
+    title_de: "Caritas-Zentrum ↔ Sozialraumlotsen ↔ Landkreis ↔ Gemeinden"
+    title_en: "Caritas-Zentrum ↔ Sozialraumlotsen ↔ Landkreis ↔ municipalities"
+    detail_de: "Kein öffentliches Dokument klärt, ob das eine Förderung, eine Trägerschaft, delegierte Koordination, eine Kooperationsvereinbarung, bloße Projektbeteiligung oder eine Mischung ist. Muss intern geklärt, nicht erschlossen werden."
+    detail_en: "No public document specifies whether the relation is grant funding, formal Trägerschaft, delegated coordination, a cooperation agreement, mere project participation, or a mixture. To be supplied internally rather than inferred."
+  - kind: not_found
+    actors: []
+    title_de: "Pflegekonferenz, Bürgermeisterrunde, PSAG"
+    title_en: "Pflegekonferenz, Bürgermeisterrunde, PSAG"
+    detail_de: "Keine aktuellen öffentlichen Belege für eine landkreisweite Pflegekonferenz, eine öffentliche Bürgermeisterrunde mit Protokollen oder eine Psychosoziale Arbeitsgemeinschaft für Miesbach. Interviewfragen, keine Fakten."
+    detail_en: "No current public evidence of a Miesbach-wide Pflegekonferenz, a public Bürgermeisterrunde with minutes, or a Miesbach-specific PSAG. Interview questions, not facts to backfill."
+  - kind: interview
+    actors: [sozialraumlotsen]
+    title_de: Tatsächliche Steuerung der Sozialraumlotsen
+    title_en: Actual Sozialraumlotsen governance
+    detail_de: "Steuerungsgruppe, Mitglieder, Entscheidungsrechte, Eskalationsweg, Turnus, Projektbudget, Fördergeber, Förderende, Berichtspflichten, rechtliche Grundlage."
+    detail_en: "Current steering group, named members, decision rights, escalation path, meeting cadence, project budget, funder, grant end date, reporting obligations and legal/contractual basis."
+  - kind: interview
+    actors: []
+    title_de: Zusagen der Gemeinden
+    title_en: Municipal commitment
+    detail_de: "Welche der 17 Gemeinden machen aktiv mit; politische oder Verwaltungsvertreter; mündliche, haushaltswirksame oder vertragliche Zusagen; wo es Widerstand gibt."
+    detail_en: "Which of the 17 municipalities actively participate; political vs administrative representatives; verbal, budgetary or contractual commitments; where resistance exists."
+  - kind: interview
+    actors: [sozialbeirat, netzwerk-quartiersmanagement, netzwerk-ehrenamt, netzwerk-integration]
+    title_de: Teilnahme und Qualität der Netzwerke
+    title_en: Network attendance and quality
+    detail_de: "Anwesenheitslisten, ausgefallene Treffen, wiederkehrende Abwesenheiten, Doppelmitgliedschaften, gemeinsame Entscheidungen statt bloßem Austausch."
+    detail_en: "Attendance lists, cancelled meetings, recurring absences, duplicate memberships, evidence of joint decisions rather than information exchange."
+  - kind: interview
+    actors: []
+    title_de: Vermittlungswege
+    title_en: Referral flows
+    detail_de: "Wer schickt wen wohin; geschlossene Vermittlungen; wo Übergaben scheitern; Vermittlung an Dienste ohne Kapazität; Doppelung mit bestehender Lotsenarbeit."
+    detail_en: "Who sends people to whom, closed-loop referrals, failed hand-offs, referrals to services with no capacity, duplication of existing navigation."
+  - kind: interview
+    actors: []
+    title_de: Ungedeckter Bedarf und Wartezeiten
+    title_en: Unmet demand and waiting time
+    detail_de: "Wartelisten, abgelehnte Vermittlungen, Aufnahmestopps, ungedeckter Fahrbedarf. Trägerseiten zeigen das Angebot, nicht wer nicht versorgt wurde."
+    detail_en: "Service-level waiting lists, rejected referrals, Aufnahmestopps and unmet transport needs. Provider websites advertise what is offered, not who could not be served."
+  - kind: interview
+    actors: []
+    title_de: Beständigkeit des Personals
+    title_en: Workforce persistence
+    detail_de: "Dauer von Vakanzen, gescheiterte Ausschreibungen, Krankenstand, Fluktuation, Leiharbeit, Kapazitätsabbau wegen unbesetzter Stellen."
+    detail_en: "Vacancy age, unsuccessful recruitment rounds, sick leave, turnover, temporary staff, capacity reduced because posts cannot be filled."
+  - kind: interview
+    actors: []
+    title_de: Ökonomie der Leistungsverträge
+    title_en: Service-contract economics
+    detail_de: "Leistungs- und Vergütungsvereinbarungen, Defizite, Quersubventionierung, Kostenteilung zwischen Landkreis, Bezirk und Gemeinden."
+    detail_en: "Leistungs-/Vergütungsvereinbarungen, deficits on commissioned services, cross-subsidy, cost-sharing among Landkreis/Bezirk/municipalities."
+  - kind: interview
+    actors: []
+    title_de: Datenarchitektur und Plattformnutzung
+    title_en: Data architecture and platform use
+    detail_de: "Welche Datensätze es gibt, wem sie gehören, Aggregation, Rechtsgrundlagen, Interoperabilität; welche Plattformen technisch da, aber ungenutzt sind."
+    detail_en: "Which datasets exist, owners, aggregation level, legal bases, interoperability; which platforms are technically present but operationally unused."
+  - kind: interview
+    actors: [caritas-zentrum-miesbach]
+    title_de: Gewünschter Endzustand der Caritas
+    title_en: Caritas's desired end-state
+    detail_de: "Dauerhafte Trägerschaft, neutrales Moderationsmandat, Auftraggeberrolle, interkommunales Büro oder Übergabe an Landkreis und Gemeinden – je nachdem gelten andere Beobachtungskriterien."
+    detail_en: "Permanent Trägerschaft, a neutral moderation mandate, a commissioning role, a hosted inter-municipal office, or handing the function to Landkreis/municipalities — each implies different monitoring criteria."
+  - kind: interview
+    actors: []
+    title_de: Toleranz für die Förderklippe
+    title_en: Funding-cliff tolerance
+    detail_de: "Mindestausstattung und Jahreskosten nach Förderende; was jeder Akteur realistisch tragen kann."
+    detail_en: "Minimum permanent staffing and annual cost after project funding; the maximum contribution each actor could realistically carry."

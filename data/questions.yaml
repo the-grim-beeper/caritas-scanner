@@ -1,0 +1,234 @@
+# The fifteen standing monitoring questions — transcribed from the brief
+# (docs/brief/source-architecture.txt, "Monitoring questions", pp. 10–14).
+#
+# The report's two evidence columns are kept verbatim in meaning:
+#   for      = "Evidence for the concern or transition" (the yes-answer to the question)
+#   against  = "Evidence against / stabilising"
+# Whether "for" is good or bad news differs per question (q03 for = Verstetigung; q01 for =
+# shrinking room), so each side carries its own short label for the UI.
+# Nothing here is invented; the German is a translation of the report's English.
+
+- id: q01
+  title_de: Verlieren die Gemeinden ihren Spielraum für soziale und präventive Arbeit?
+  title_en: Are municipalities losing discretionary capacity for social and preventive work?
+  driver_de: Kommunaler Handlungsspielraum; Finanzierung
+  driver_en: municipal room for manoeuvre; financing
+  sources_de: Gemeindehaushalte; Landkreishaushalt und Amtsblatt; Bezirkshaushalt; bayerischer Finanzausgleich
+  for_label_de: Spielraum schrumpft
+  for_label_en: Room shrinking
+  for_de: Haushaltssperre, Kürzung freiwilliger Leistungen, höhere Umlagen, aufgeschobene Kofinanzierung, gestrichene Projektstellen
+  for_en: Haushaltssperre, cuts in freiwillige Leistungen, higher Umlagen, deferred co-financing, project posts removed
+  against_label_de: Spielraum hält
+  against_label_en: Room holding
+  against_de: Sozial- und Präventionsposten geschützt oder erhöht; mehrjährige Zusagen; freie Einnahmen fangen Umlagen auf
+  against_en: social/prevention lines protected or increased; multi-year commitments; unrestricted revenues absorb Umlagen
+
+- id: q02
+  title_de: Verdrängen Kreisumlage und Bezirksumlage spürbar die örtliche Koordinationskapazität?
+  title_en: Are Kreisumlage and Bezirksumlage materially crowding out local coordination capacity?
+  driver_de: Finanzierung; institutionelle Verankerung
+  driver_en: financing; institutional anchoring
+  sources_de: Bezirkshaushalt, Kreishaushalt, 17 Gemeindehaushalte, StMFH
+  for_label_de: Umlagen verdrängen
+  for_label_en: Levies crowd out
+  for_de: steigende Hebesätze und Aussagen von Gemeinden, dass Zuschüsse oder Stellen gestrichen werden müssen
+  for_en: rising Hebesätze plus municipal statements that grants/posts must be cut
+  against_label_de: Umlagen abgefedert
+  against_label_en: Levies absorbed
+  against_de: Umlageerhöhungen durch Zuweisungen oder Einnahmen ausgeglichen, ohne Abbau sozialer Leistungen
+  against_en: Umlage increases offset by transfers/revenue without social-service retrenchment
+
+- id: q03
+  title_de: Wird aus dem Projekt Sozialraumlotsen vor Förderende eine reguläre Struktur?
+  title_en: Is Sozialraumlotsen moving from a project into regular governance before grant expiry?
+  driver_de: Verstetigungsmodell; Trägerschaft
+  driver_en: Verstetigungsmodell; Trägerschaft
+  sources_de: Caritas-interne Unterlagen; Ausschüsse und Haushalt des Landkreises; 17 Gemeinderäte; Stellenseiten
+  for_label_de: Verstetigung in Sicht
+  for_label_en: Moving into regular governance
+  for_de: dauerhafter Haushaltstitel, Stelle im Stellenplan, förmliches Mandat, Zweck- oder Kooperationsvereinbarung, regelmäßige Berichte an Ausschüsse
+  for_en: permanent budget title, Stellenplan position, formal mandate, Zweck-/Kooperationsvereinbarung, regular committee reporting
+  against_label_de: Bleibt Projekt
+  against_label_en: Stays a project
+  against_de: wiederholte befristete Verlängerungen; kein Träger nach Förderende; die Rolle verschwindet aus Haushalt oder Organigramm
+  against_en: repeated temporary extensions; no owner after grant; role disappears from budget/organigram
+
+- id: q04
+  title_de: Wird Koordination formalisiert, oder hängt sie weiter an persönlichen Beziehungen?
+  title_en: Is coordination being formalised, or remaining dependent on personal relationships?
+  driver_de: Steuerungsstruktur; Governance
+  driver_en: steering structure; governance
+  sources_de: Fachstelle, Sozialbeirat, Netzwerkseiten, Ausschusstagesordnungen, Interviews
+  for_label_de: Wird formalisiert
+  for_label_en: Formalising
+  for_de: fester Turnus, benannter Vorsitz, Mitgliedschaftsregeln, Protokolle, Arbeitsprogramm, Nachfolgeregelungen
+  for_en: regular cadence, named chair, membership rules, minutes, work programme, succession arrangements
+  against_label_de: Hängt an Personen
+  against_label_en: Person-dependent
+  against_de: Treffen nur „bei Bedarf“; keine Protokolle; Beteiligung bricht nach Personalwechsel ein
+  against_en: meetings only “bei Bedarf”; no minutes; participation collapses after staff turnover
+
+- id: q05
+  title_de: Verändern die politischen Wechsel von 2026 die Unterstützung für interkommunale Koordination?
+  title_en: Do the 2026 political changes alter support for inter-municipal coordination?
+  driver_de: politische Robustheit bis 2035/40
+  driver_en: political robustness to 2035/40
+  sources_de: Tagesordnungen und Protokolle der Räte, Seiten von Bürgermeistern und Landrat, Lokalmedien
+  for_label_de: Unterstützung bröckelt
+  for_label_en: Support eroding
+  for_de: Anträge, Mittel zu streichen, den Träger zu wechseln oder Leistungen zu kommunalisieren; parteipolitischer Streit
+  for_en: motions to withdraw funding, change Träger or localise services; partisan conflict
+  against_label_de: Parteiübergreifend getragen
+  against_label_en: Cross-party support
+  against_de: parteiübergreifende Haushaltsbeschlüsse; Zusagen in Vereinbarungen und Verwaltung verankert statt an Personen
+  against_en: cross-party budget votes; commitments embedded in agreements/administration rather than personalities
+
+- id: q06
+  title_de: Wird der Fachkräftemangel zur Grenze der Versorgungskapazität statt bloß zum Rekrutierungsproblem?
+  title_en: Is skilled-worker scarcity becoming a service-capacity constraint rather than merely a recruitment problem?
+  driver_de: Fachkräfte
+  driver_en: skilled workers
+  sources_de: Stellenbörsen von Lebenshilfe, Caritas, Diakonie, BRK, AWO; Krankenhaus; Ratsunterlagen
+  for_label_de: Kapazität sinkt
+  for_label_en: Capacity falling
+  for_de: wiederkehrende Vakanzen, lange Neuausschreibungen, verkürzte Zeiten, Bett- oder Platzschließungen, Abhängigkeit von Leiharbeit
+  for_en: recurring vacancies, long reposting intervals, reduced hours, bed/place closures, agency dependence
+  against_label_de: Kapazität gehalten
+  against_label_en: Capacity held
+  against_de: Stellen rasch besetzt; Kapazität und Öffnungszeiten gehalten, während die Fallzahlen steigen
+  against_en: vacancies filled rapidly; capacity/opening hours maintained while caseload grows
+
+- id: q07
+  title_de: Wo wächst der Bedarf schneller als das Angebot?
+  title_en: Where is demand growing faster than supply?
+  driver_de: demografischer Wandel; veränderte Bedarfe
+  driver_en: demographic change; changing needs
+  sources_de: Pflegestützpunkt, Jugendhilfeausschuss, Jobcenter, Krankenhaus, Bezirks-Dashboards, Statistik
+  for_label_de: Bedarf überholt Angebot
+  for_label_en: Demand outpacing supply
+  for_de: Wartelisten, Aufnahmestopp, steigende Fallzahlen, Kita-Lücke, mehr Pflegeberatung, Schließungen
+  for_en: waiting lists, Aufnahmestopp, rising cases, Kita shortfall, more Pflegeberatung, service closures
+  against_label_de: Angebot hält Schritt
+  against_label_en: Supply keeping pace
+  against_de: sinkende Wartezeiten oder Fallzahlen; belegter Kapazitätsausbau passend zur Bevölkerungsentwicklung
+  against_en: falling waits/cases or documented capacity additions matched to population change
+
+- id: q08
+  title_de: Verschlechtern Mobilitätshürden den Zugang zu Leistungen, die es formal gibt?
+  title_en: Are mobility barriers worsening access to services even when services technically exist?
+  driver_de: Mobilität und Teilhabe
+  driver_en: mobility and participation
+  sources_de: Mobilitätskonzept, MVV, Tagesordnungen der Gemeinden, Interviews mit Trägern und Nutzern
+  for_label_de: Zugang verschlechtert
+  for_label_en: Access worsening
+  for_de: Linienkürzungen, schwacher Abend- und Wochenendverkehr, verpasste Termine, Engpässe bei Fahrdiensten
+  for_en: route reductions, weak evening/weekend access, missed appointments, Fahrdienst shortages
+  against_label_de: Zugang verbessert
+  against_label_en: Access improving
+  against_de: neue Linien und Takte, bedarfsgesteuerte Angebote, messbar bessere Erreichbarkeit
+  against_en: new routes/Takte, demand-responsive service, measurable accessibility gains
+
+- id: q09
+  title_de: Verschieben sich die Bedarfe von Jugend und Familie so, dass ein anderer Leistungsmix nötig wird?
+  title_en: Are youth/family needs shifting enough to require a different local service mix?
+  driver_de: veränderte Unterstützungsbedarfe
+  driver_en: changing support needs
+  sources_de: Jugendhilfeausschuss, Jobcenter, Kita-Bedarfsplanung, Jugendhilfe der Diakonie, BMBFSFJ
+  for_label_de: Bedarf verschiebt sich
+  for_label_en: Needs shifting
+  for_de: veränderte Bevölkerungsprognose, mehr Hilfen zur Erziehung, Kita-Lücken, Schulvermeidung und psychische Belastung
+  for_en: population forecast shifts, higher HzE demand, Kita gaps, school-avoidance/mental-health pressures
+  against_label_de: Bedarf stabil
+  against_label_en: Needs stable
+  against_de: Bedarfsplanung stabilisiert sich; präventive Angebote verringern Eskalation
+  against_en: demand planning stabilises and preventive services reduce escalation
+
+- id: q10
+  title_de: Setzt der kirchliche Umbau örtliche soziale Infrastruktur frei, nimmt er sie weg oder nutzt er sie um?
+  title_en: Will church restructuring release, remove or repurpose local social infrastructure?
+  driver_de: organisatorische Rahmenbedingungen; Rolle der Caritas
+  driver_en: organisational conditions; Caritas role
+  sources_de: Dekanat Miesbach, Erzbistum, Caritas-Geschäftsbericht, Pfarreien
+  for_label_de: Infrastruktur fällt weg
+  for_label_en: Infrastructure lost
+  for_de: Immobilienverkäufe, Pfarreizusammenlegungen, weniger Personal, Wegfall von Treffpunkten
+  for_en: property sales, parish mergers, fewer staff, closure of meeting space
+  against_label_de: Für Soziales umgenutzt
+  against_label_en: Repurposed for social use
+  against_de: Gebäude und Ehrenamtsnetze bewusst für soziale Koordination oder Gemeinwesen umgenutzt
+  against_en: buildings/volunteer networks deliberately repurposed for social coordination or community use
+
+- id: q11
+  title_de: Konsolidieren sich die Wohlfahrtsträger, weil die örtliche Trägerökonomie nicht mehr trägt?
+  title_en: Are welfare providers consolidating because the local provider economy no longer works?
+  driver_de: Marktlogik gegen Fürsorgelogik; Trägerschaft
+  driver_en: market logic vs care logic; Trägerschaft
+  sources_de: Meldungen und Stellen der Träger, Caritas-Berichte, Räte, Förderung von Bezirk und Freistaat
+  for_label_de: Konsolidierung
+  for_label_en: Consolidating
+  for_de: Fusion, Insolvenz, Trägerwechsel, Rückzug aus Verträgen, Schließung
+  for_en: merger, insolvency, transfer of Trägerschaft, contract withdrawal, closure
+  against_label_de: Trägerlandschaft stabil
+  against_label_en: Providers stable
+  against_de: neue langfristige Leistungsvereinbarungen, tragfähige Tarif- und Refinanzierungsabschlüsse, Kapazitätsausbau
+  against_en: new long-term service agreements, sustainable tariff/refinancing settlements, capacity expansion
+
+- id: q12
+  title_de: Welche externen Förderungen erzeugen die nächste Förderklippe – und welche lassen sich in Regelfinanzierung überführen?
+  title_en: Which external grants create the next funding cliff—and which are genuinely bridgeable to regular finance?
+  driver_de: Finanzierung; Verstetigung
+  driver_en: financing; Verstetigung
+  sources_de: SeLA, PflegesoNah, LEADER, künftig ESF Plus und Stiftungen
+  for_label_de: Förderklippe
+  for_label_en: Funding cliff
+  for_de: Projekte hängen zu 100 % an befristetem Geld; kein Plan für die Zeit nach der Förderung; wiederholte Suche nach Anschlussförderung
+  for_en: projects depend on 100% temporary money; no post-grant plan; repeated search for successor grants
+  against_label_de: Überbrückbar
+  against_label_en: Bridgeable
+  against_de: Förderung verlangt und erreicht eine Anschlussfinanzierung, einen regulären Haushaltsposten oder einen gesetzlichen Vertrag
+  against_en: grant requires and leads to explicit follow-on financing, regular budget or statutory contract
+
+- id: q13
+  title_de: Bewegt sich der Landkreis auf gemeinsame Daten und Sozialberichterstattung zu, oder entstehen mehr getrennte Plattformen?
+  title_en: Is the county moving toward shared data and social reporting, or accumulating more separate platforms?
+  driver_de: Koordination; Daten
+  driver_en: coordination; data
+  sources_de: Fachstelle, Bezirks-Dashboards, GesundheitsregionPlus, Caritas intern, Interviews
+  for_label_de: Gemeinsame Daten
+  for_label_en: Shared data
+  for_de: gemeinsame Indikatoren, gemeinsame Taxonomie, Datenvereinbarungen, ein gemeinsamer Berichtskalender
+  for_en: shared indicators, common taxonomy, data-sharing agreements, one reporting calendar
+  against_label_de: Mehr Insellösungen
+  against_label_en: More silos
+  against_de: doppelte Portale, veraltete Verzeichnisse, inkompatible Daten, Zugangsbeschränkungen, kein benannter Datenverantwortlicher
+  against_en: duplicate portals, stale directories, incompatible data, access restrictions, no named data owner
+
+- id: q14
+  title_de: Wird die örtliche Legitimität präventiver Koordination stärker oder schwächer?
+  title_en: Is local legitimacy for preventive coordination strengthening or weakening?
+  driver_de: Governance; Stimmung
+  driver_en: governance; sentiment
+  sources_de: Ratsprotokolle, Lokalmedien, Bürgerinitiativen, Träger und Zivilgesellschaft
+  for_label_de: Legitimität schwindet
+  for_label_en: Legitimacy weakening
+  for_de: wiederholter Streit über Kosten, Doppelstrukturen, „Bürokratie“ und Gerechtigkeit zwischen Gemeinden
+  for_en: repeated controversy over cost, duplication, “bureaucracy,” municipal fairness
+  against_label_de: Legitimität wächst
+  against_label_en: Legitimacy strengthening
+  against_de: sichtbare parteiübergreifende Unterstützung, Bürgerbeteiligung, konkrete Vermittlungen und Ergebnisse, die Räte zitieren
+  against_en: visible cross-party support, civic participation, concrete referrals/outcomes cited by councillors
+
+- id: q15
+  title_de: Welche Vergleichsmodelle haben das Projektende überlebt – und woran lag es?
+  title_en: Which peer models survived project funding, and what made the difference?
+  driver_de: institutionelle Verankerung; Trägerschaft
+  driver_en: institutional anchoring; Trägerschaft
+  sources_de: Gemeindeschwester plus; Community Nursing; Präventionsketten; weitere Vergleichsquellen
+  for_label_de: Verstetigt
+  for_label_en: Survived
+  for_de: Übergang in reguläre Landes- oder Kommunalfinanzierung, Dauerstellen, Eingliederung in gesetzliche oder kommunale Strukturen
+  for_en: movement to regular state/local financing, permanent posts, integration into statutory/municipal structure
+  against_label_de: Ausgelaufen
+  against_label_en: Ended
+  against_de: Schließung, geografische Schrumpfung, befristete Brückenfinanzierung ohne dauerhaften Träger
+  against_en: closure, geographic contraction, temporary bridge funding without permanent owner
