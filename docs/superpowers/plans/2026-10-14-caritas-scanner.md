@@ -464,3 +464,98 @@ Requirements:
 - [ ] Full test suite green; `scripts/check_models.py` OK; `scripts/check_sources.py` on the researched catalogue; `alembic upgrade head` on a fresh DB; `load_sources.py`; one live cycle with backfill (local, `MAX_EXTRACTIONS_PER_CYCLE` 600); `POST /api/report/run`; inspect output quality (questions, quotes, Friday note) and fix prompts if needed.
 - [ ] Railway: new project `caritas-scanner`, `postgres` from `pgvector/pgvector:pg16` + volume, `web` from repo Dockerfile; variables `DATABASE_URL`, `APP_PASSWORD=oberland`, `SECRET_KEY`, `SCHEDULER_ENABLED=true`; Nicklas sets `ANTHROPIC_API_KEY` via `! railway variable set`; deploy; run a cycle + report in production; browser smoke test of all seven views.
 - [ ] README rewritten for this project; memory updated; push.
+
+---
+
+## Task 9: Self-updating sources — weekly suggestions, adopted after 7 days unless declined
+
+Added 2026-10-14 at the user's request ("make the sources self-updating with a list of new suggested sources that get added after a week if they are not declined; this exists in Sandglass"). Port of Sandglass *tending* (`~/projects/sandglass/backend/app/services/tending.py`: `_is_public_host`, `_fetch`, `_parses_as_feed`, `discover_feed_url`, `validate_candidate`, `_discovery_messages`; `app/models/tending.py` `FolderSuggestion`; `app/api/tending.py` accept/dismiss). Sandglass leaves suggestions pending until accepted; **new here: a pending suggestion nobody declines is re-verified and adopted after 7 days.** Declines are permanent (a declined URL is never proposed again).
+
+**Files:**
+- Modify: `backend/mhs/db/models.py` (`Source.origin`; new `SourceSuggestion`), `backend/mhs/config.py`, `backend/scripts/load_sources.py` (`prune_sources` keeps `origin="suggestion"`)
+- Create: `backend/mhs/suggest/__init__.py`, `suggest/net.py` (public-host guard + bounded fetch), `suggest/validate.py`, `suggest/discover.py` (prompt, schema, live + mock), `suggest/adopt.py`, `suggest/run.py` (orchestration), `backend/mhs/api/suggestions.py` (router)
+- Test: `backend/tests/test_suggest_net.py`, `test_suggest_validate.py`, `test_suggest_adopt.py`, `test_suggest_discover.py`, `test_suggest_api.py`, extend `test_load_prune.py`
+
+**Interfaces — Produces:**
+```python
+# models
+class Source:  # + origin: String(12), default "catalogue"   ("catalogue" | "suggestion")
+class SourceSuggestion(Base):   # "source_suggestions"
+    id uuid PK; url String(2048) UNIQUE (canonical form); name String(300); layer String(32); scope String(16);
+    authority String(16) default "medium"; places ARRAY(String); rationale_de Text; rationale_en Text;
+    method String(16)|None ("rss"|"page" after validation); feed_url String(2048)|None; items_at_check int|None;
+    status String(12) default "pending"   # pending | adopted | declined | rejected | failed
+    reason Text|None (why rejected/failed); model String(64); suggested_at; adopt_after (suggested_at + 7 days);
+    resolved_at|None; source_id FK sources SET NULL |None
+# config (verified 2026-10-14: claude-sonnet-5-5 + web_search_20260209 + output_config json_schema, 29 s, 3 searches)
+suggest_model: str = "claude-sonnet-5-5"; suggest_web_search_tool: str = "web_search_20260209"
+suggest_max_candidates: int = 8; suggest_web_search_max_uses: int = 8; suggest_adopt_after_days: int = 7
+suggest_weekday: str = "mon"; suggest_hour_local: int = 6
+# suggest/net.py
+def is_public_host(host: str) -> bool        # resolves; rejects private/loopback/link-local/reserved/multicast, "localhost", single-label
+async def fetch(http, url: str, max_bytes: int = 3_000_000) -> httpx.Response | None   # scheme http/https only, public host only (also after redirects), size cap
+# suggest/validate.py
+@dataclass class Verdict: ok: bool; method: str | None; feed_url: str | None; items: int; reason: str | None
+async def verify_candidate(http, url: str) -> Verdict
+    # 1 fetch url; if it parses as a feed with ≥1 item → rss (feed_url=url); 2 else feed autodiscovery on the HTML
+    # (<link rel=alternate type=rss/atom>, then the usual suffixes as in scripts/check_sources.py) → rss;
+    # 3 else mhs.collect.page.extract_items ≥3 → page; else ok=False with reason
+def canonical(url: str) -> str               # mhs.collect.canonical.canonical_url
+async def known_urls(session) -> set[str]     # canonical url/homepage of every Source + every SourceSuggestion (any status)
+# suggest/discover.py
+@dataclass class Candidate: name: str; url: str; layer: str; scope: str; places: list[str]; rationale_de: str; rationale_en: str
+async def propose(session) -> list[Candidate]
+    # live: settings.suggest_model with tools=[{"type": settings.suggest_web_search_tool, "name": "web_search",
+    #   "max_uses": settings.suggest_web_search_max_uses, "user_location": {"type": "approximate", "country": "DE",
+    #   "region": "Bavaria", "city": "Miesbach", "timezone": "Europe/Berlin"}}] and output_config json_schema;
+    #   read the LAST text block as JSON (server-tool blocks precede it); layer/scope must be in vocab (drop otherwise);
+    #   cap settings.suggest_max_candidates. Mock (no key): returns [].
+    # Prompt context: the coverage gaps — collected-source counts per layer and per municipality (all 17, zero-count ones named),
+    #   the 15 monitoring questions' titles (what the scanner is for), up to 30 recent founder headlines, and the full list of
+    #   known URLs (catalogue + every suggestion incl. declined/rejected: "never propose these"). Ask for durable listing
+    #   endpoints (Aktuelles, Bekanntmachungen, Sitzungskalender/RIS, Pressemitteilungen, feeds), official or established
+    #   sources only, no social media, no single articles, no paywalled pages; German sites preferred.
+# suggest/adopt.py
+async def adopt_due(session, http, *, now: datetime | None = None) -> dict   # {"adopted": n, "failed": m}
+    # pending with adopt_after <= now: re-verify; ok → Source(slug "vorschlag-<slugify(name)>"[:120] unique, origin="suggestion",
+    #   collect=True, status active, method/url from verdict, homepage=suggestion url, layer/scope/authority/places from suggestion,
+    #   priority "thematic", brief_ref "vorschlag", notes=rationale_de) and suggestion adopted + source_id + resolved_at;
+    #   not ok → status failed + reason + resolved_at
+async def adopt_now(session, http, suggestion_id) -> SourceSuggestion        # same path, ignores adopt_after (409 if not pending)
+async def decline(session, suggestion_id) -> SourceSuggestion                # pending → declined, resolved_at (409 if not pending)
+# suggest/run.py
+async def suggest_cycle(session_factory, http=None) -> dict   # propose → drop known → verify each → store pending (adopt_after = now + 7d) or rejected (with reason); returns counts
+```
+API (`api/suggestions.py`, same auth dependency as `routes.router`):
+```
+GET  /api/suggestions?status=pending|adopted|declined|rejected|failed|all  -> [{id, name, url, layer, scope, places, rationale_de, rationale_en,
+      method, feed_url, items_at_check, status, reason, suggested_at, adopt_after, resolved_at, source_slug}]  (pending first, adopt_after asc)
+POST /api/suggestions/{id}/decline   -> SuggestionOut     (409 unless pending)
+POST /api/suggestions/{id}/adopt     -> SuggestionOut     (409 unless pending; 422 with reason if re-verify fails → status failed)
+POST /api/suggestions/run            -> {proposed, pending_new, rejected, known}   (409 if a run is in progress; asyncio.Lock)
+```
+- [ ] **Step 1: Failing tests:**
+```python
+def test_private_and_local_hosts_are_not_public():
+    for h in ["localhost", "127.0.0.1", "10.0.0.5", "192.168.1.1", "169.254.169.254", "intranet"]:
+        assert not is_public_host(h)
+async def test_known_and_declined_urls_are_never_stored_again(db_session):   # a declined suggestion for https://a.test/x → suggest_cycle with a mocked proposer returning https://a.test/x/ (trailing slash) → no new row, counts.known == 1
+async def test_feed_candidate_verifies_as_rss(): ...        # respx: url returns RSS with 2 items → Verdict(ok, "rss", url, 2)
+async def test_html_with_alternate_link_resolves_feed(): ... # page with <link rel=alternate type=application/rss+xml href=/feed> → rss at absolute /feed
+async def test_listing_page_verifies_as_page(): ...          # ≥3 article links, no feed → "page"
+async def test_dead_candidate_is_rejected_with_reason(db_session): ...   # 404 → stored status "rejected", reason mentions 404, never pending
+async def test_pending_older_than_seven_days_is_adopted(db_session):
+    s = SourceSuggestion(url="https://weyarn.test/aktuelles", name="Gemeinde Weyarn – Aktuelles", layer="gemeinden", scope="gemeinde",
+                         places=["Weyarn"], rationale_de="r", rationale_en="r", model="mock",
+                         suggested_at=now - timedelta(days=8), adopt_after=now - timedelta(days=1))
+    ... respx: page with 3 links → adopt_due → status "adopted", a Source with origin "suggestion", collect True, layer gemeinden exists
+async def test_pending_younger_than_seven_days_is_not_adopted(db_session): ...
+async def test_declined_is_never_adopted(db_session): ...     # declined with adopt_after in the past → adopt_due leaves it declined, no Source
+async def test_adoption_reverify_failure_marks_failed(db_session): ...   # 500 at adoption → status failed, no Source
+async def test_prune_keeps_adopted_suggestion_sources(db_session): ...   # origin "suggestion", no feed items, not in catalogue → kept
+async def test_mock_proposer_returns_nothing_and_cycle_is_a_noop(...): ...
+def test_discovery_payload_with_unknown_layer_is_dropped(): ...         # parse helper drops layer "policy"
+async def test_api_decline_then_adopt_conflicts(client): ...             # decline → 200 declined; adopt same id → 409
+```
+- [ ] **Step 2–4:** FAIL → implement → PASS (full suite). **Step 5: Commit.**
+- Wiring (Task 8, orchestrator): daily cycle runs `adopt_due` before collect (so adopted sources collect the same day); scheduler runs `suggest_cycle` weekly (Mon 06:00 Europe/Berlin); router included in `main.py`; Quellen view gets a "Vorschläge" panel (pending with "wird am <adopt_after> aufgenommen", Ablehnen / Jetzt aufnehmen; history of adopted/declined/rejected) — frontend follow-up after Task 7 merges.
