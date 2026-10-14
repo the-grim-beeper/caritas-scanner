@@ -13,6 +13,8 @@ import type {
   ReportFull,
   Signal,
   SourceOut,
+  Suggestion,
+  SuggestionRunResult,
   TrendCell,
 } from "./types";
 
@@ -20,9 +22,12 @@ export class AuthError extends Error {}
 
 export class HttpError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  /** FastAPI's `{"detail": "..."}` body, when the error response is JSON and carries one. */
+  detail?: string;
+  constructor(status: number, message: string, detail?: string) {
     super(message);
     this.status = status;
+    this.detail = detail;
   }
 }
 
@@ -31,7 +36,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (res.status === 401) throw new AuthError("not signed in");
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new HttpError(res.status, `${res.status} ${res.statusText}: ${text.slice(0, 200)}`);
+    let detail: string | undefined;
+    try {
+      const j: unknown = JSON.parse(text);
+      if (j && typeof j === "object" && typeof (j as Record<string, unknown>).detail === "string") {
+        detail = (j as Record<string, string>).detail;
+      }
+    } catch {
+      /* body is not JSON */
+    }
+    throw new HttpError(res.status, detail ?? `${res.status} ${res.statusText}: ${text.slice(0, 200)}`, detail);
   }
   return (await res.json()) as T;
 }
@@ -59,6 +73,12 @@ export function post<T>(path: string, body?: unknown): Promise<T> {
 
 export const isNotFound = (e: unknown) => e instanceof HttpError && e.status === 404;
 
+/** The backend's stated reason, when there is one; otherwise the plain error message. */
+export const errorDetail = (e: unknown): string => {
+  if (e instanceof HttpError && e.detail) return e.detail;
+  return e instanceof Error ? e.message : String(e);
+};
+
 export const api = {
   login: (password: string) => post<{ ok: boolean }>("/api/login", { password }),
   meta: () => get<Meta>("/api/meta"),
@@ -78,6 +98,10 @@ export const api = {
   sources: () => get<{ items: SourceOut[] }>("/api/sources"),
   cycles: () => get<{ items: CycleOut[] }>("/api/cycles"),
   runCycle: () => post<{ started: boolean; reason?: string }>("/api/cycle/run"),
+  suggestions: (status: string = "all") => get<Suggestion[] | { items: Suggestion[] }>("/api/suggestions", { status }).then(unwrapList),
+  declineSuggestion: (id: string) => post<unknown>(`/api/suggestions/${encodeURIComponent(id)}/decline`),
+  adoptSuggestion: (id: string) => post<unknown>(`/api/suggestions/${encodeURIComponent(id)}/adopt`),
+  runSuggestions: () => post<SuggestionRunResult>("/api/suggestions/run"),
 };
 
 /** The list endpoints are specified as bare arrays; accept the template's `{items}` wrapper too. */

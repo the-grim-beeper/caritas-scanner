@@ -380,6 +380,38 @@ export interface SourceOut {
   items_7d: number;
   items_30d?: number;
   signals_7d: number;
+  /** "catalogue" (the original 168) or "suggestion" (adopted from the weekly proposal run). Older backends omit it. */
+  origin?: "catalogue" | "suggestion";
+}
+
+// --- source suggestions (Task 9/10: self-updating sources) -------------------------------------
+export type SuggestionStatus = "pending" | "adopted" | "declined" | "rejected" | "failed";
+
+export interface Suggestion {
+  id: string;
+  name: string;
+  url: string | null;
+  layer: Layer;
+  scope: string;
+  places?: string[];
+  rationale_de: string;
+  rationale_en: string;
+  method: string;
+  feed_url: string | null;
+  items_at_check: number | null;
+  status: SuggestionStatus;
+  reason: string | null;
+  suggested_at: string;
+  adopt_after: string | null;
+  resolved_at: string | null;
+  source_slug: string | null;
+}
+
+export interface SuggestionRunResult {
+  proposed: number;
+  pending_new: number;
+  rejected: number;
+  known: number;
 }
 
 export interface TrendCell {
