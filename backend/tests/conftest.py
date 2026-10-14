@@ -7,6 +7,7 @@ import os
 import asyncpg
 import pytest
 from sqlalchemy import text
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 TEST_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://mhs:mhs@localhost:5441/mhs_test")
@@ -14,11 +15,13 @@ ADMIN_DSN = "postgresql://mhs:mhs@localhost:5441/postgres"
 
 
 async def _ensure_database() -> None:
+    # The database named in TEST_DATABASE_URL, so parallel worktrees can each have their own.
+    name = make_url(TEST_URL).database
     conn = await asyncpg.connect(ADMIN_DSN)
     try:
-        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname='mhs_test'")
+        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname=$1", name)
         if not exists:
-            await conn.execute("CREATE DATABASE mhs_test")
+            await conn.execute(f'CREATE DATABASE "{name}"')
     finally:
         await conn.close()
 

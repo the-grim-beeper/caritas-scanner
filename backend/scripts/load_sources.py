@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from mhs.calendar import load_calendar  # noqa: E402
 from mhs.db.engine import session_factory  # noqa: E402
 from mhs.db.models import Entity, Source  # noqa: E402
 from mhs.entities import load_seed  # noqa: E402
@@ -66,6 +67,7 @@ async def main() -> None:
     async with session_factory()() as session:
         c, u = await upsert_sources(session, rows)
         e = await upsert_entities(session, seeds)
+        print(f"calendar: {await load_calendar(session, DATA / 'calendar.yaml')} entries loaded")
     collected = sum(1 for r in rows if r.collect)
     print(f"sources: {c} created, {u} updated, {collected}/{len(rows)} collected; entities seeded: {e} new of {len(seeds)}")
 
