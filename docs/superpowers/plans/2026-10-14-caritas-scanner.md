@@ -559,3 +559,16 @@ async def test_api_decline_then_adopt_conflicts(client): ...             # decli
 ```
 - [ ] **Step 2–4:** FAIL → implement → PASS (full suite). **Step 5: Commit.**
 - Wiring (Task 8, orchestrator): daily cycle runs `adopt_due` before collect (so adopted sources collect the same day); scheduler runs `suggest_cycle` weekly (Mon 06:00 Europe/Berlin); router included in `main.py`; Quellen view gets a "Vorschläge" panel (pending with "wird am <adopt_after> aufgenommen", Ablehnen / Jetzt aufnehmen; history of adopted/declined/rejected) — frontend follow-up after Task 7 merges.
+
+---
+
+## Task 10: Frontend follow-up — Vorschläge panel + error states
+
+**Files:** `frontend/src/views/Quellen.tsx`, `frontend/src/views/Lagebericht.tsx`, `frontend/src/views/Lage.tsx`, `frontend/src/types.ts`, `frontend/src/api.ts`, `frontend/src/i18n.ts` (and a new component if it keeps Quellen focused).
+
+**Interfaces — Consumes** Task 9's API: `GET /api/suggestions?status=pending|adopted|declined|rejected|failed|all` → `[{id, name, url, layer, scope, places, rationale_de, rationale_en, method, feed_url, items_at_check, status, reason, suggested_at, adopt_after, resolved_at, source_slug}]`; `POST /api/suggestions/{id}/decline` (409 unless pending); `POST /api/suggestions/{id}/adopt` (409 unless pending; 422 with `detail` reason if re-verification fails); `POST /api/suggestions/run` (409 if running; may take ~30–60 s; returns `{proposed, pending_new, rejected, known}`). `/api/sources` items now carry `origin` ("catalogue" | "suggestion") and `items_30d`.
+
+- [ ] **Vorschläge panel** at the top of Quellen: pending suggestions (name, link, layer dot + label, places, rationale in the current language, method + items_at_check, "wird am {adopt_after, de date} aufgenommen" with days remaining), buttons **Ablehnen** and **Jetzt aufnehmen** (optimistic disable while in flight; on 409/422 show the reason inline). A collapsed history list below (adopted → link to the source row; declined; rejected/failed with reason). A small button "Neue Vorschläge suchen" calling run (disabled while running, shows "läuft …", result counts afterwards). One sentence explaining the rule: "Neue Quellen schlägt der Scanner wöchentlich vor. Wer nicht ablehnt, stimmt zu: nach sieben Tagen wird die Quelle nach erneuter Prüfung aufgenommen."
+- [ ] Sources with `origin == "suggestion"` get a small "Vorschlag" badge in the coverage table; the municipality grid uses `items_30d` when present (fall back to 7d as now).
+- [ ] Fix the three deferred minors: Lagebericht archive list, Quellen cycles table and Lage "Fragen in Bewegung" strip must show the shared error state on fetch errors (404 = empty state; other errors = ErrorBox).
+- [ ] German first; EN strings for every new label. `npm run build` + `npx oxlint` clean; check 390 px width.
