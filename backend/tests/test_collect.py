@@ -6,8 +6,8 @@ import pytest
 import respx
 from sqlalchemy import select
 
-from rns.collect.run import collect_all
-from rns.db.models import FeedItem, Source
+from mhs.collect.run import collect_all
+from mhs.db.models import FeedItem, Source
 
 FIX = Path(__file__).parent / "fixtures"
 
@@ -63,7 +63,7 @@ async def test_second_run_adds_nothing_and_page_monitor_skips_unchanged_page(db_
 
 @respx.mock
 async def test_failed_source_counts_up_and_quarantines_after_max(db_session, http, monkeypatch):
-    from rns import config
+    from mhs import config
     monkeypatch.setattr(config.settings, "max_consecutive_failures", 2)
     s = _source("dead", "rss", "https://dead.test/feed.xml")
     db_session.add(s)
@@ -96,7 +96,7 @@ async def test_not_collected_sources_are_never_fetched(db_session, http):
 async def test_items_older_than_the_freshness_window_are_not_stored(db_session, http, monkeypatch):
     # Wrong: ingesting a publisher's whole archive (MVV's feed carries ~1,700 items going
     # back years) as if it were this cycle's news.
-    from rns import config
+    from mhs import config
     monkeypatch.setattr(config.settings, "max_item_age_days", 60)
     s = _source("mvv", "rss", "https://mvv.test/feed.xml")
     db_session.add(s)

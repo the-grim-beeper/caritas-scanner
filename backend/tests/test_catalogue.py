@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from rns.sources import catalogue
+from mhs.sources import catalogue
 
 FIX = Path(__file__).parent / "fixtures"
 DATA = Path(__file__).resolve().parents[2] / "data"
@@ -63,7 +63,7 @@ def test_real_catalogue_loads_and_covers_all_six_layers():
 
 
 def test_real_entity_dictionary_has_the_reports_places_and_projects():
-    from rns.entities import load_seed
+    from mhs.entities import load_seed
     seeds = {s.slug: s for s in load_seed(DATA / "entities.yaml")}
     assert seeds["patrick-henry-village"].kind == "project" and "PHV" in seeds["patrick-henry-village"].aliases
     assert seeds["kurt-schumacher-bruecke"].kind == "project"

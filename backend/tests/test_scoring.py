@@ -1,4 +1,4 @@
-from rns.analyse.scoring import ScoreComponents, score, story_confidence
+from mhs.analyse.scoring import ScoreComponents, score, story_confidence
 
 
 def test_score_is_the_briefs_product_and_zero_when_any_factor_is_zero():

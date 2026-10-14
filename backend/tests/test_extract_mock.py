@@ -1,7 +1,7 @@
 """The mock extractor is what the offline pipeline and the tests run on. It must
 behave like a strict extractor, not a generous one."""
-from rns.llm.mock import mock_extract
-from rns import vocab
+from mhs.llm.mock import mock_extract
+from mhs import vocab
 
 
 def test_mock_only_emits_vocabulary_topics():

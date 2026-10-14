@@ -342,7 +342,7 @@ cycle with the 60-day backfill; then the deployed URL is smoke-tested in a brows
 New Railway project `caritas-scanner`: `web` (repo Dockerfile, as the template) + `postgres`
 (`pgvector/pgvector:pg16`, volume). Pre-deploy: `alembic upgrade head && python scripts/load_sources.py`.
 `APP_PASSWORD=oberland`. The Anthropic key is set by Nicklas with a `! railway variable set` command
-(auto mode blocks secret writes). Local Postgres on host port **5439** (5438 is the Rhein-Neckar
+(auto mode blocks secret writes). Local Postgres on host port **5441** (5438 is the Rhein-Neckar
 scanner's).
 
 ## 11. Decisions made in this build (for review)

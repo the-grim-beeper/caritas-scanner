@@ -1,7 +1,7 @@
 """List-page monitor: picks article links, not chrome."""
 from pathlib import Path
 
-from rns.collect.page import extract_items, page_hash
+from mhs.collect.page import extract_items, page_hash
 
 FIXTURE = (Path(__file__).parent / "fixtures" / "page_list.html").read_text()
 BASE = "https://www.rhein-neckar-kreis.de/startseite/aktuelles/pressemeldungen.html"

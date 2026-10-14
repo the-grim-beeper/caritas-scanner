@@ -5,8 +5,8 @@ from datetime import timedelta
 import numpy as np
 import pytest
 
-from rns.analyse import stories
-from rns.db.models import Signal, Source, Story, utcnow
+from mhs.analyse import stories
+from mhs.db.models import Signal, Source, Story, utcnow
 
 
 def _unit(seed: int, dim: int = 384) -> list[float]:

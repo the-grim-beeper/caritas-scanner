@@ -1,5 +1,5 @@
 """Canonical URLs: the dedup key. Each test names the wrong implementation it defends against."""
-from rns.collect.canonical import canonical_url, content_hash
+from mhs.collect.canonical import canonical_url, content_hash
 
 
 def test_strips_tracking_params_but_keeps_real_query():

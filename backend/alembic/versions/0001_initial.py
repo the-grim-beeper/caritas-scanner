@@ -7,7 +7,7 @@ transcribing twelve tables by hand; later migrations are written explicitly
 from alembic import op
 import sqlalchemy as sa
 
-from rns.db.models import Base
+from mhs.db.models import Base
 
 revision = "0001_initial"
 down_revision = None

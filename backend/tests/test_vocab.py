@@ -1,5 +1,5 @@
 """Vocabulary is transcribed from the brief; these tests defend against drift."""
-from rns import vocab
+from mhs import vocab
 
 
 def test_topics_are_exactly_the_brief_vocabulary():

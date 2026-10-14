@@ -2,8 +2,8 @@ from datetime import date, datetime, timedelta, timezone
 
 from sqlalchemy import select
 
-from rns.analyse import trends
-from rns.db.models import Signal, SignalTopic, Source, TrendCell
+from mhs.analyse import trends
+from mhs.db.models import Signal, SignalTopic, Source, TrendCell
 
 
 async def _sig(db_session, src, when, topics):

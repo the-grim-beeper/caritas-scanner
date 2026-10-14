@@ -11,10 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from rns.db.engine import session_factory  # noqa: E402
-from rns.db.models import Entity, Source  # noqa: E402
-from rns.entities import load_seed  # noqa: E402
-from rns.sources.catalogue import SourceRow, load_catalogue, load_live, merge_for_load  # noqa: E402
+from mhs.db.engine import session_factory  # noqa: E402
+from mhs.db.models import Entity, Source  # noqa: E402
+from mhs.entities import load_seed  # noqa: E402
+from mhs.sources.catalogue import SourceRow, load_catalogue, load_live, merge_for_load  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[2] / "data"
 

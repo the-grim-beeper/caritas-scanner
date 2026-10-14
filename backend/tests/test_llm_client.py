@@ -1,7 +1,7 @@
 """The two production failure modes: empty completions and refusals."""
 import pytest
 
-from rns.llm import client as llm
+from mhs.llm import client as llm
 
 
 class _Block:

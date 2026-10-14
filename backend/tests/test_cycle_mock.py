@@ -6,9 +6,9 @@ import httpx
 import respx
 from sqlalchemy import select
 
-from rns.cycle import run_cycle
-from rns.db.models import Cycle, Digest, Signal, Source, Story, TrendCell
-from rns.entities import load_seed
+from mhs.cycle import run_cycle
+from mhs.db.models import Cycle, Digest, Signal, Source, Story, TrendCell
+from mhs.entities import load_seed
 
 FIX = Path(__file__).parent / "fixtures"
 DATA = Path(__file__).resolve().parents[2] / "data"
@@ -17,7 +17,7 @@ DATA = Path(__file__).resolve().parents[2] / "data"
 @respx.mock
 async def test_mock_cycle_produces_signals_stories_trends_and_a_digest(db_session, session_factory, monkeypatch):
     from scripts.load_sources import upsert_entities
-    from rns.analyse import embedding
+    from mhs.analyse import embedding
 
     await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
     a = Source(slug="mm-wirtschaft", name="MM Wirtschaft", layer="editorial", authority="high", scope="region",
@@ -39,7 +39,7 @@ async def test_mock_cycle_produces_signals_stories_trends_and_a_digest(db_sessio
             out.append(vec)
         return out
     monkeypatch.setattr(embedding, "embed_texts", fake_embed)
-    monkeypatch.setattr("rns.analyse.run.embed_texts", fake_embed)
+    monkeypatch.setattr("mhs.analyse.run.embed_texts", fake_embed)
 
     cycle = await run_cycle(session_factory)
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from rns.collect.rss import parse_feed
+from mhs.collect.rss import parse_feed
 
 FEED_A = (Path(__file__).parent / "fixtures" / "feed_a.xml").read_bytes()
 

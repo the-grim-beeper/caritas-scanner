@@ -23,10 +23,10 @@ from selectolax.parser import HTMLParser
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from rns.collect.page import extract_items  # noqa: E402
-from rns.collect.rss import parse_feed  # noqa: E402
-from rns.config import settings  # noqa: E402
-from rns.sources.catalogue import COLLECTED_METHODS, load_catalogue  # noqa: E402
+from mhs.collect.page import extract_items  # noqa: E402
+from mhs.collect.rss import parse_feed  # noqa: E402
+from mhs.config import settings  # noqa: E402
+from mhs.sources.catalogue import COLLECTED_METHODS, load_catalogue  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"

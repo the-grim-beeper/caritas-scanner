@@ -4,9 +4,9 @@ from pathlib import Path
 
 from sqlalchemy import select
 
-from rns.db.models import Event, FeedItem, Signal, SignalEntity, SignalTopic, Source
-from rns.entities import load_seed
-from rns.extract.run import extract_pending
+from mhs.db.models import Event, FeedItem, Signal, SignalEntity, SignalTopic, Source
+from mhs.entities import load_seed
+from mhs.extract.run import extract_pending
 
 DATA = Path(__file__).resolve().parents[2] / "data"
 
@@ -79,9 +79,9 @@ async def test_extraction_cap_does_not_starve_undated_page_items(db_session):
 async def test_auth_error_aborts_the_batch_instead_of_calling_per_item(db_session, monkeypatch):
     # Wrong: catching the 401 per item and carrying on, so a dead key costs a request
     # per feed item and the cycle "completes" with zero signals.
-    from rns import config
-    from rns.extract import run as extract_run
-    from rns.llm.client import LLMAuthError
+    from mhs import config
+    from mhs.extract import run as extract_run
+    from mhs.llm.client import LLMAuthError
 
     monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-dead")
     monkeypatch.setattr(config.settings, "extraction_concurrency", 2)
@@ -113,9 +113,9 @@ async def test_auth_error_aborts_the_batch_instead_of_calling_per_item(db_sessio
 async def test_bad_request_aborts_the_batch_too(db_session, monkeypatch):
     # A 400 (e.g. an unsupported schema keyword) is a bug in our request, identical on
     # every item — one failure per item would burn the whole batch for nothing.
-    from rns import config
-    from rns.extract import run as extract_run
-    from rns.llm.client import LLMRequestError
+    from mhs import config
+    from mhs.extract import run as extract_run
+    from mhs.llm.client import LLMRequestError
 
     monkeypatch.setattr(config.settings, "anthropic_api_key", "sk-x")
     monkeypatch.setattr(config.settings, "extraction_concurrency", 1)
@@ -142,7 +142,7 @@ async def test_bad_request_aborts_the_batch_too(db_session, monkeypatch):
 async def test_one_items_persist_failure_does_not_lose_the_batch(db_session, monkeypatch):
     # Wrong: an exception while writing one signal rolls back every extraction in the
     # cycle — 400 paid model calls gone.
-    from rns.extract import run as extract_run
+    from mhs.extract import run as extract_run
     from scripts.load_sources import upsert_entities
     await upsert_entities(db_session, load_seed(DATA / "entities.yaml"))
     src = Source(slug="s", name="s", layer="corporate", authority="high", scope="region", method="rss",

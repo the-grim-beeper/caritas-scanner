@@ -2,12 +2,12 @@ services:
   db:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: rns
-      POSTGRES_PASSWORD: rns
-      POSTGRES_DB: rns
+      POSTGRES_USER: mhs
+      POSTGRES_PASSWORD: mhs
+      POSTGRES_DB: mhs
     ports:
-      - "5438:5432"
+      - "5441:5432"
     volumes:
-      - rns_pgdata:/var/lib/postgresql/data
+      - mhs_pgdata:/var/lib/postgresql/data
 volumes:
-  rns_pgdata:
+  mhs_pgdata:

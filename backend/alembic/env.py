@@ -1,4 +1,4 @@
-"""Async Alembic environment. Reads the URL from rns.config, not alembic.ini."""
+"""Async Alembic environment. Reads the URL from mhs.config, not alembic.ini."""
 from __future__ import annotations
 
 import asyncio
@@ -12,8 +12,8 @@ from sqlalchemy import pool
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from rns.config import settings  # noqa: E402
-from rns.db.models import Base  # noqa: E402
+from mhs.config import settings  # noqa: E402
+from mhs.db.models import Base  # noqa: E402
 
 config = context.config
 if config.config_file_name is not None:

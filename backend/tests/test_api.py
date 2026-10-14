@@ -5,9 +5,9 @@ import httpx
 import pytest
 from httpx import ASGITransport
 
-from rns.config import settings
-from rns.db.engine import get_session
-from rns.db.models import (
+from mhs.config import settings
+from mhs.db.engine import get_session
+from mhs.db.models import (
     Cycle, Digest, Entity, Event, Signal, SignalEntity, SignalTopic, Source, Story, TrendCell, utcnow,
 )
 
@@ -66,7 +66,7 @@ async def seeded(db_session):
 
 @pytest.fixture
 async def client(db_session):
-    from rns.main import app
+    from mhs.main import app
 
     async def _override():
         yield db_session

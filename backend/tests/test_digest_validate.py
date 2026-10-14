@@ -1,7 +1,7 @@
 """The digest may only cite what it was given. Provenance is a build invariant."""
 import pytest
 
-from rns.digest.validate import DigestProvenanceError, validate_digest
+from mhs.digest.validate import DigestProvenanceError, validate_digest
 
 GOOD = {
     "lead_en": "Two developments moved.", "lead_de": "Zwei Entwicklungen.",

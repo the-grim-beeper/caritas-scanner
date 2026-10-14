@@ -1,4 +1,4 @@
-"""Test database: a separate `rns_test` database on the same Postgres, created on
+"""Test database: a separate `mhs_test` database on the same Postgres, created on
 demand, schema built from the ORM, every table truncated between tests."""
 from __future__ import annotations
 
@@ -9,23 +9,23 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-TEST_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://rns:rns@localhost:5438/rns_test")
-ADMIN_DSN = "postgresql://rns:rns@localhost:5438/postgres"
+TEST_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://mhs:mhs@localhost:5441/mhs_test")
+ADMIN_DSN = "postgresql://mhs:mhs@localhost:5441/postgres"
 
 
 async def _ensure_database() -> None:
     conn = await asyncpg.connect(ADMIN_DSN)
     try:
-        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname='rns_test'")
+        exists = await conn.fetchval("SELECT 1 FROM pg_database WHERE datname='mhs_test'")
         if not exists:
-            await conn.execute("CREATE DATABASE rns_test")
+            await conn.execute("CREATE DATABASE mhs_test")
     finally:
         await conn.close()
 
 
 @pytest.fixture(scope="session")
 async def engine():
-    from rns.db.models import Base
+    from mhs.db.models import Base
 
     await _ensure_database()
     eng = create_async_engine(TEST_URL)
@@ -42,7 +42,7 @@ async def engine():
 
 @pytest.fixture
 async def db_session(engine):
-    from rns.db.models import Base
+    from mhs.db.models import Base
 
     factory = async_sessionmaker(engine, expire_on_commit=False)
     async with factory() as session:
@@ -60,7 +60,7 @@ def session_factory(engine):
 @pytest.fixture(autouse=True)
 def _mock_mode(monkeypatch):
     """Tests never spend money: a key in backend/.env must not flip them to live."""
-    from rns.config import settings
+    from mhs.config import settings
 
     monkeypatch.setattr(settings, "anthropic_api_key", None)
     monkeypatch.setattr(settings, "max_item_age_days", 60)

@@ -1,0 +1,75 @@
+"""Settings. Everything that differs between laptop and Railway lives here."""
+from __future__ import annotations
+
+from functools import lru_cache
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    # --- database -----------------------------------------------------------
+    database_url: str = "postgresql+asyncpg://mhs:mhs@localhost:5441/mhs"
+
+    # --- models -------------------------------------------------------------
+    anthropic_api_key: str | None = None
+    # One call per feed item, so price dominates here.
+    extraction_model: str = "claude-haiku-4-5"
+    # One call per cycle, and the thing the reader actually reads.
+    digest_model: str = "claude-opus-5"
+    digest_fallback_model: str = "claude-sonnet-5"
+    # Guards a runaway bill on a bad feed day rather than tuning throughput.
+    max_extractions_per_cycle: int = 1500
+    extraction_concurrency: int = 8
+
+    # --- analysis -----------------------------------------------------------
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    # Cosine distance under which two signals are the same story from different
+    # outlets. Derived from this corpus (scripts/derive_threshold.py); the
+    # default is a starting point, not an inheritance from another project.
+    story_threshold: float = 0.22
+    story_window_days: int = 14
+
+    # --- collection ---------------------------------------------------------
+    feed_timeout_seconds: float = 20.0
+    feed_concurrency: int = 12
+    # Quarantined after this many consecutive failures; never deleted.
+    max_consecutive_failures: int = 5
+    # A list page is a snapshot, not a stream; the first N links in document order are
+    # the newest on every site checked. Caps what a nav-heavy page can inject per cycle.
+    max_page_items: int = 40
+    # Items published earlier than this on first sight are archive, not news. Undated
+    # items (list pages) are kept — a missing date is not evidence of age.
+    max_item_age_days: int = 60
+    user_agent: str = "Mozilla/5.0 (compatible; MiesbachScanner/0.1; +https://pharosfutures.com)"
+
+    # --- data ---------------------------------------------------------------
+    # Repo-relative by default; the Docker image sets DATA_DIR=/data.
+    data_dir: str | None = None
+
+    def resolved_data_dir(self) -> Path:
+        if self.data_dir:
+            return Path(self.data_dir)
+        return Path(__file__).resolve().parents[2] / "data"
+
+    # --- app ----------------------------------------------------------------
+    app_password: str = "oberland"
+    secret_key: str = "dev-only-change-me"
+    session_max_age_seconds: int = 60 * 60 * 24 * 7
+    cycle_hour_utc: int = 5
+    scheduler_enabled: bool = True
+    environment: str = "development"
+
+    @property
+    def llm_enabled(self) -> bool:
+        return bool(self.anthropic_api_key)
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings = get_settings()

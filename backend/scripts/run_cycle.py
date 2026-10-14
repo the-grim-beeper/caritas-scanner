@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from rns.cycle import run_cycle, run_digest_only  # noqa: E402
-from rns.db.engine import session_factory  # noqa: E402
+from mhs.cycle import run_cycle, run_digest_only  # noqa: E402
+from mhs.db.engine import session_factory  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 

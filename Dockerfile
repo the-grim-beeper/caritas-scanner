@@ -20,8 +20,8 @@ ENV PYTHONUNBUFFERED=1 \
 
 COPY backend/pyproject.toml ./
 RUN pip install --no-cache-dir fastapi "uvicorn[standard]" "sqlalchemy[asyncio]" greenlet asyncpg \
-      alembic pgvector pydantic pydantic-settings httpx feedparser selectolax pyyaml anthropic \
-      fastembed numpy apscheduler itsdangerous python-dateutil
+      alembic pgvector pydantic pydantic-settings httpx feedparser "selectolax<1.0" pyyaml anthropic \
+      fastembed numpy apscheduler itsdangerous python-dateutil pypdf
 
 COPY backend/ ./
 COPY data/ /data/
@@ -33,4 +33,4 @@ RUN python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='se
 EXPOSE 8000
 # Migrations + source load run in railway.json's preDeployCommand, once per deploy.
 # sh -c so ${PORT} expands — Railway injects it at runtime.
-CMD ["sh", "-c", "uvicorn rns.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn mhs.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
