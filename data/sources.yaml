@@ -1,7 +1,2544 @@
-# Source catalogue — Horizont-Scanner Landkreis Miesbach.
+# Source catalogue — Horizon scanner for social provision in Landkreis Miesbach (Caritas-Zentrum Miesbach).
 #
-# Placeholder (2026-10-14, late evening): the Rhein-Neckar catalogue inherited from the
-# template has been removed. The Miesbach catalogue (the brief's 38-source core, all 17
-# municipalities, Google-News queries, structural pages and PDF listings) is being
-# researched and verified now and replaces this file. Until then nothing is collected.
-[]
+# Rebuilt 2026-10-14 from docs/brief/source-architecture.txt (deep-research report, research cut
+# 8 Oct 2026) plus endpoint discovery, then merged with a second deep-research report
+# (gemini-monitoring.md, 14 Oct 2026; every URL it gives was reopened — several were extrapolated).
+# Replaces the earlier Rhein-Neckar catalogue entirely.
+#
+# Every rss/page/diff/pdf URL below was fetched on 2026-10-14 with a browser User-Agent; the notes
+# record what came back ("checked 2026-10-14: 200, N items"). Entries that did NOT verify (bot
+# challenges, timeouts, script-only sites) are kept and say so in their notes — they are intent,
+# not evidence. scripts/check_sources.py decides what is actually collected.
+#
+# method: rss | page | query | diff | pdf (collected) · newsletter | api | social (catalogued only)
+#   diff = structural page whose text changes matter; pdf = listing page whose linked PDFs matter.
+# priority: core = the report's 38-source v1 core (municipal slots filled with the durable endpoint
+#   found here, incl. Rottach-Egern and Weyarn) + all municipal Google News queries; else thematic.
+# brief_ref: report footnote number | discovery (found in this pass) | unverified-bundle (the report's
+#   "plausible, unverified" set, now checked) | report2 (second report only) | report2+<ref> (both).
+#
+# Platform notes from discovery:
+#   - Advantic "Kommune" CMS (Landkreis, Bad Wiessee, Gmund, Kreuth, Rottach-Egern, Tegernsee): no RSS;
+#     list pages are "Mitteilungsverzeichnis"; every page has a 4-item Aktuelles sidebar.
+#   - cross-7 TYPO3 (Bayrischzell, Hausham): news comes from https://api.cross-7.de/public/news/<data-c7-page>/articles/rss.
+#   - SessionNet on digitalfabrix (Bad Wiessee, Gmund, Otterfing, Waakirchen): rssfeed.asp.
+#   - komuna RIS (Hausham, Holzkirchen, Kreuth, Miesbach, Rottach-Egern, Weyarn) and ALLRIS 4
+#     (Landkreis, Fischbachau, Tegernsee) are JS apps: not scrapeable without a browser. Poliscope
+#     (third-party, authority low) publishes server-rendered summaries for those municipalities.
+#   - Bot challenges (403): caritas-nah-am-naechsten.de (all Caritas München-Freising pages).
+#   - PDFs without a .pdf extension: Irschenberg slugs, Holzkirchen /ceasy/resource/, Rottach-Egern
+#     loadDocument.phtml — the pdf collector should sniff content-type.
+
+# =============================================================================
+# gemeinden — the 17 municipalities (council/RIS, news, bulletins, budgets; Poliscope summaries at the end)
+# =============================================================================
+- slug: bad-wiessee-ratsinfo
+  name: Gemeinde Bad Wiessee — Bürgerinfoportal (SessionNet), RSS
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bad Wiessee
+  method: rss
+  url: https://buergerinfo-bad-wiessee.digitalfabrix.de/rssfeed.asp
+  homepage: https://buergerinfo-bad-wiessee.digitalfabrix.de/info.asp
+  priority: core
+  cadence: weekly
+  notes: 'Durable council endpoint replacing the report''s 2026 election page: SessionNet feed of Gemeinderat/Ausschuss sessions (linked from the municipal site as ''Sitzungen und Niederschriften''). checked 2026-10-14: 200, RSS 15 items, next ''Gemeinderat 22.10.2026''; items carry no pubDate.'
+  brief_ref: discovery
+
+- slug: bad-wiessee-pressemitteilungen
+  name: Gemeinde Bad Wiessee — Pressemitteilungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bad Wiessee
+  method: page
+  url: https://www.gemeinde.bad-wiessee.de/Aktuelles/Pressemitteilungen/
+  homepage: https://www.gemeinde.bad-wiessee.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Advantic ''Mitteilungsverzeichnis'' — the listing above the report''s election-result item. checked 2026-10-14: 200, 25 items. Site also has ''Bürgerbote Online'' (/Aktuelles/B%C3%BCrgerbote-Online/, 60 links) and a visualised Haushalt on app.kslplus.de.'
+  brief_ref: '16'
+
+- slug: bayrischzell-gemeinderat
+  name: Gemeinde Bayrischzell — Gemeinderat
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bayrischzell
+  method: diff
+  url: https://gemeinde.bayrischzell.de/de/rathaus/politik/gemeinderat
+  homepage: https://gemeinde.bayrischzell.de/
+  priority: core
+  cadence: monthly
+  notes: 'Current mayor/council baseline (report v1 core). checked 2026-10-14: 200, ~4,000 chars of text. TYPO3 page with a large mega-menu: the diff extractor should isolate the content column.'
+  brief_ref: '17'
+
+- slug: bayrischzell-neuigkeiten
+  name: Gemeinde Bayrischzell — Neues aus der Gemeinde (cross-7 RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bayrischzell
+  method: rss
+  url: https://api.cross-7.de/public/news/3462/articles/rss
+  homepage: https://gemeinde.bayrischzell.de/de/rathaus/aktuelles/neues-aus-der-gemeinde
+  priority: core
+  cadence: weekly
+  notes: 'News on the site is rendered client-side by cross-7 web components (data-c7-page=3462); this is the vendor''s public RSS for the same news. checked 2026-10-14: 200, RSS 7 items, newest 13 Oct 2026.'
+  brief_ref: discovery
+
+- slug: bayrischzell-sitzungstermine
+  name: Gemeinde Bayrischzell — Sitzungstermine
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bayrischzell
+  method: diff
+  url: https://gemeinde.bayrischzell.de/de/rathaus/politik/sitzungstermine
+  homepage: https://gemeinde.bayrischzell.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Session calendar (dates through 26.10.2026 visible). checked 2026-10-14: 200, dated session list in page text.'
+  brief_ref: discovery
+
+- slug: bayrischzell-gemeindenachrichten
+  name: Gemeinde Bayrischzell — Bayrischzeller Gemeindenachrichten
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Bayrischzell
+  method: pdf
+  url: https://gemeinde.bayrischzell.de/de/rathaus/aktuelles/bayrischzeller-gemeindenachrichten
+  homepage: https://gemeinde.bayrischzell.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'Half-yearly municipal bulletin (Sommer/Winter) as PDF. checked 2026-10-14: 200, 26 PDF links (newest ''Sommer 2026'').'
+  brief_ref: discovery
+
+- slug: fischbachau-aktuelles
+  name: Gemeinde Fischbachau — Aktuelles
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Fischbachau
+  method: page
+  url: https://gemeinde.fischbachau.de/de/rathaus/aktuelles
+  homepage: https://gemeinde.fischbachau.de/
+  priority: core
+  cadence: weekly
+  notes: 'Durable news listing replacing the report''s election-result PDF. checked 2026-10-14: 200, 39 links incl. mega-menu; real items are the publish[id] links (e.g. ''Bürgerversammlung am 21.10.2026'', ''Forum Ehrenamt am 24.10.2026''). Council material lives in ALLRIS (https://www.gemeinde.fischbachau.sitzung-online.de/public — Wicket/JS, not scrapeable).'
+  brief_ref: discovery
+
+- slug: fischbachau-bekanntmachungen
+  name: Gemeinde Fischbachau — Bekanntmachungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Fischbachau
+  method: pdf
+  url: https://gemeinde.fischbachau.de/de/rathaus/bekanntmachungen
+  homepage: https://gemeinde.fischbachau.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Official notices (Satzungen, Haushalt, Sitzungen) as PDFs. checked 2026-10-14: 200, 31 PDF links.'
+  brief_ref: '18'
+
+- slug: gmund-aktuelles
+  name: Gemeinde Gmund a. Tegernsee — Aktuelles
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Gmund a. Tegernsee
+  method: page
+  url: https://www.gemeinde.gmund.de/Rathaus-B%C3%BCrgerservice/Aktuelles-und-Termine/Aktuelles/
+  homepage: https://www.gemeinde.gmund.de/
+  priority: core
+  cadence: weekly
+  notes: 'Durable news listing replacing the report''s Kommunalwahlen page (off-cycle mayor). checked 2026-10-14: 200, 25 items (Advantic Mitteilungsverzeichnis).'
+  brief_ref: '19'
+
+- slug: gmund-sitzungskalender
+  name: Gemeinde Gmund — Bürgerinfosystem (SessionNet) Sitzungskalender
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Gmund a. Tegernsee
+  method: diff
+  url: https://buergerinfo-gmund.digitalfabrix.de/si0040.asp
+  homepage: https://buergerinfo-gmund.digitalfabrix.de/info.asp
+  priority: thematic
+  cadence: weekly
+  notes: 'Gemeinderat and Bau-/Umweltausschuss sessions with BM (agenda) and NÖ (minutes) downloads. SessionNet RSS exists but is unconfigured (''Parameter anpassen'', 0 items), so diff the month calendar. checked 2026-10-14: 200, calendar table with Gemeinderat/Ausschuss rows.'
+  brief_ref: discovery
+
+- slug: gmund-gemeindebote
+  name: Gemeinde Gmund — Gemeindebote
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Gmund a. Tegernsee
+  method: pdf
+  url: https://www.gemeinde.gmund.de/Rathaus-B%C3%BCrgerservice/Brosch%C3%BCren-und-Infos/Gemeindebote/
+  homepage: https://www.gemeinde.gmund.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Monthly bulletin as PDF. checked 2026-10-14: 200, 24 PDF links.'
+  brief_ref: discovery
+
+- slug: hausham-rathaus-aktuell
+  name: Gemeinde Hausham — Rathaus Aktuell (cross-7 RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Hausham
+  method: rss
+  url: https://api.cross-7.de/public/news/1149/articles/rss?CategoryIds=40902333
+  homepage: https://www.hausham.de/de/neuigkeiten/aktuelles-gemeinde
+  priority: core
+  cadence: weekly
+  notes: 'Feed advertised on hausham.de/de/neuigkeiten/rss (''Rathaus Aktuell''); replaces the report''s Wahlen page. checked 2026-10-14: 200, RSS 23 items, newest 13 Oct 2026. Unfiltered feed (all categories) has 41 items. Council papers: komuna RIS https://ris.komuna.net/hausham (React SPA, not scrapeable).'
+  brief_ref: discovery
+
+- slug: hausham-bekanntmachungen
+  name: Gemeinde Hausham — Öffentliche Bekanntmachungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Hausham
+  method: pdf
+  url: https://www.hausham.de/de/rathaus/gemeindeverwaltung/oeffentliche-bekanntmachungen
+  homepage: https://www.hausham.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Official notices incl. Haushaltssatzung and session notices. checked 2026-10-14: 200, 3 PDF links (plus menu links).'
+  brief_ref: '20'
+
+- slug: holzkirchen-news
+  name: Markt Holzkirchen — Immer informiert (News)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Holzkirchen
+  method: page
+  url: https://www.holzkirchen.de/Aktuelles/Immer-informiert
+  homepage: https://www.holzkirchen.de/
+  priority: core
+  cadence: weekly
+  notes: 'Main municipal news list (cEasy CMS, items at News?view=publish&item=article&id=…). checked 2026-10-14: 200, 231 links incl. navigation; newest article id 3193. Council: komuna RIS https://ris.komuna.net/holzkirchen/app/liste (React SPA, not scrapeable).'
+  brief_ref: discovery
+
+- slug: holzkirchen-gemeinderat
+  name: Markt Holzkirchen — Marktgemeinderat
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Holzkirchen
+  method: diff
+  url: https://www.holzkirchen.de/de/Ihr-Rathaus/Kommunalpolitik/Gemeinderat
+  homepage: https://www.holzkirchen.de/
+  priority: core
+  cadence: monthly
+  notes: 'Council composition/governance baseline cited by the report. checked 2026-10-14: 200, ~1,900 chars. Report 2''s ''Holzkirchen RIS'' (/de/Ihr-Rathaus/Kommunalpolitik/Gremien_und_Sitzungen and /de/Ihr-Rathaus/Ratsinformationssystem/Sitzungskalender) are wrappers: the latter iframes https://ris.komuna.net/holzkirchen/Meeting.mvc/Calendar (SPA).'
+  brief_ref: report2+21
+
+- slug: holzkirchen-gemeindeblatt
+  name: Markt Holzkirchen — Holzkirchner Gemeindeblatt
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Holzkirchen
+  method: pdf
+  url: https://www.holzkirchen.de/gemeindeblatt
+  homepage: https://www.holzkirchen.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Monthly Gemeindeblatt. checked 2026-10-14: 200, 46 links; issues are /ceasy/resource/<id>?download=1 (PDF without .pdf extension — the pdf collector must sniff content-type). Newest: Oktober 2026.'
+  brief_ref: discovery
+
+- slug: irschenberg-sitzungsdokumente
+  name: Gemeinde Irschenberg — Sitzungsladungen und Sitzungsprotokolle (Startseite)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Irschenberg
+  method: pdf
+  url: https://irschenberg.de/
+  homepage: https://irschenberg.de/
+  priority: core
+  cadence: monthly
+  notes: 'The homepage links the current Sitzungsladung, Sitzungsprotokoll and Gemeindenachrichten as slug URLs (e.g. /sitzungsprotokoll-juli-2026) that serve application/pdf (GR-2026-007_Niederschrift_oeffentlich.pdf) — no .pdf extension, so the collector must sniff content-type. Decision text, not just composition (report v1 core). checked 2026-10-14: 200, 3 PDF slugs.'
+  brief_ref: '22'
+
+- slug: irschenberg-bekanntmachungen
+  name: Gemeinde Irschenberg — Öffentliche Bekanntmachungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Irschenberg
+  method: page
+  url: https://irschenberg.de/oeffentliche-bekanntmachungen
+  homepage: https://irschenberg.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Notices incl. ''Bekanntmachung der Haushaltssatzung für das Haushaltsjahr 2026'', Satzungen and Sitzungsladung. checked 2026-10-14: 200, 14 items.'
+  brief_ref: discovery
+
+- slug: irschenberg-aktuelles
+  name: Gemeinde Irschenberg — Aktuelles
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Irschenberg
+  method: page
+  url: https://irschenberg.de/aktuelles-2
+  homepage: https://irschenberg.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Municipal news (Open2C CMS; its export/rss.php returns an empty feed). checked 2026-10-14: 200, 27 items.'
+  brief_ref: discovery
+
+- slug: kreuth-aktuell
+  name: Gemeinde Kreuth — Kreuth aktuell
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Kreuth
+  method: page
+  url: https://gemeinde.kreuth.de/Unsere-Gemeinde/Aktuelles/Kreuth-aktuell/
+  homepage: https://gemeinde.kreuth.de/
+  priority: core
+  cadence: weekly
+  notes: 'Municipal news incl. session notices (''Sitzung des Gemeinderates Kreuth am 15.10.2026''). checked 2026-10-14: 200, 25 items. Council: komuna RIS https://ris.komuna.net/kreuth/Meeting.mvc (React SPA, not scrapeable).'
+  brief_ref: discovery
+
+- slug: kreuth-gemeinderat
+  name: Gemeinde Kreuth — Gemeinderat
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Kreuth
+  method: diff
+  url: https://gemeinde.kreuth.de/Rathaus-B%C3%BCrgerservice/Politik/Gemeinderat/index.php
+  homepage: https://gemeinde.kreuth.de/
+  priority: core
+  cadence: monthly
+  notes: 'Council page cited by the report (off-cycle mayor). checked 2026-10-14: 200, ~480 chars of text — thin; diff mainly catches membership changes.'
+  brief_ref: '23'
+
+- slug: kreuth-gemeindebote
+  name: Gemeinde Kreuth — Mitteilungsblatt 'Gemeindebote'
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Kreuth
+  method: pdf
+  url: https://gemeinde.kreuth.de/Unsere-Gemeinde/Aktuelles/Mitteilungsblatt-Gemeindebote-/
+  homepage: https://gemeinde.kreuth.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Monthly bulletin. checked 2026-10-14: 200, 179 PDF links (Advantic output/download.php?fid=…PDF), newest Oktober 2026.'
+  brief_ref: discovery
+
+- slug: miesbach-rss
+  name: Stadt Miesbach — RSS (Aktuelles/Bekanntmachungen)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Miesbach
+  method: rss
+  url: https://www.miesbach.de/export/rss.php?id=7
+  homepage: https://www.miesbach.de/aktuelles-1
+  priority: core
+  cadence: weekly
+  notes: 'Feed advertised by <link rel=alternate> on Aktuelles and Bekanntmachungen; replaces the report''s Stadtratswahl page. checked 2026-10-14: 200, RSS 17 items (not date-sorted; first item dated 23 Jun 2026). Council: komuna RIS https://ris.komuna.net/Miesbach (React SPA).'
+  brief_ref: discovery
+
+- slug: miesbach-sitzungstermine
+  name: Stadt Miesbach — Sitzungstermine
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Miesbach
+  method: page
+  url: https://www.miesbach.de/sitzungstermine
+  homepage: https://www.miesbach.de/
+  priority: core
+  cadence: weekly
+  notes: 'Stadtrat and committee sessions as linked items (e.g. ''Stadtratssitzung am Donnerstag, den 22. Oktober 2026'', ''1. Sitzung des Stadtentwicklungsausschusses''). County seat after the 2026 leadership change. checked 2026-10-14: 200, 26 items.'
+  brief_ref: '24'
+
+- slug: otterfing-ratsinfo
+  name: Gemeinde Otterfing — Bürgerinfoportal (SessionNet), RSS
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Otterfing
+  method: rss
+  url: https://buergerinfo-otterfing.digitalfabrix.de/rssfeed.asp
+  homepage: https://buergerinfo-otterfing.digitalfabrix.de/info.asp
+  priority: core
+  cadence: weekly
+  notes: 'Sessions and minutes (linked from otterfing.de ''Aus dem Gemeinderat''). checked 2026-10-14: 200, RSS 11 items, first ''Bürgerversammlung 15.10.2026''; no pubDate.'
+  brief_ref: discovery
+
+- slug: otterfing-haushalt
+  name: Gemeinde Otterfing — Haushaltsdokumente (WordPress media search)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Otterfing
+  method: api
+  url: https://www.otterfing.de/wp-json/wp/v2/media?search=haushalt
+  homepage: https://www.otterfing.de/
+  priority: core
+  cadence: monthly
+  notes: 'The report''s finance source (Haushalt-2026-rechtskraeftig.pdf) is an unattached upload; no HTML listing links it. The WP REST media search returns it plus ''Vorbericht Haushalt 2026''. checked 2026-10-14: 200, JSON with 2 PDFs (Apr and Mar 2026). Catalogued, not collected.'
+  brief_ref: '25'
+
+- slug: otterfing-aktuelles
+  name: Gemeinde Otterfing — Aktuelles (WordPress RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Otterfing
+  method: rss
+  url: https://www.otterfing.de/feed/
+  homepage: https://www.otterfing.de/aktuelles-2/
+  priority: thematic
+  cadence: weekly
+  notes: 'checked 2026-10-14: 200, RSS 10 items, newest 14 Oct 2026.'
+  brief_ref: discovery
+
+- slug: otterfing-gemeindeblatt
+  name: Gemeinde Otterfing — Letzte Ausgaben des Gemeindeblatts
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Otterfing
+  method: pdf
+  url: https://www.otterfing.de/letzte-ausgaben-des-gemeindeblatts/
+  homepage: https://www.otterfing.de/gemeindeblatt/
+  priority: thematic
+  cadence: monthly
+  notes: 'Monthly Gemeindeblatt PDFs. checked 2026-10-14: 200, 12 PDF links, newest GB_Otterfing_Gesamt_1026.'
+  brief_ref: discovery
+
+- slug: rottach-egern-meldungen
+  name: Gemeinde Rottach-Egern — Aktuelle Meldungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Rottach-Egern
+  method: page
+  url: https://www.gemeinde.rottach-egern.de/Unsere-Gemeinde/Aktuelles/Aktuelle-Meldungen/
+  homepage: https://www.gemeinde.rottach-egern.de/
+  priority: core
+  cadence: weekly
+  notes: 'Closes the report''s ''not found'' gap: the municipal site is www.gemeinde.rottach-egern.de (www.rottach-egern.de has a mismatched TLS certificate). checked 2026-10-14: 200, 25 items. A separate ''Pressemitteilungen'' list exists (/Unsere-Gemeinde/Aktuelles/Pressemitteilungen/, 25 items). Council: komuna RIS https://ris.komuna.net/rottachegern (React SPA).'
+  brief_ref: discovery
+
+- slug: rottach-egern-buergerbote
+  name: Gemeinde Rottach-Egern — Bürgerbote
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Rottach-Egern
+  method: pdf
+  url: https://www.gemeinde.rottach-egern.de/Unsere-Gemeinde/Aktuelles/B%C3%BCrgerbote/
+  homepage: https://www.gemeinde.rottach-egern.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Monthly bulletin. checked 2026-10-14: 200, 130 links; issues are loadDocument.phtml?FID=…&Ext=PDF (no .pdf extension). Newest: August 2026.'
+  brief_ref: discovery
+
+- slug: schliersee-finanzverwaltung
+  name: Markt Schliersee — Finanzverwaltung (Haushalt)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Schliersee
+  method: pdf
+  url: https://rathaus.schliersee.de/marktverwaltung/finanzverwaltung/
+  homepage: https://rathaus.schliersee.de/
+  priority: core
+  cadence: monthly
+  notes: 'Parent listing of the report''s ''Haushalt 2026 – Vorbericht''. checked 2026-10-14: 200, 2 PDFs (Haushalt-2026-Vorbericht.pdf, Bekanntmachung Auflegung der Haushaltssatzung 2026).'
+  brief_ref: '26'
+
+- slug: schliersee-bekanntmachungen
+  name: Markt Schliersee — Amtliche Bekanntmachungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Schliersee
+  method: pdf
+  url: https://rathaus.schliersee.de/marktverwaltung/bekanntmachungen/
+  homepage: https://rathaus.schliersee.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'All official notices (Geschäftsordnung Marktgemeinderat, Satzungen, Haushalt). checked 2026-10-14: 200, ~510 PDF links (long archive — collector''s 5-new-PDFs cap matters here). The site''s WordPress feed is empty (0 items).'
+  brief_ref: discovery
+
+- slug: schliersee-gemeindenachrichten
+  name: Markt Schliersee — Gemeindenachrichten
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Schliersee
+  method: pdf
+  url: https://rathaus.schliersee.de/aktuelles/gemeindenachrichten/
+  homepage: https://rathaus.schliersee.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'checked 2026-10-14: 200, 56 PDF links.'
+  brief_ref: discovery
+
+- slug: schliersee-ris
+  name: Markt Schliersee — Bürgerinformationssystem (kommune-aktiv)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Schliersee
+  method: diff
+  url: https://schliersee.ris.kommune-aktiv.de/seite/de/rathaus/033:02/-/startseite.html
+  homepage: https://schliersee.ris.kommune-aktiv.de/seite/de/rathaus/033:02/-/startseite.html
+  priority: thematic
+  cadence: weekly
+  notes: 'RIS start page lists the next session notice (''Bekanntmachung zur Sitzung am Dienstag, 20.10.2026''); protocols at /seite/de/rathaus/021/-/Sitzungsprotokolle.html. checked 2026-10-14: 200 on first request, but a ''Just a moment…'' bot challenge appeared after repeated requests — may fail verification.'
+  brief_ref: discovery
+
+- slug: tegernsee-stadtrat
+  name: Stadt Tegernsee — Stadtrat
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Tegernsee
+  method: diff
+  url: https://www.stadt.tegernsee.de/Rathaus-B%C3%BCrgerservice/Politik-Stadtrat/Stadtrat/?La=1
+  homepage: https://www.stadt.tegernsee.de/
+  priority: core
+  cadence: monthly
+  notes: 'Current mayor/council baseline (report v1 core). checked 2026-10-14: 200, ~1,200 chars. Sessions: ALLRIS https://www.tegernsee.sitzung-online.de/public/ (Wicket/JS, not scrapeable).'
+  brief_ref: '27'
+
+- slug: tegernsee-aktuell
+  name: Stadt Tegernsee — Tegernsee aktuell
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Tegernsee
+  method: page
+  url: https://www.stadt.tegernsee.de/Unsere-Gemeinde/Aktuelles/Tegernsee-aktuell/
+  homepage: https://www.stadt.tegernsee.de/
+  priority: core
+  cadence: weekly
+  notes: 'Municipal news (Advantic Mitteilungsverzeichnis). checked 2026-10-14: 200, 14 items.'
+  brief_ref: discovery
+
+- slug: tegernsee-nachrichten
+  name: Stadt Tegernsee — Tegernseer Nachrichten
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Tegernsee
+  method: pdf
+  url: https://www.stadt.tegernsee.de/Unsere-Gemeinde/Aktuelles/Tegernseer-Nachrichten/
+  homepage: https://www.stadt.tegernsee.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Municipal bulletin archive. checked 2026-10-14: 200, ~270 PDF links.'
+  brief_ref: discovery
+
+- slug: valley-nachrichten
+  name: Gemeinde Valley — Nachrichten (RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Valley
+  method: rss
+  url: https://www.gemeinde-valley.de/nachrichten/rss
+  homepage: https://www.gemeinde-valley.de/nachrichten
+  priority: core
+  cadence: weekly
+  notes: 'Durable news feed replacing the report''s election-result PDF. checked 2026-10-14: 200, RSS 44 items, newest 14 Oct 2026 (''Bürgersammlung am 04.11.2026'').'
+  brief_ref: discovery
+
+- slug: valley-sitzungen
+  name: Gemeinde Valley — Gemeinderatssitzungen (RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Valley
+  method: rss
+  url: https://www.gemeinde-valley.de/veranstaltungen/rss-1
+  homepage: https://www.gemeinde-valley.de/unsere-gemeinde/gemeinderat/sitzungen
+  priority: thematic
+  cadence: monthly
+  notes: 'Session feed linked from the Sitzungen page. checked 2026-10-14: 200, RSS 2 items (''Gemeinderatssitzung 10.11.2026''); future-dated items.'
+  brief_ref: discovery
+
+- slug: valley-bekanntmachungen
+  name: Gemeinde Valley — Amtliche Bekanntmachungen
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Valley
+  method: pdf
+  url: https://www.gemeinde-valley.de/buergerservice/bekanntmachungen/amtliche-bekanntmachungen
+  homepage: https://www.gemeinde-valley.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'checked 2026-10-14: 200, 126 PDF links.'
+  brief_ref: '28'
+
+- slug: waakirchen-sitzungen
+  name: Gemeinde Waakirchen — Sitzungen Gemeinderat
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Waakirchen
+  method: diff
+  url: https://www.waakirchen.de/de/rathaus/politik/sitzungen-gemeinderat-1
+  homepage: https://www.waakirchen.de/
+  priority: core
+  cadence: weekly
+  notes: 'Report''s exemplary endpoint: 2026 session calendar (13.10., 10.11., 08.12.2026) plus link to the next Tagesordnung. checked 2026-10-14: 200, ~5,200 chars. Decisions also at /de/rathaus/politik/beschluesse/protokolle (24 links). SessionNet feed https://buergerinfo-waakirchen.digitalfabrix.de/rssfeed.asp lists only the next session (1 item) — not catalogued separately.'
+  brief_ref: '29'
+
+- slug: waakirchen-rathaus-aktuell
+  name: Gemeinde Waakirchen — Rathaus Aktuell
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Waakirchen
+  method: page
+  url: https://www.waakirchen.de/de/rathaus/service/rathaus-aktuell
+  homepage: https://www.waakirchen.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Municipal news (publish[id] items) plus menu links. checked 2026-10-14: 200, 30 links incl. 11 news items.'
+  brief_ref: discovery
+
+- slug: waakirchen-gemeindebote
+  name: Gemeinde Waakirchen — Gemeindebote
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Waakirchen
+  method: pdf
+  url: https://www.waakirchen.de/de/waakirchen/aktuelles/gemeindebote
+  homepage: https://www.waakirchen.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'checked 2026-10-14: 200, 83 PDF links.'
+  brief_ref: discovery
+
+- slug: warngau-nachrichten
+  name: Gemeinde Warngau — Nachrichten (RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Warngau
+  method: rss
+  url: https://www.warngau.de/nachrichten/rss
+  homepage: https://www.warngau.de/nachrichten
+  priority: core
+  cadence: weekly
+  notes: 'checked 2026-10-14: 200, RSS 47 items, newest 13 Oct 2026. Same CMS as Valley (/nachrichten/rss).'
+  brief_ref: discovery
+
+- slug: warngau-sitzungsprotokolle
+  name: Gemeinde Warngau — Sitzungsprotokolle
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Warngau
+  method: pdf
+  url: https://www.warngau.de/buergerservice-politik/gemeinderat/sitzungsprotokolle
+  homepage: https://www.warngau.de/
+  priority: core
+  cadence: monthly
+  notes: 'Council minutes — decision text rather than the members page the report cited. checked 2026-10-14: 200, ~210 PDF links. Session dates: /buergerservice-politik/gemeinderat/sitzungskalender (diffable, ~1,600 chars).'
+  brief_ref: '30'
+
+- slug: warngau-landzeit
+  name: Gemeinde Warngau — Gemeindeblatt 'Landzeit'
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Warngau
+  method: pdf
+  url: https://www.warngau.de/unsere-gemeinde/willkommen-in-warngau/gemeindeblatt-landzeit
+  homepage: https://www.warngau.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'checked 2026-10-14: 200, 64 PDF links.'
+  brief_ref: discovery
+
+- slug: weyarn-aktuelles
+  name: Gemeinde Weyarn — Aktuelles (WordPress RSS)
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Weyarn
+  method: rss
+  url: https://gemeinde-weyarn.de/feed/
+  homepage: https://gemeinde-weyarn.de/aktuelles/
+  priority: core
+  cadence: weekly
+  notes: 'Closes the report''s ''not found'' gap (site is gemeinde-weyarn.de). checked 2026-10-14: 200, RSS 10 items, newest 20 Sep 2026. Council: komuna RIS https://ris.komuna.net/weyarn (React SPA).'
+  brief_ref: discovery
+
+- slug: weyarn-haushalt
+  name: Gemeinde Weyarn — Doppik-Haushaltsplan
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Weyarn
+  method: pdf
+  url: https://gemeinde-weyarn.de/ihr-rathaus/finanzen/doppik-haushaltsplan/
+  homepage: https://gemeinde-weyarn.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Budget documents. checked 2026-10-14: 200, 7 PDF links.'
+  brief_ref: discovery
+
+- slug: weyarn-gmoablattl
+  name: Gemeinde Weyarn — Gmoablattl-Archiv
+  layer: gemeinden
+  authority: high
+  scope: gemeinde
+  places:
+  - Weyarn
+  method: pdf
+  url: https://gemeinde-weyarn.de/gemeinde/gmoablattl-archiv/
+  homepage: https://gemeinde-weyarn.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Municipal bulletin archive. checked 2026-10-14: 200, 158 PDF links.'
+  brief_ref: discovery
+
+- slug: poliscope-miesbach
+  name: Poliscope — Ratsinformationen Miesbach
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Miesbach
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/miesbach-st/091820125125
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. Stadt Miesbach (komuna RIS is a SPA). Report 2 core #2. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-holzkirchen
+  name: Poliscope — Ratsinformationen Holzkirchen
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Holzkirchen
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/holzkirchen-m/091820120120
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. komuna RIS is a SPA. Report 2 core #1. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-hausham
+  name: Poliscope — Ratsinformationen Hausham
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Hausham
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/hausham/091820119119
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. komuna RIS is a SPA; report 2''s Hausham ''RIS'' (Behördenwegweiser) is a directory page. Report 2 core #3. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-weyarn
+  name: Poliscope — Ratsinformationen Weyarn
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Weyarn
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/weyarn/091820137137
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. komuna RIS is a SPA; report 2''s Weyarn Gemeinderat page only links two old brochure PDFs. Report 2 core #4. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-kreuth
+  name: Poliscope — Ratsinformationen Kreuth
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Kreuth
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/kreuth/091820124124
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. komuna RIS is a SPA. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-rottach-egern
+  name: Poliscope — Ratsinformationen Rottach-Egern
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Rottach-Egern
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/rottach-egern/091820129129
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. komuna RIS is a SPA. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-tegernsee
+  name: Poliscope — Ratsinformationen Tegernsee
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Tegernsee
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/tegernsee-st/091820132132
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. ALLRIS is Wicket/JS. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+- slug: poliscope-fischbachau
+  name: Poliscope — Ratsinformationen Fischbachau
+  layer: gemeinden
+  authority: low
+  scope: gemeinde
+  places:
+  - Fischbachau
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/fischbachau/091820114114
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. ALLRIS is Wicket/JS. Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+
+# =============================================================================
+# landkreis — Landkreis Miesbach and county-level services
+# =============================================================================
+- slug: lk-fachstelle-soziales-senioren
+  name: Landkreis Miesbach — Fachstelle für Soziales und Senioren
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Fachstelle-f%C3%BCr-Soziales-und-Senioren/index.php
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: monthly
+  notes: 'Strongest public map of the county''s coordination layer (Sozialbeirat, Netzwerk Ehrenamt/Quartiersmanagement/Integration, Verbund Psychische Gesundheit Region 17); the report says diff it, not read it as news. checked 2026-10-14: 200, ~3,400 chars. Advantic page: every page carries a 4-item ''Aktuelles'' sidebar, so the diff must isolate the content column or it fires on each press release. Report 2 core #6 (cites the alias path /Landratsamt/Soziales-Jugend-und-Gesundheit/Fachstelle-f%C3%BCr-Soziales-und-Senioren/ — same page, 200).'
+  brief_ref: report2+32
+
+- slug: lk-pflegestuetzpunkt
+  name: 'Landkreis Miesbach — Pflegestützpunkt: Unser Service'
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Betreuung-und-FQA/Pflegest%C3%BCtzpunkt/Unser-Service-/index.php
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: monthly
+  notes: 'Front door to care navigation; on-site advice from Bezirk Oberbayern. checked 2026-10-14: 200, ~5,400 chars, 2 PDFs. Report 2 core #8 cites the parent https://www.landkreis-miesbach.de/pflegest%C3%BCtzpunkt (200, ~2,900 chars, Stadtplatz 2); ''Unser Service'' kept as the richer page.'
+  brief_ref: report2+33
+
+- slug: lk-gesundheitsregionplus
+  name: Landkreis Miesbach — GesundheitsregionPlus
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/index.php?NavID=2823.780
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: monthly
+  notes: 'Network ''im Aufbau'': steering group, manager recruitment and themes are change signals in themselves. checked 2026-10-14: 200, ~2,600 chars. Canonical path: /Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/GesundheitsregionPlus/. Report 2 core #7 (Steuerkreis, Ehrenamtskoordination).'
+  brief_ref: report2+34
+
+- slug: lk-jobcenter
+  name: 'Landkreis Miesbach — Jobcenter: Leistung'
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Arbeit-und-Soziales/Jobcenter-Leistung/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: monthly
+  notes: 'Local implementation of the 1 July 2026 SGB II reform (Grundsicherungsgeld). checked 2026-10-14: 200, ~5,200 chars, 8 PDF forms/notices.'
+  brief_ref: '35'
+
+- slug: lk-ratsinformationssystem
+  name: 'Landkreis Miesbach — Ratsinformationssystem (ALLRIS): Kreistag, Kreisausschuss, Jugendhilfeausschuss'
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: api
+  url: https://www.landkreis-miesbach.sitzung-online.de/public/si018
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: weekly
+  notes: 'Where Jugendhilfeausschuss/Kreistag agendas and Vorlagen live (report v1 core: Jugendhilfeausschuss). ALLRIS net 4.1.7 is Wicket/JS-rendered (curl sees ~390 chars, no rows) and its OParl endpoint /public/oparl/system returns 500. checked 2026-10-14: 200 shell only. Session notices reach the scanner via lk-pressemitteilungen.'
+  brief_ref: '36'
+
+- slug: lk-pressemitteilungen
+  name: Landkreis Miesbach — Pressemitteilungen
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Aktuelles-und-Presse-/Pressemitteilungen/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: daily
+  notes: 'County press releases, including session notices (''Sitzung des Jugendhilfeausschusses'', ''Kreisausschuss-Sitzung am Mittwoch'') and the Mobilitätskonzept item the report cites. checked 2026-10-14: 200, 29 items. No RSS exposed.'
+  brief_ref: '40'
+
+- slug: lk-amtsblatt
+  name: Landkreis Miesbach — Amtsblatt
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: pdf
+  url: https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Aktuelles-und-Presse-/Amtsblatt/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: core
+  cadence: weekly
+  notes: 'Legally consequential notices (Haushaltssatzung, Kreisumlage, Satzungen). Same page as the report''s index.php?NavID=2716.26. checked 2026-10-14: 200, 25 PDF links (output/download.php?file=…PDF).'
+  brief_ref: '37'
+
+- slug: lk-kreistag
+  name: Landkreis Miesbach — Kreistag
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Landratsamt-Verwaltung-Aktuelles/Landratsamt-und-Politik/Kreistag/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Composition, committees (Kreisausschuss, Jugendhilfeausschuss), constituent session 19 May 2026, Landrat deputies; links the ALLRIS Sitzungskalender. checked 2026-10-14: 200, ~4,900 chars. Advantic page: every page carries a 4-item ''Aktuelles'' sidebar, so the diff must isolate the content column or it fires on each press release.'
+  brief_ref: discovery
+
+- slug: lk-arbeitskreise
+  name: Landkreis Miesbach — Arbeitskreise (Soziales, Jugend und Gesundheit)
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Soziales-Jugend-und-Gesundheit/Arbeitskreise/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Public list of the county''s social working groups — creation/dissolution of forums is a coordination signal. checked 2026-10-14: 200, ~4,300 chars. Advantic page: every page carries a 4-item ''Aktuelles'' sidebar, so the diff must isolate the content column or it fires on each press release.'
+  brief_ref: discovery
+
+- slug: lk-mobilitaet
+  name: Landkreis Miesbach — Mobilität (Mobilitätskonzept, Mobilitätsangebote)
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Kommunales-Soziales-Gesundheit/Kreisentwicklung-und-Nachhaltigkeit/Mobilit%C3%A4t/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Mobility/participation driver; section root above the report''s Mobilitätskonzept press item. checked 2026-10-14: 200, ~2,900 chars.'
+  brief_ref: '40'
+
+- slug: lk-stellenangebote
+  name: Landratsamt Miesbach — Aktuelle Stellenangebote
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/B%C3%BCrgerservice-Informationen-Karriere/Karriere/Aktuelle-Stellenangebote/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'County vacancies (Jugendamt, Sozialverwaltung) — workforce signal. checked 2026-10-14: 200, ~3,700 chars.'
+  brief_ref: discovery
+
+- slug: krankenhaus-agatharied-presse
+  name: Krankenhaus Agatharied — Presse
+  layer: landkreis
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.khagatharied.de/news/presse/
+  homepage: https://www.khagatharied.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Hospital finance, staffing and service changes; self-presentational, triangulate. checked 2026-10-14: 200, 33 items; /feed/ is 404. Report 2 cites /news/ (200, 32 items) and /news/veranstaltungen/ (200, 32 items; symposia 10–11 Nov 2026).'
+  brief_ref: report2+38
+
+- slug: leader-oberland
+  name: Regionalentwicklung Oberland — LEADER
+  layer: landkreis
+  authority: medium
+  scope: landkreis
+  places:
+  - Oberland
+  - Landkreis Miesbach
+  method: page
+  url: https://www.regionalentwicklung-oberland.de/leader/
+  homepage: https://www.regionalentwicklung-oberland.de/
+  priority: core
+  cadence: weekly
+  notes: 'LEADER awards reveal where municipalities and civil society build capacity (2026: Warngau, Hausham, Weyarn). checked 2026-10-14: 200, 10 items. Wider news list: /news/ (107 links).'
+  brief_ref: report2+39
+
+- slug: mvv-presse
+  name: Münchner Verkehrs- und Tarifverbund — Presse
+  layer: landkreis
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: page
+  url: https://www.mvv-muenchen.de/mvv-im-ueberblick/die-gesellschaft/presse/
+  homepage: https://www.mvv-muenchen.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Press listing (BergBus season, fares from 01.01.2027) replacing the report''s single BergBus release. checked 2026-10-14: 200, 13 items.'
+  brief_ref: report2+41
+
+- slug: lk-gesundheit
+  name: Landkreis Miesbach — Gesundheit (Gesundheitsamt)
+  layer: landkreis
+  authority: high
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.landkreis-miesbach.de/Landratsamt/Soziales-Jugend-und-Gesundheit/Gesundheit/
+  homepage: https://www.landkreis-miesbach.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Gesundheitsamt services and dated outreach (Hörsprechtage 7 Dec 2026 per report 2). checked 2026-10-14: 200, ~10,400 chars. Advantic page: every page carries a 4-item ''Aktuelles'' sidebar, so the diff must isolate the content column or it fires on each press release.'
+  brief_ref: report2
+
+- slug: leader-miesbacher-land
+  name: LAG Kreisentwicklung Miesbacher Land — News & Termine
+  layer: landkreis
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.leader-mb.de/mitmachen/news-termine.html
+  homepage: https://www.leader-mb.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'The county''s own LEADER action group: Entscheidungsgremium calls and results (14. Sitzung 16.11.2026), budget monitoring PDF (Budgetmonitoring_30.09.2026.pdf). Report 2 cited a 2016 protocol PDF on this host; the live listing is this page. checked 2026-10-14: 200, 16 items.'
+  brief_ref: report2
+
+- slug: mvv-on-demand
+  name: MVV — On-Demand-Services (ODS)
+  layer: landkreis
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www.mvv-muenchen.de/vernetzte-mobilitaet/on-demand-services-ods/
+  homepage: https://www.mvv-muenchen.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Report 2''s Bedarfsverkehr lead pointed to Oberhaching (Landkreis München — rejected as out of area); this MVV page lists the ODS/FLEX areas and will change when the Landkreis Miesbach on-demand bus (planned per Merkur, Oct 2026) is added. checked 2026-10-14: 200, ~1,400 chars; no Miesbach area listed yet.'
+  brief_ref: report2
+
+- slug: poliscope-landkreis
+  name: Poliscope — Ratsinformationen Landkreis Miesbach
+  layer: landkreis
+  authority: low
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://poliscope.de/ratsinformationssystem/miesbach/09182
+  homepage: https://poliscope.de/ratsinformationssystem/bayern/09
+  priority: thematic
+  cadence: weekly
+  notes: 'Third-party aggregator: AI summaries of recent council sessions from Poliscope''s own session database — the only server-rendered decision trail found here. Report 2''s ''Miesbach RIS'' URL: the district-level Poliscope page (it links per-municipality pages). Triangulate against the official RIS; wording may change on regeneration. checked 2026-10-14: 200, ~56–61k chars incl. inline CSS/JSON-LD, sessions summarised through Sep 2026.'
+  brief_ref: report2
+
+
+# =============================================================================
+# wohlfahrt — welfare providers and civil society
+# =============================================================================
+- slug: diakonie-rosenheim
+  name: Diakonisches Werk des Evang.-Luth. Dekanatsbezirks Rosenheim — Aktuelles (RSS)
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: rss
+  url: https://dwro.de/feed/
+  homepage: https://dwro.de/
+  priority: core
+  cadence: weekly
+  notes: 'Cross-sector provider with seven Miesbach offers. checked 2026-10-14: 200, RSS 8 items, newest 12 Oct 2026.'
+  brief_ref: report2+42
+
+- slug: diakonie-jugendhilfe-miesbach
+  name: Diakonie — Kinder- und Jugendhilfe Miesbach
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Miesbach
+  - Landkreis Miesbach
+  method: diff
+  url: https://dwro.de/standorte/einrichtung/kinder-und-jugendhilfe-miesbach/
+  homepage: https://dwro.de/standorte/
+  priority: thematic
+  cadence: monthly
+  notes: 'Ambulatory services on behalf of the Jugendamt (commissioned SGB VIII edge). checked 2026-10-14: 200, ~6,300 chars.'
+  brief_ref: '56'
+
+- slug: brk-miesbach
+  name: BRK Kreisverband Miesbach — Aktuelles
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.kvmiesbach.brk.de/start/aktuelles/aktuelle-meldungen/aktuelles.html
+  homepage: https://www.kvmiesbach.brk.de/
+  priority: core
+  cadence: weekly
+  notes: 'Provider and volunteer-system signal. checked 2026-10-14: 200, 9 items.'
+  brief_ref: report2+43
+
+- slug: lebenshilfe-miesbach-jobs
+  name: Lebenshilfe Miesbach — Jobs
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.lebenshilfe-miesbach.de/jobs/
+  homepage: https://www.lebenshilfe-miesbach.de/jobs/
+  priority: core
+  cadence: weekly
+  notes: 'One of the cleanest local skilled-worker indicators; postings are PDFs. checked 2026-10-14: 200, 8 items, 12 PDF links. The homepage is script-rendered (~400 chars), so homepage = jobs page.'
+  brief_ref: '69'
+
+- slug: lebenshilfe-oba-lebensmut
+  name: Lebenshilfe Miesbach — Offene Behindertenarbeit LebensMUT
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.lebenshilfe-miesbach.de/einrichtungen/offene-behindertenarbeit-lebensmut/start
+  homepage: https://www.lebenshilfe-miesbach.de/einrichtungen/
+  priority: thematic
+  cadence: monthly
+  notes: 'OBA funded by Bezirk Oberbayern and Freistaat (funding edges). Report URL redirects here. checked 2026-10-14: 200, ~2,000 chars, 2 PDFs.'
+  brief_ref: '57'
+
+- slug: awo-seniorenzentrum-miesbach
+  name: AWO-Seniorenzentrum Miesbach
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Miesbach
+  method: diff
+  url: https://www.gesundheitsportal.awo-obb.de/mehr/senioren/einrichtung/awo-seniorenzentrum-miesbach
+  homepage: https://www.gesundheitsportal.awo-obb.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Local care-home texture (outside the weekly core). checked 2026-10-14: 200, ~8,900 chars, no list structure.'
+  brief_ref: report2+45
+
+- slug: hospizkreis-miesbach
+  name: Hospizkreis im Landkreis Miesbach — Aktuelles
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.hospizkreis.de/aktuelles.html
+  homepage: https://www.hospizkreis.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Hospice/palliative network news; calendar at /Termine.html (8 items). checked 2026-10-14: 200, 61 links.'
+  brief_ref: '45'
+
+- slug: nachbarschaftshilfe-warngau
+  name: Nachbarschaftshilfe Warngau — Neues & Aktuelles
+  layer: wohlfahrt
+  authority: medium
+  scope: gemeinde
+  places:
+  - Warngau
+  method: diff
+  url: https://www.nachbarschaftshilfe-warngau.de/neues-und-aktuelles
+  homepage: https://www.nachbarschaftshilfe-warngau.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Volunteer neighbourhood-help organisational updates. checked 2026-10-14: 200, ~14,400 chars, 7 PDFs, no item list.'
+  brief_ref: '45'
+
+- slug: caritas-zentrum-miesbach
+  name: Caritas-Zentrum Miesbach — Aktuelles
+  layer: wohlfahrt
+  authority: medium
+  scope: landkreis
+  places:
+  - Miesbach
+  - Landkreis Miesbach
+  method: page
+  url: https://www.caritas-nah-am-naechsten.de/caritas-zentrum-miesbach/cont/38852
+  homepage: https://www.caritas-nah-am-naechsten.de/caritas-zentrum-miesbach
+  priority: thematic
+  cadence: weekly
+  notes: 'The client''s own centre. checked 2026-10-14: 403 bot challenge (''Bestätigen Sie, dass Sie ein Mensch sind'') for curl and WebFetch — will not verify; URL taken from search results. Needs a browser fetch or Caritas to supply a feed.'
+  brief_ref: discovery
+
+- slug: kjf-muenchen-presse
+  name: Katholische Jugendfürsorge der Erzdiözese München und Freising — Presse
+  layer: wohlfahrt
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: pdf
+  url: https://www.kjf-muenchen.de/presse.html
+  homepage: https://www.kjf-muenchen.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Youth-welfare provider across the archdiocese (Medienmitteilungen as PDFs: leadership, facilities). Miesbach-specific activity not verified. checked 2026-10-14: 200, 29 PDF links.'
+  brief_ref: report2
+
+
+# =============================================================================
+# kirche — Dekanat Miesbach, Erzbistum, Evang. Dekanat Bad Tölz, diocesan Caritas
+# =============================================================================
+- slug: dekanat-miesbach
+  name: Erzbistum München und Freising — Dekanat Miesbach
+  layer: kirche
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien/dekanat-miesbach
+  homepage: https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien
+  priority: core
+  cadence: monthly
+  notes: 'Eleven Pfarrverbände, explicit middle-level coordination role; parish restructuring signal. checked 2026-10-14: 200, ~1,900 chars.'
+  brief_ref: '13'
+
+- slug: erzbistum-dekanatsreform
+  name: Erzbistum München und Freising — Dekanatsreform 2024
+  layer: kirche
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www2.erzbistum-muenchen.de/im-blick/dekanatsreform2024
+  homepage: https://www2.erzbistum-muenchen.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Report 2 core #10: reform of 40 → 18 deaneries, middle-level structure, property and staffing consequences. checked 2026-10-14: 200, ~10,300 chars, 8 PDFs. Structure overview (first report fn 14): https://www.erzbistum-muenchen.de/ueber-das-erzbistum/struktur-und-organisation/dekanate-pfarrverbaende-pfarreien (200, ~2,800 chars). News/press pages are script-rendered.'
+  brief_ref: report2+14
+
+- slug: dekanat-bad-toelz
+  name: Evang.-Luth. Dekanat Bad Tölz (Evangelisch im Oberland)
+  layer: kirche
+  authority: medium
+  scope: landkreis
+  places:
+  - Oberland
+  - Landkreis Miesbach
+  method: diff
+  url: https://www.evangelisch-im-oberland.de/
+  homepage: https://www.evangelisch-im-oberland.de/
+  priority: core
+  cadence: monthly
+  notes: 'Correct Protestant regional structure for the Miesbach area (not Rosenheim). checked 2026-10-14: 200, ~7,200 chars, no news list or feed (/feed/ 404).'
+  brief_ref: '15'
+
+- slug: caritas-muenchen-geschaeftsberichte
+  name: Caritasverband der Erzdiözese München und Freising — Geschäftsberichte
+  layer: kirche
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: pdf
+  url: https://der-caritasverband.caritas-nah-am-naechsten.de/de/geschaeftsberichte
+  homepage: https://der-caritasverband.caritas-nah-am-naechsten.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'Group-level finance, workforce and restructuring (2025/2026 report per the brief). checked 2026-10-14: 403 bot challenge for curl and WebFetch — will not verify automatically. Report 2 cites the EOM portal https://www.caritas-nah-am-naechsten.de/de for diocesan Caritas news — also 403 (as are /rss and /feed).'
+  brief_ref: report2+46
+
+
+# =============================================================================
+# bezirk — Bezirk Oberbayern
+# =============================================================================
+- slug: bezirk-sitzungstermine
+  name: 'Bezirk Oberbayern — Bürgerinfoportal (SessionNet): Termine Bezirkstag und Ausschüsse'
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://buergerinfo-bezirk-obb.digitalfabrix.de/si0046.asp
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: core
+  cadence: weekly
+  notes: 'Report 2''s Bezirkstag RIS replaces the thin /Sitzungstermine page (~800 chars): the SessionNet Termine list carries Bezirksausschuss, Personalausschuss and Bezirkstag (28.10.2026) — the 2027 Bezirksumlage window is Nov–Dec. checked 2026-10-14: 200, ~1,060 chars; rssfeed.asp is unconfigured (''Parameter anpassen'', 0 items) so diff, not rss.'
+  brief_ref: report2+48
+
+- slug: bezirk-haushalt
+  name: Bezirk Oberbayern — Bezirkshaushalt
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www.bezirk-oberbayern.de/Der-Bezirk-Oberbayern/Finanzen/Bezirkshaushalt
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: core
+  cadence: monthly
+  notes: '2026: €3.199 bn, Bezirksumlage 24.7 %, ~92.8 % social. checked 2026-10-14: 200, ~1,200 chars.'
+  brief_ref: '72'
+
+- slug: bezirk-sozialberichterstattung
+  name: Bezirk Oberbayern — Sozialberichterstattung
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung/?La=1
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: core
+  cadence: monthly
+  notes: 'Regional indicator layer; interactive dashboards by region and year. checked 2026-10-14: 200, ~2,100 chars.'
+  brief_ref: '49'
+
+- slug: bezirk-sozialplanung
+  name: Bezirk Oberbayern — Sozialplanung
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung-neu/
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Institutional redesign; GSV-Gremium and Psychosoziale Arbeitsgemeinschaften. checked 2026-10-14: 200, ~4,200 chars, 2 PDFs.'
+  brief_ref: '58'
+
+- slug: bezirk-sozialberichte-archiv
+  name: Bezirk Oberbayern — Bisherige Sozialberichterstattung
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: pdf
+  url: https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Sozialberichterstattung/Bisherige-Sozialberichterstattung/
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'Sozialberichte and annual data updates as PDFs. checked 2026-10-14: 200, 29 PDF links.'
+  brief_ref: discovery
+
+- slug: bezirk-publikationen-soziales
+  name: Bezirk Oberbayern — Publikationen Soziales
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: pdf
+  url: https://www.bezirk-oberbayern.de/Service/Publikationen/Soziales/
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'The report''s ''Bezirk publications catalogue'' (Hilfe zur Pflege, Mobilitätshilfe, Beratung vor Ort). checked 2026-10-14: 200, 5 PDF links.'
+  brief_ref: '78'
+
+- slug: bezirk-pressemeldungen
+  name: Bezirk Oberbayern — Pressemeldungen
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: page
+  url: https://www.bezirk-oberbayern.de/Der-Bezirk-Oberbayern/Aktuelles-Presse/Pressemeldungen/
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'District press releases (Bezirksumlage, Pflege, Eingliederungshilfe). checked 2026-10-14: 200, 24 items. /Aktuelles/Pressemitteilungen/ is an ''Ungueltige ID'' page — use this path.'
+  brief_ref: discovery
+
+- slug: bezirk-psag
+  name: Bezirk Oberbayern — Psychosoziale Arbeitsgemeinschaften
+  layer: bezirk
+  authority: high
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: diff
+  url: https://www.bezirk-oberbayern.de/Soziales/Sozialplanung/Psychosoziale-Arbeitsgemeinschaften/
+  homepage: https://www.bezirk-oberbayern.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Watch for a Miesbach PSAG appearing. Report 2 claimed a ''PSAG Miesbach'' at baype.info/news (200, but no mention of Miesbach or PSAG there); this page and its PDF (checked 2026-10-14: 200, ~2,000 chars, 2 PDFs) also do not name Miesbach.'
+  brief_ref: report2
+
+
+# =============================================================================
+# freistaat — Freistaat Bayern: ministries, Landtag, statistics, state umbrellas
+# =============================================================================
+- slug: stmas-sela
+  name: StMAS — Förderrichtlinie 'Selbstbestimmt Leben im Alter' (SeLA)
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: diff
+  url: https://www.stmas.bayern.de/themen/wohnen-im-alter/SeLA/foerderrichtlinie-sela.php
+  homepage: https://www.stmas.bayern.de/
+  priority: core
+  cadence: monthly
+  notes: 'Funds Quartierskonzepte and Nachbarschaftshilfen; requires a sustainability financing plan. checked 2026-10-14: 200, ~7,400 chars, 2 PDFs.'
+  brief_ref: '12'
+
+- slug: stmas-pressemitteilungen
+  name: Bayerisches Staatsministerium für Familie, Arbeit und Soziales — Pressemitteilungen (RSS)
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: rss
+  url: https://www.stmas.bayern.de/_xml/rss.xml
+  homepage: https://www.stmas.bayern.de/ministerium/presse/pressemitteilungen/
+  priority: thematic
+  cadence: daily
+  notes: 'All StMAS press releases (Pflege, Familie, SGB, Förderprogramme). checked 2026-10-14: 200, RSS 1,384 items (full archive), newest 14 Oct 2026.'
+  brief_ref: '52'
+
+- slug: stmgp-pressemitteilungen
+  name: Bayerisches Staatsministerium für Gesundheit, Pflege und Prävention — Pressemitteilungen
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.stmgp.bayern.de/ministerium/presse/pressemitteilungen/
+  homepage: https://www.stmgp.bayern.de/ministerium/presse/
+  priority: core
+  cadence: weekly
+  notes: 'Care-infrastructure grants (PflegesoNah) and rule changes; listing replaces the report''s single release. checked 2026-10-14: 200, 8 items; no feed found (/feed/ redirects to homepage).'
+  brief_ref: report2+73
+
+- slug: pflegesonah
+  name: Landesamt für Pflege — PflegesoNahFöR (Investitionskostenrichtlinie)
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: diff
+  url: https://www.lfp.bayern.de/pflegesonah-investitionskostenrichtlinie/
+  homepage: https://www.lfp.bayern.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Programme page (StMGP''s old PflegesoNah URL redirects here); 2026 application round to 31 Oct 2026. checked 2026-10-14: 200, ~23,800 chars, 27 PDFs. LfP WordPress feed is empty.'
+  brief_ref: report2+11
+
+- slug: stmfh-pressemitteilungen
+  name: Bayerisches Staatsministerium der Finanzen und für Heimat — Pressemitteilungen
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.stmfh.bayern.de/aktuelles/pressemitteilungen/
+  homepage: https://www.stmfh.bayern.de/
+  priority: core
+  cadence: weekly
+  notes: 'Kommunaler Finanzausgleich, Schlüsselzuweisungen, Doppelhaushalt. Items sit in div.row rows the generic extractor misses (0 items), hence item_selector. checked 2026-10-14: 200, 287 items with selector; no RSS.'
+  brief_ref: '74'
+  item_selector: div.col-sm-10 a
+
+- slug: landtag-sitzungen
+  name: Bayerischer Landtag — Sitzungen
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: diff
+  url: https://www.bayern.landtag.de/aktuelles/sitzungen/
+  homepage: https://www.bayern.landtag.de/
+  priority: core
+  cadence: weekly
+  notes: 'Plenary/committee calendar; links the 2027 sitting plan and agenda PDFs (German version of the report''s /en/ URL). checked 2026-10-14: 200, ~5,000 chars, 12 PDFs.'
+  brief_ref: '50'
+
+- slug: landtag-ausschuss-soziales
+  name: Bayerischer Landtag — Drucksachen, federführend Ausschuss für Arbeit und Soziales, Jugend und Familie (RSS)
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: rss
+  url: https://www.bayern.landtag.de/webangebot3/views/rssfeed/rssfeed.xhtml?federfuehrung=SO&titel=Drucksachen+zu+Initiativen+mit+federf%C3%BChrender+Beratung+im+Ausschuss+f%C3%BCr+Arbeit+und+Soziales%2C+Jugend+und+Familie
+  homepage: https://www.bayern.landtag.de/parlament/dokumente/rss-feeds/
+  priority: thematic
+  cadence: daily
+  notes: 'Social-policy motions and bills as filed. checked 2026-10-14: 200, RSS 87 items, newest 8 Oct 2026. Sibling feed for all Gesetzentwürfe: ?art=GESETZ (97 items).'
+  brief_ref: report2
+
+- slug: statistik-bayern-pressemitteilungen
+  name: Bayerisches Landesamt für Statistik — Pressemitteilungen
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.statistik.bayern.de/presse/mitteilungen/index.php
+  homepage: https://www.statistik.bayern.de/presse/
+  priority: thematic
+  cadence: monthly
+  notes: 'Demographic baselines; ingest population releases (e.g. Statistischer Bericht A1200C) when they appear. Release calendar: /presse/vorschau/index.html. checked 2026-10-14: 200, 10 items.'
+  brief_ref: '51'
+
+- slug: bay-landkreistag
+  name: Bayerischer Landkreistag — Aktuelle Meldungen (RSS)
+  layer: freistaat
+  authority: medium
+  scope: land
+  places:
+  - Bayern
+  method: rss
+  url: https://www.bay-landkreistag.de/aktuelles/aktuelle-meldungen/newsrss/
+  homepage: https://www.bay-landkreistag.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'County umbrella: Kommunalfinanzen, Bezirksumlage, Sozialhilfe positions. checked 2026-10-14: 200, RSS 247 items, newest 12 Oct 2026 (''Kommunalfinanzen im Fokus'').'
+  brief_ref: unverified-bundle
+
+- slug: bay-gemeindetag
+  name: Bayerischer Gemeindetag — Themen und Aktuelles
+  layer: freistaat
+  authority: medium
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.bay-gemeindetag.de/
+  homepage: https://www.bay-gemeindetag.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Municipal umbrella (''Kommunen am Limit''). /aktuelles is script-rendered (0 items); the homepage teasers link /aktuelles/<slug>. checked 2026-10-14: 200, 7 items on homepage.'
+  brief_ref: unverified-bundle
+
+- slug: freie-wohlfahrtspflege-bayern
+  name: Freie Wohlfahrtspflege Bayern — Pressemitteilungen
+  layer: freistaat
+  authority: medium
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.freie-wohlfahrtspflege-bayern.de/informationen/pressemitteilungen
+  homepage: https://www.freie-wohlfahrtspflege-bayern.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Landesarbeitsgemeinschaft of the welfare associations. checked 2026-10-14: 200, 26 items.'
+  brief_ref: report2+unverified-bundle
+
+- slug: caritas-bayern-presse
+  name: Landes-Caritasverband Bayern — Presse
+  layer: freistaat
+  authority: medium
+  scope: land
+  places:
+  - Bayern
+  method: page
+  url: https://www.caritas-bayern.de/aktuelles/presse/
+  homepage: https://www.caritas-bayern.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'State Caritas positions (Versorgung, Sozialstaatsreform, Asylverfahrensberatung). checked 2026-10-14: 200, 5 items (lcv-bayern.de does not resolve).'
+  brief_ref: unverified-bundle
+
+- slug: sela-richtlinie
+  name: SeLA-Richtlinie (BayVV 2175-4-A) — Bayern.Recht
+  layer: freistaat
+  authority: high
+  scope: land
+  places:
+  - Bayern
+  method: diff
+  url: https://www.gesetze-bayern.de/Content/Document/BayVV_2175_4_A_14506
+  homepage: https://www.gesetze-bayern.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Legal text of the SeLA funding guideline — catches amendments the StMAS info page may lag. checked 2026-10-14: 200, ~1,500 chars (consolidated text loads in sections).'
+  brief_ref: report2
+
+
+# =============================================================================
+# bund — federal ministries and federal umbrella organisations
+# =============================================================================
+- slug: bmas-sgb2-gesetz
+  name: BMAS — Gesetz zur Umgestaltung der Grundsicherung für Arbeitsuchende (13. SGB-II-Änderung)
+  layer: bund
+  authority: high
+  scope: bund
+  places: []
+  method: diff
+  url: https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/13-gesetz-zur-aenderung-zweiten-buch-sozialgesetzbuch-und-anderer-gesetze.html
+  homepage: https://www.bmas.de/DE/Service/Gesetze-und-Gesetzesvorhaben/
+  priority: core
+  cadence: monthly
+  notes: 'Legislation tracker: in force 1 July 2026, further provisions 1 Aug 2027. checked 2026-10-14: 200, ~24,700 chars, 38 PDFs.'
+  brief_ref: '75'
+
+- slug: bmas-pressemitteilungen
+  name: Bundesministerium für Arbeit und Soziales — Newsfeed (RSS)
+  layer: bund
+  authority: high
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.bmas.de/SiteGlobals/Functions/RSSFeed/DE/RSSNewsfeed/RSSNewsfeed.xml
+  homepage: https://www.bmas.de/DE/Service/Newsletter/RSS/rss.html
+  priority: thematic
+  cadence: daily
+  notes: 'Federal labour/social press (Grundsicherungsgeld, Bürgergeld legacy terms). checked 2026-10-14: 200, RSS 30 items, newest 13 Oct 2026.'
+  brief_ref: '10'
+
+- slug: bmbfsfj-pressemitteilungen
+  name: Bundesministerium für Bildung, Familie, Senioren, Frauen und Jugend — Pressemitteilungen (RSS)
+  layer: bund
+  authority: high
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.bmbfsfj.bund.de/service/rss/bmbfsfj/111102/feed.rss
+  homepage: https://www.bmbfsfj.bund.de/bmbfsfj/aktuelles/pressemitteilungen
+  priority: core
+  cadence: daily
+  notes: 'Children, youth, seniors, volunteering, Kita. Feed listed on /bmbfsfj/aktuelles/rss (topic feeds also exist: Ältere Menschen 111110, Kinder und Jugend 111122). checked 2026-10-14: 200, RSS 20 items, newest 14 Oct 2026.'
+  brief_ref: '76'
+
+- slug: bmg-pressemitteilungen
+  name: Bundesministerium für Gesundheit — Pressemitteilungen (RSS)
+  layer: bund
+  authority: high
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.bundesgesundheitsministerium.de/pressemitteilungen.xml
+  homepage: https://www.bundesgesundheitsministerium.de/service/rss-feed
+  priority: thematic
+  cadence: daily
+  notes: 'Federal health/Pflege rules; the report left BMG unverified. checked 2026-10-14: 200, RSS 412 items, newest 14 Oct 2026.'
+  brief_ref: unverified-bundle
+
+- slug: deutscher-landkreistag
+  name: Deutscher Landkreistag — Pressemitteilungen (RSS)
+  layer: bund
+  authority: medium
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.landkreistag.de/index.php/presseforum/pressemitteilungen?format=feed&type=rss
+  homepage: https://www.landkreistag.de/presseforum/rss-feed
+  priority: thematic
+  cadence: weekly
+  notes: 'County umbrella at federal level (Kreisfinanzen, Sozialausgaben). checked 2026-10-14: 200, RSS 11 items, newest 14 Oct 2026.'
+  brief_ref: unverified-bundle
+
+- slug: bagfw-pressemitteilungen
+  name: Bundesarbeitsgemeinschaft der Freien Wohlfahrtspflege — Pressemitteilungen
+  layer: bund
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.bagfw.de/veroeffentlichungen/pressemitteilungen
+  homepage: https://www.bagfw.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'checked 2026-10-14: 200, 14 items.'
+  brief_ref: unverified-bundle
+
+- slug: caritas-dcv-pressemeldungen
+  name: Deutscher Caritasverband — Pressemeldungen Inland
+  layer: bund
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.caritas.de/presse/pressemeldungen-dcv/pressemeldungen-dcv
+  homepage: https://www.caritas.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'National Caritas positions (Sozialstaatsreform, Kommunen, Pflege). checked 2026-10-14: 200, 21 items; caritas.de/rss is 404.'
+  brief_ref: unverified-bundle
+
+- slug: deutscher-verein
+  name: Deutscher Verein für öffentliche und private Fürsorge
+  layer: bund
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.deutscher-verein.de/
+  homepage: https://www.deutscher-verein.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'unverified — no listing endpoint found: /presse/ renders 0 items to curl, /feed/ and /aktuelles/ are 404; homepage yields only 2 items. checked 2026-10-14: homepage 200.'
+  brief_ref: unverified-bundle
+
+
+# =============================================================================
+# medien — regional press, research institutes, trade press
+# =============================================================================
+- slug: merkur-region-miesbach
+  name: Merkur — Region Miesbach (RSS)
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: rss
+  url: https://www.merkur.de/lokales/region-miesbach/rssfeed.rdf
+  homepage: https://www.merkur.de/lokales/region-miesbach/
+  priority: core
+  cadence: daily
+  notes: 'Conflict, informal politics and civil-society events absent from official records; section feed replaces the report''s single article. checked 2026-10-14: 200, RSS 40 items, newest 14 Oct 2026.'
+  brief_ref: '77'
+
+- slug: tegernseer-stimme
+  name: Tegernseer Stimme
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Tegernseer Tal
+  method: rss
+  url: https://tegernseerstimme.de/feed/
+  homepage: https://tegernseerstimme.de/
+  priority: thematic
+  cadence: daily
+  notes: 'Online local paper for the Tegernseer Tal. checked 2026-10-14: 200, RSS 8 items; first item dated 24 Sep 2026 — check freshness.'
+  brief_ref: unverified-bundle
+
+- slug: gelbe-blatt-miesbach
+  name: Das Gelbe Blatt — Nachrichten aus Miesbach
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: page
+  url: https://www.dasgelbeblatt.de/lokales/miesbach/
+  homepage: https://www.dasgelbeblatt.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Free weekly. checked 2026-10-14: 200, 27 items; no feed exposed.'
+  brief_ref: unverified-bundle
+
+- slug: br24-oberbayern
+  name: BR24 — Oberbayern (RSS)
+  layer: medien
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: rss
+  url: https://nachrichtenfeeds.br.de/rss/nachrichten/seiten/UZlJdUE
+  homepage: https://www.br.de/nachrichten/themen/oberbayern,UZlJdUE
+  priority: thematic
+  cadence: daily
+  notes: 'Topic feed for the BR24 Oberbayern page (id UZlJdUE; same pattern as BR''s published section feeds). checked 2026-10-14: 200, RSS 25 items, newest 14 Oct 2026 — noisy (sport, Munich).'
+  brief_ref: unverified-bundle
+
+- slug: thuenen-pressemitteilungen
+  name: Thünen-Institut — Pressemitteilungen
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.thuenen.de/de/newsroom/presse/pressemitteilungen
+  homepage: https://www.thuenen.de/de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Rural-areas research (Ländliche Räume). checked 2026-10-14: 200, 15 items; no feed found.'
+  brief_ref: unverified-bundle
+
+- slug: bbsr
+  name: Bundesinstitut für Bau-, Stadt- und Raumforschung (BBSR)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.bbsr.bund.de/
+  homepage: https://www.bbsr.bund.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'unverified — no listing endpoint found: checked 2026-10-14 the report-era /BBSR/DE/home/home_node.html now 404s; the root 302s to /BBSR/DE/startseite/_node.html, which timed out (60 s) twice.'
+  brief_ref: unverified-bundle
+
+- slug: dza
+  name: Deutsches Zentrum für Altersfragen
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.dza.de/
+  homepage: https://www.dza.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Ageing research (Deutscher Alterssurvey). /presse yields 2 items, /aktuelles is 404; homepage lists current projects. checked 2026-10-14: 200, 8 items.'
+  brief_ref: unverified-bundle
+
+- slug: iab
+  name: Institut für Arbeitsmarkt- und Berufsforschung (RSS)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: rss
+  url: https://iab.de/feed/
+  homepage: https://iab.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Labour market, SGB II research. checked 2026-10-14: 200, RSS 10 items, newest 14 Oct 2026.'
+  brief_ref: unverified-bundle
+
+- slug: dji
+  name: Deutsches Jugendinstitut — Presse (RSS)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.dji.de/presse-rss.xml
+  homepage: https://www.dji.de/ueber-uns/rss-feeds.html
+  priority: thematic
+  cadence: weekly
+  notes: 'Child/youth/family research. checked 2026-10-14: 200, RSS 30 items, newest 14 Oct 2026. News feed: /news-rss.xml (30 items).'
+  brief_ref: unverified-bundle
+
+- slug: berlin-institut
+  name: Berlin-Institut für Bevölkerung und Entwicklung — Aktuelles
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.berlin-institut.org/was-wir-tun/aktuelles
+  homepage: https://www.berlin-institut.org/
+  priority: thematic
+  cadence: monthly
+  notes: 'Demography, rural services. checked 2026-10-14: 200, 10 items (Pressemitteilungen: /presse/pressemitteilungen, 9 items); /feed/ 404.'
+  brief_ref: unverified-bundle
+
+- slug: wegweiser-kommune
+  name: Bertelsmann Stiftung — Wegweiser Kommune
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.wegweiser-kommune.de/
+  homepage: https://www.wegweiser-kommune.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'unverified — no listing endpoint found: the site is script-rendered (~700 chars, 0 items), /news is 404. Use bertelsmann-pressemitteilungen for announcements. checked 2026-10-14: homepage 200.'
+  brief_ref: unverified-bundle
+
+- slug: bertelsmann-pressemitteilungen
+  name: Bertelsmann Stiftung — Pressemitteilungen (RSS)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: rss
+  url: https://www.bertelsmann-stiftung.de/de/system/service/rss-feed-pressemitteilungen
+  homepage: https://www.bertelsmann-stiftung.de/de/system/service/rss-feeds
+  priority: thematic
+  cadence: weekly
+  notes: 'Carries Wegweiser Kommune / Kommunalfinanzen releases. checked 2026-10-14: 200, RSS 10 items, newest 14 Oct 2026.'
+  brief_ref: discovery
+
+- slug: neue-caritas
+  name: neue caritas — Aktuelles
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.caritas.de/neue-caritas/aktuelles/
+  homepage: https://www.caritas.de/neue-caritas/
+  priority: thematic
+  cadence: weekly
+  notes: 'Caritas trade magazine. checked 2026-10-14: 200, 10 items.'
+  brief_ref: report2+unverified-bundle
+
+- slug: ndv
+  name: Deutscher Verein — Nachrichtendienst (NDV)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: diff
+  url: https://www.deutscher-verein.de/buchshop/nachrichtendienst-ndv/
+  homepage: https://www.deutscher-verein.de/
+  priority: thematic
+  cadence: monthly
+  notes: 'Journal page changes with each issue. checked 2026-10-14: 200, ~2,000 chars, 4 PDFs.'
+  brief_ref: unverified-bundle
+
+- slug: wohlfahrt-intern
+  name: Wohlfahrt Intern
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.wohlfahrtintern.de/
+  homepage: https://www.wohlfahrtintern.de/
+  priority: thematic
+  cadence: weekly
+  notes: 'Sozialwirtschaft trade press (partly paywalled). checked 2026-10-14: 200, 10 items; no feed exposed.'
+  brief_ref: unverified-bundle
+
+- slug: sozialwirtschaft-nomos
+  name: Sozialwirtschaft — Zeitschrift (Nomos)
+  layer: medien
+  authority: medium
+  scope: bund
+  places: []
+  method: page
+  url: https://www.nomos.de/zeitschriften/sw/
+  homepage: https://www.nomos.de/zeitschriften/sw/
+  priority: thematic
+  cadence: irregular
+  notes: 'unverified — no listing endpoint found: journal page yields 0 items. checked 2026-10-14: 200, ~4,900 chars.'
+  brief_ref: unverified-bundle
+
+
+# =============================================================================
+# medien (query) — Google News searches; the collector builds
+#   https://news.google.com/rss/search?q=<query>+when:60d&hl=de&gl=DE&ceid=DE:de
+# =============================================================================
+- slug: gn-bad-wiessee
+  name: Google News — Bad Wiessee
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Bad Wiessee
+  method: query
+  query: '"Bad Wiessee" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 8 items; on topic (Oberlandhospiz, Ortsmitte, council votes).'
+  brief_ref: discovery
+
+- slug: gn-bayrischzell
+  name: Google News — Bayrischzell
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Bayrischzell
+  method: query
+  query: '"Bayrischzell" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 3 items; on topic (Bebauungsplan, Personalhaus).'
+  brief_ref: discovery
+
+- slug: gn-fischbachau
+  name: Google News — Fischbachau
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Fischbachau
+  method: query
+  query: '"Fischbachau" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 6 items; on topic (Förderantrag Warmfreibad).'
+  brief_ref: discovery
+
+- slug: gn-gmund
+  name: Google News — Gmund a. Tegernsee
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Gmund a. Tegernsee
+  method: query
+  query: '"Gmund" Tegernsee (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 5 items; mostly on topic; one national celebrity item.'
+  brief_ref: discovery
+
+- slug: gn-hausham
+  name: Google News — Hausham
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Hausham
+  method: query
+  query: '"Hausham" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 6 items; on topic (knapper Haushalt, Kämmerin leaves, population forecast).'
+  brief_ref: discovery
+
+- slug: gn-holzkirchen
+  name: Google News — Holzkirchen
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Holzkirchen
+  method: query
+  query: '"Holzkirchen" Miesbach (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 10 items; ''Miesbach'' added to exclude Holzkirchen (Unterfranken); on topic.'
+  brief_ref: discovery
+
+- slug: gn-irschenberg
+  name: Google News — Irschenberg
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Irschenberg
+  method: query
+  query: '"Irschenberg" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 9 items; on topic (Schulneubau, Musikschul-Zuschuss).'
+  brief_ref: discovery
+
+- slug: gn-kreuth
+  name: Google News — Kreuth
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Kreuth
+  method: query
+  query: '"Kreuth" Tegernsee (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 7 items; on topic (Glasfaser-Eigenanteil, Tempo 30).'
+  brief_ref: discovery
+
+- slug: gn-miesbach
+  name: Google News — Miesbach
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Miesbach
+  method: query
+  query: '"Miesbach" Stadtrat (Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas OR Bürgermeister)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 6 items; on topic (Kindergarten fees, Breitband).'
+  brief_ref: discovery
+
+- slug: gn-otterfing
+  name: Google News — Otterfing
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Otterfing
+  method: query
+  query: '"Otterfing" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 2 items; on topic (Bürgerforum, Lärmschutz); low volume.'
+  brief_ref: discovery
+
+- slug: gn-rottach-egern
+  name: Google News — Rottach-Egern
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Rottach-Egern
+  method: query
+  query: '"Rottach-Egern" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 9 items; mostly on topic; some lifestyle/tourism.'
+  brief_ref: discovery
+
+- slug: gn-schliersee
+  name: Google News — Schliersee
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Schliersee
+  method: query
+  query: '"Schliersee" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 10 items; on topic (Seniorenresidenz, Tourismus-Chef).'
+  brief_ref: discovery
+
+- slug: gn-tegernsee
+  name: Google News — Tegernsee
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Tegernsee
+  method: query
+  query: '"Tegernsee" Stadtrat (Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas OR Bürgermeister)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 5 items; on topic (Kita-Leitung, Gestaltungsbeirat).'
+  brief_ref: discovery
+
+- slug: gn-valley
+  name: Google News — Valley
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Valley
+  method: query
+  query: '"Valley" Landkreis Miesbach (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 4 items; noisy (obituary, S5 closure) — the bare name is ambiguous.'
+  brief_ref: discovery
+
+- slug: gn-waakirchen
+  name: Google News — Waakirchen
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Waakirchen
+  method: query
+  query: '"Waakirchen" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 9 items; on topic (Obdachloser, Geflüchtete move out, Rathaus).'
+  brief_ref: discovery
+
+- slug: gn-warngau
+  name: Google News — Warngau
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Warngau
+  method: query
+  query: '"Warngau" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 4 items; on topic (Kita, Asylunterkunft closes 2027).'
+  brief_ref: discovery
+
+- slug: gn-weyarn
+  name: Google News — Weyarn
+  layer: medien
+  authority: medium
+  scope: gemeinde
+  places:
+  - Weyarn
+  method: query
+  query: '"Weyarn" (Gemeinderat OR Haushalt OR Pflege OR Sozial OR Kita OR Zuschuss OR Caritas)'
+  priority: core
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 8 items; on topic (largest Kita opened, Carsharing).'
+  brief_ref: discovery
+
+- slug: gn-lk-pflege
+  name: Google News — Pflege
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Pflege OR Pflegeheim OR Tagespflege OR Pflegestützpunkt)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 5 items; on topic (Demenzwoche, Notrufuhr).'
+  brief_ref: discovery
+
+- slug: gn-lk-haushalt
+  name: Google News — Kreishaushalt und Kreisumlage
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Kreisumlage OR Kreishaushalt OR Kreistag OR Haushalt)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 35 items; broad; ''Haushalt'' also matches accidents and real estate.'
+  brief_ref: discovery
+
+- slug: gn-lk-jugend
+  name: Google News — Jugendhilfe und Kita
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Jugendhilfe OR Jugendamt OR Kita OR Kinderbetreuung)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 3 items; on topic (Jugendhilfe figures, Schulamt).'
+  brief_ref: discovery
+
+- slug: gn-lk-mobilitaet
+  name: Google News — ÖPNV und Mobilität
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Bus OR BRB OR Rufbus OR MVV OR ÖPNV OR Bahn)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 13 items; rephrased: the brief''s (ÖPNV OR Rufbus OR MVV OR Buslinie OR Fahrdienst) returned 1 item; this finds the on-demand bus plan.'
+  brief_ref: discovery
+
+- slug: gn-lk-fachkraefte
+  name: Google News — Fachkräfte und Personal
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Fachkräftemangel OR Personalmangel OR Stellen OR Pflegekräfte)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 10 items; on topic (Lehrstellen, Ehrenamt vacancies, Arbeitslosenquote).'
+  brief_ref: discovery
+
+- slug: gn-lk-ehrenamt
+  name: Google News — Ehrenamt und Quartier
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Ehrenamt OR Nachbarschaftshilfe OR Quartiersmanagement)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 3 items; on topic.'
+  brief_ref: discovery
+
+- slug: gn-lk-grundsicherung
+  name: Google News — Jobcenter und Grundsicherung
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Landkreis Miesbach" (Jobcenter OR Grundsicherung OR Bürgergeld OR Wohngeld)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 10 items; labour-market reports; Grundsicherungsgeld rarely named yet.'
+  brief_ref: discovery
+
+- slug: gn-lk-armut
+  name: Google News — Armut, Wohnungsnot, Einsamkeit
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: Miesbach (Armut OR Tafel OR obdachlos OR Wohnungsnot OR Einsamkeit OR Schuldnerberatung OR Altersarmut)
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 3 items; rephrased: the ''"Landkreis Miesbach" (Wohnungsnot OR Obdachlosigkeit OR Einsamkeit OR Armut)'' form returned 1 item; still thin.'
+  brief_ref: discovery
+
+- slug: gn-caritas-miesbach
+  name: Google News — Caritas Miesbach
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Miesbach
+  - Landkreis Miesbach
+  method: query
+  query: '"Caritas" Miesbach'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 7 items; on topic (Rufbus for seniors in Irschenberg, Hospizbegleiter).'
+  brief_ref: discovery
+
+- slug: gn-krankenhaus-agatharied
+  name: Google News — Krankenhaus Agatharied
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Krankenhaus Agatharied"'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 10 items; mixed (staff awards, obituaries, health advice).'
+  brief_ref: discovery
+
+- slug: gn-kirche-miesbach
+  name: Google News — Dekanat und Pfarrverbände
+  layer: medien
+  authority: medium
+  scope: landkreis
+  places:
+  - Landkreis Miesbach
+  method: query
+  query: '"Dekanat Miesbach" OR "Pfarrverband" Miesbach'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 2 items; on topic (first woman as Pfarrverbandsleiterin, Schliersee appointment).'
+  brief_ref: discovery
+
+- slug: gn-bezirk-oberbayern
+  name: Google News — Bezirk Oberbayern
+  layer: medien
+  authority: medium
+  scope: bezirk
+  places:
+  - Oberbayern
+  method: query
+  query: '"Bezirk Oberbayern" (Bezirksumlage OR Eingliederungshilfe OR Bezirkstag OR Haushalt OR Pflege)'
+  priority: thematic
+  cadence: daily
+  notes: 'Google News RSS search (when:60d). checked 2026-10-14: 9 items; on topic (Bezirksumlage pressure on Kommunen) — added beyond the brief''s list.'
+  brief_ref: discovery
+
+
+# =============================================================================
+# vergleich — peer cases (model → regular financing)
+# =============================================================================
+- slug: gemeindeschwester-plus
+  name: Rheinland-Pfalz — Landesprogramm Gemeindeschwester plus
+  layer: vergleich
+  authority: high
+  scope: extern
+  places:
+  - Rheinland-Pfalz
+  method: diff
+  url: https://masffj.rlp.de/themen/soziales/gut-leben-im-alter/gemeindeschwester-plus
+  homepage: https://masffj.rlp.de/
+  priority: core
+  cadence: monthly
+  notes: 'Best verified peer: model → Verstetigungsphase → Landesprogramm, state-funded in 2025/26. checked 2026-10-14: 200, ~4,300 chars, 8 PDFs. Report 2 adds the RLP Landtag Vorlage 18/4401 (https://dokumente.landtag.rlp.de/landtag/vorlagen/4401-V-18.pdf, 200 application/pdf) and the DIP project page https://www.dip.de/projekte/modellprojekt-gemeindeschwester-plus/ (200).'
+  brief_ref: report2+54
+
+- slug: community-nursing-oesterreich
+  name: Community Nursing Österreich — Downloads
+  layer: vergleich
+  authority: high
+  scope: extern
+  places:
+  - Österreich
+  method: pdf
+  url: https://cn-oesterreich.at/aktuelles-service/downloads
+  homepage: https://cn-oesterreich.at/
+  priority: thematic
+  cadence: irregular
+  notes: 'Continuation after the 2022–24 pilot varies by Land and Träger; listing that holds the report''s ''Factsheet Weiterführung CN 2025''. checked 2026-10-14: 200, 13 PDF links. Report 2''s funding-cliff evidence: Stadt Leoben press release https://www.leoben.at/press_release/finanzierung-community-nursing/ (200; no press listing — /press_release/ is 404) and pflegenetz.at pflege:news (feed /pflegenews/feed/, 182 items).'
+  brief_ref: report2+55
+
+- slug: isa-praeventionsketten
+  name: Institut für soziale Arbeit — Arbeitsbereich Prävention (kommunale Präventionsketten)
+  layer: vergleich
+  authority: medium
+  scope: extern
+  places: []
+  method: diff
+  url: https://isa-muenster.de/arbeitsbereiche/praevention/
+  homepage: https://isa-muenster.de/
+  priority: thematic
+  cadence: irregular
+  notes: 'The report''s second peer source (resilience and institutionalisation of municipal prevention chains; Qualitätsverbund Präventionsketten). checked 2026-10-14: 200, ~3,800 chars, 2 PDFs; isa-muenster.de/feed/ 404, qv-praeventionsketten.de/feed/ empty.'
+  brief_ref: '55'
+
+- slug: kinderstark-nrw
+  name: kinderstark – NRW schafft Chancen (Präventionsketten)
+  layer: vergleich
+  authority: high
+  scope: extern
+  places: []
+  method: page
+  url: https://www.kinderstark.nrw/
+  homepage: https://www.kinderstark.nrw/
+  priority: thematic
+  cadence: irregular
+  notes: 'NRW state programme for kommunale Präventionsketten; report 2 cites its evaluation (https://www.mkjfgfi.nrw/system/files/media/document/file/abschlussbericht_kinderstark_lang.pdf, 200 application/pdf). checked 2026-10-14: 200, 11 items.'
+  brief_ref: report2
+
+- slug: nhs-social-prescribing
+  name: NHS England — Social prescribing (link workers)
+  layer: vergleich
+  authority: high
+  scope: extern
+  places: []
+  method: diff
+  url: https://www.england.nhs.uk/personalisedcare/social-prescribing/
+  homepage: https://www.england.nhs.uk/
+  priority: thematic
+  cadence: irregular
+  notes: 'Link workers anchored in Primary Care Networks. checked 2026-10-14: page returns 202 with an empty body to curl and WebFetch (bot protection) — unverified; the guide PDF report 2 cites (https://www.england.nhs.uk/wp-content/uploads/2020/06/social-prescribing-summary-guide-updated-june-20.pdf) is 200 application/pdf.'
+  brief_ref: report2
