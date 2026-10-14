@@ -106,6 +106,13 @@ def _iso(d: date | datetime | None) -> str | None:
     return d.isoformat() if d else None
 
 
+def _shown() -> list:
+    """With a key set, mock judgements are left out — the rule the questions API applies."""
+    from mhs.questions.judge import MOCK_MODEL
+
+    return [Judgement.model != MOCK_MODEL] if settings.llm_enabled else []
+
+
 async def _question_movements(session: AsyncSession, today: date) -> dict[str, str]:
     """Movement per question from mhs.questions.balance (imported here, not at module load,
     so this module does not depend on it at import time; tests replace this function).
@@ -116,6 +123,7 @@ async def _question_movements(session: AsyncSession, today: date) -> dict[str, s
         await session.execute(
             select(Judgement.question_id, Judgement.direction, Judgement.weight, Signal.published_at)
             .join(Signal, Signal.id == Judgement.signal_id)
+            .where(*_shown())
             .distinct(Judgement.question_id, Judgement.signal_id)
             .order_by(Judgement.question_id, Judgement.signal_id, desc(Judgement.created_at))
         )
@@ -164,7 +172,7 @@ async def _questions(session: AsyncSession, since: datetime, until: datetime, mo
         await session.execute(
             select(Judgement, Signal.headline_de)
             .join(Signal, Signal.id == Judgement.signal_id)
-            .where(Judgement.created_at > since, Judgement.created_at <= until)
+            .where(Judgement.created_at > since, Judgement.created_at <= until, *_shown())
             .order_by(Judgement.question_id, desc(Judgement.weight), desc(Judgement.created_at))
         )
     ).all()
