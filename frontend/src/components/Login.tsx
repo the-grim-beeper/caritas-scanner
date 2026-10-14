@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { api } from "../api";
-import { useT } from "../i18n";
+import { useLang, useT } from "../i18n";
 
 export function Login({ onDone }: { onDone: () => void }) {
   const t = useT();
+  const { lang, setLang } = useLang();
   const [pw, setPw] = useState("");
   const [bad, setBad] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -24,15 +25,20 @@ export function Login({ onDone }: { onDone: () => void }) {
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
-      <form onSubmit={submit} className="w-full max-w-sm border-t-2 border-ink pt-4">
-        <h1 className="display text-2xl">{t("app_title")}</h1>
-        <p className="text-sm text-ink-3 mt-1 mb-6">{t("app_sub")}</p>
-        <label className="eyebrow block mb-1" htmlFor="pw">
+      <form onSubmit={submit} className="w-full max-w-md border-t-2 border-ink pt-4">
+        <div className="flex justify-between items-start gap-4">
+          <h1 className="display text-[1.8rem] leading-tight">{t("app_title")}</h1>
+          <button type="button" className="btn btn-quiet !px-2 !py-0.5 text-xs" onClick={() => setLang(lang === "de" ? "en" : "de")}>
+            {lang === "de" ? "EN" : "DE"}
+          </button>
+        </div>
+        <p className="text-sm text-ink-2 mt-2 mb-6">{t("app_sub")}</p>
+        <label className="label block mb-1" htmlFor="pw">
           {t("password")}
         </label>
-        <input id="pw" type="password" className="w-full" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus />
-        {bad && <p className="text-warn text-sm mt-2">{t("wrong_password")}</p>}
-        <button className="btn mt-4" disabled={busy}>
+        <input id="pw" type="password" className="w-full" value={pw} onChange={(e) => setPw(e.target.value)} autoFocus autoComplete="current-password" />
+        {bad && <p className="text-sm mt-2">{t("wrong_password")}</p>}
+        <button className="btn btn-fir mt-4" disabled={busy}>
           {t("sign_in")}
         </button>
       </form>

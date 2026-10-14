@@ -1,27 +1,37 @@
 @import "tailwindcss";
 
+/*
+ * Oberland broadsheet. Limestone paper, olive-black ink, one fir-green accent
+ * (UI: links, active section, focus, the panorama glyph) and one rust secondary
+ * that marks only two things: the tilt of a monitoring question and a deadline.
+ * Layer and actor hues are validated as a set (dataviz validator, light, on #EFEDE6):
+ * lightness band, chroma floor, adjacent CVD separation and the normal-vision floor pass.
+ */
 @theme {
-  --color-paper: #f3f4f1;
-  --color-paper-2: #e9ebe6;
-  --color-paper-3: #dfe2dc;
-  --color-ink: #161b22;
-  --color-ink-2: #3a414b;
-  --color-ink-3: #6b7280;
-  --color-rule: #c9cdc6;
-  --color-river: #0f6e6b;
-  --color-river-2: #d9ecea;
-  --color-warn: #a34a2a;
+  --color-paper: #efede6;
+  --color-paper-2: #e6e3d9;
+  --color-paper-3: #d9d5c9;
+  --color-ink: #1e201b;
+  --color-ink-2: #40433b;
+  --color-ink-3: #6c6e64;
+  --color-rule: #c9c4b6;
+  --color-fir: #2d5b46;
+  --color-fir-2: #dbe5dc;
+  --color-rust: #9c4322;
+  --color-rust-2: #f1ddd2;
 
-  --color-policy: #4a5e8a;
-  --color-editorial: #6b6f76;
-  --color-innovation: #5e7f3f;
-  --color-corporate: #a8782a;
-  --color-infrastructure: #9a4b3b;
-  --color-funding: #6e4a8a;
+  --color-gemeinden: #a97416;
+  --color-landkreis: #26652b;
+  --color-wohlfahrt: #c26576;
+  --color-kirche: #644395;
+  --color-bezirk: #068fa7;
+  --color-freistaat: #29559f;
+  --color-bund: #7e8832;
+  --color-medien: #8e3776;
+  --color-vergleich: #ba673f;
 
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-display: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 html {
@@ -29,11 +39,14 @@ html {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 15px;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+  hyphens: auto;
 }
 
 body {
   min-height: 100vh;
+  background: var(--color-paper);
 }
 
 a {
@@ -41,27 +54,32 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-river);
+  outline: 2px solid var(--color-fir);
   outline-offset: 2px;
 }
 
+/* Source Serif for headlines, leads, quotes and the Friday note. */
 .display {
+  hyphens: manual;
   font-family: var(--font-display);
-  font-variation-settings: "opsz" 72;
-  letter-spacing: -0.01em;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+.serif {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
 }
 
-.reading {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* Small labels: sentence case, never tracked capitals. */
+.label {
+  font-size: 0.76rem;
+  font-weight: 500;
   color: var(--color-ink-3);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
 }
 
 .rule {
@@ -74,9 +92,20 @@ a {
 
 .layer-bar {
   display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.55rem;
+  height: 0.55rem;
   border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.link {
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 2px;
+}
+.link:hover {
+  text-decoration-color: var(--color-fir);
+  color: var(--color-fir);
 }
 
 table.data {
@@ -86,34 +115,35 @@ table.data {
 table.data th {
   text-align: left;
   font-weight: 500;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.76rem;
   color: var(--color-ink-3);
-  padding: 0.5rem 0.5rem 0.4rem 0;
+  padding: 0.5rem 0.75rem 0.4rem 0;
   border-bottom: 2px solid var(--color-ink);
   white-space: nowrap;
 }
 table.data td {
-  padding: 0.55rem 0.5rem 0.55rem 0;
+  padding: 0.6rem 0.75rem 0.6rem 0;
   border-bottom: 1px solid var(--color-rule);
   vertical-align: top;
 }
 
 .btn {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
   border: 1px solid var(--color-ink);
   background: transparent;
   color: var(--color-ink);
   cursor: pointer;
+  white-space: nowrap;
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--color-ink);
   color: var(--color-paper);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: progress;
 }
 .btn[aria-pressed="true"] {
   background: var(--color-ink);
@@ -122,6 +152,15 @@ table.data td {
 .btn-quiet {
   border-color: var(--color-rule);
   color: var(--color-ink-2);
+}
+.btn-fir {
+  border-color: var(--color-fir);
+  background: var(--color-fir);
+  color: var(--color-paper);
+}
+.btn-fir:hover:not(:disabled) {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
 }
 
 select,
@@ -135,18 +174,24 @@ input[type="password"] {
   color: var(--color-ink);
 }
 
+/* Paper halo behind SVG labels so they stay legible over edges. */
+.halo {
+  paint-order: stroke;
+  stroke: var(--color-paper);
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .fade-in {
-    animation: fade-in 220ms ease-out both;
+    animation: fade-in 200ms ease-out both;
   }
   @keyframes fade-in {
     from {
       opacity: 0;
-      transform: translateY(2px);
     }
     to {
       opacity: 1;
-      transform: none;
     }
   }
 }
