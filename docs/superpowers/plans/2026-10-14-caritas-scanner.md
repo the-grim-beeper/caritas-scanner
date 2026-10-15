@@ -34,7 +34,7 @@
 
 ## Task 1 (DONE): Rename and infrastructure
 
-Package `rns` → `mhs`, Postgres 5441, `selectolax<1.0` pinned (1.0 removed the Modest backend), `pypdf` added, password `oberland`. Commit `8cb315f`. Six template tests fail only because they assert Rhein-Neckar entities — Task 2 replaces them.
+Package `rns` → `mhs`, Postgres 5441, `selectolax<1.0` pinned (1.0 removed the Modest backend), `pypdf` added, a new app password. Commit `8cb315f`. Six template tests fail only because they assert Rhein-Neckar entities — Task 2 replaces them.
 
 ---
 
@@ -417,7 +417,7 @@ Report JSON schema (`report/schema.py`):
  chains: [{title_de, title_en, signal_ids: [str]}], watch: [{event_id, why_de, why_en}],
  friday_de, friday_en, friday_signal_ids: [str]}
 ```
-Report system prompt (English, for the model): you write the weekly Lagebericht of a horizon scanner for social provision in Landkreis Miesbach, read by Caritas-Zentrum Miesbach (Florian Rausch) and a TUM foresight student team; German is the primary language, write German first and an English version. lead: 3–4 sentences, what moved this week for the question of whether an inter-municipal coordination structure can be anchored to 2035/2040. questions: only questions with evidence this week, movement + one or two sentences, cite judgement ids. sections by layer, chains across layers, watch list. **friday_de**: the team's weekly written update to Florian — two or three short paragraphs, plain prose, no headings, no bullet lists, no greeting or signature, sober, Strunk-&-White brevity; what the scanner saw this week, what it may mean for the Sozialraumlotsen question, one open question for Florian if the evidence raises one. Cite only ids in the input; never invent numbers, names or dates.
+Report system prompt (English, for the model): you write the weekly Lagebericht of a horizon scanner for social provision in Landkreis Miesbach, read by Caritas-Zentrum Miesbach (its contact for the project) and a TUM foresight student team; German is the primary language, write German first and an English version. lead: 3–4 sentences, what moved this week for the question of whether an inter-municipal coordination structure can be anchored to 2035/2040. questions: only questions with evidence this week, movement + one or two sentences, cite judgement ids. sections by layer, chains across layers, watch list. **friday_de**: the team's weekly written update to the Caritas contact — two or three short paragraphs, plain prose, no headings, no bullet lists, no greeting or signature, sober, Strunk-&-White brevity; what the scanner saw this week, what it may mean for the Sozialraumlotsen question, one open question for the Caritas contact if the evidence raises one. Cite only ids in the input; never invent numbers, names or dates.
 - [ ] **Step 1: Failing tests:**
 ```python
 async def test_seeded_window_loads_without_signal(db_session):
@@ -447,7 +447,7 @@ Requirements:
 - **Lage**: masthead with week, nine layer bands with the week's top stories (score glyph shows the five factors), a "Fragen in Bewegung" strip (questions whose movement ≠ quiet, tilt arrows with the side's label), next deadlines rail (seeded + extracted, windows shown as spans).
 - **Fragen**: ledger of the 15 (number, title, driver, tilt bar between `against_label` and `for_label`, 12-week sparkline of balance, counts); detail page with both evidence columns (for / against) — each card: quote in quotation marks, rationale, signal headline linking out, source and date.
 - **Netz**: SVG force layout (d3-force from npm is fine) of nodes coloured by `actor_kind`; report edges solid, signal edges dashed-dot with a dot marker; relation label on hover; side panel for a selected node (name, kind, edges with evidence, entity timeline from `/api/entities/{slug}`); below the graph: forums table (convener, attendance visible?, public minutes?, treatment) and **Lücken** list (gaps, the missing Caritas↔Lotsen↔Landkreis edge first, styled as dashed red-free "missing" edge in the graph between the named actors).
-- **Lagebericht**: latest report as broadsheet (lead, questions block, sections with notes beside cited signal cards, chains, watch) + a framed **Freitagsnotiz an Florian** with "Kopieren" button (copies `friday_de` or `friday_en` per language) and the cited signals under it; archive list; button "Lagebericht jetzt erstellen" (POST /api/report/run).
+- **Lagebericht**: latest report as broadsheet (lead, questions block, sections with notes beside cited signal cards, chains, watch) + a framed **Freitagsnotiz an the Caritas contact** with "Kopieren" button (copies `friday_de` or `friday_en` per language) and the cited signals under it; archive list; button "Lagebericht jetzt erstellen" (POST /api/report/run).
 - **Kalender**: by week; deadlines distinct from events; windows as horizontal bars; seeded items marked "aus dem Bericht".
 - **Quellen**: template coverage table + a 17-municipality grid (each tile: municipality, number of collected sources, items in 30 days, methods) from `/api/sources` (`places` field per source).
 - `npm run build` clean (`tsc -b` + vite), `npx oxlint` clean.
@@ -462,7 +462,7 @@ Requirements:
 - [ ] `/api/overview` adds `questions_moving: [{id, title_de, title_en, movement, balance, for_label_*, against_label_*}]` and `report_lead` from the latest Digest.
 - [ ] `/api/sources` adds per-source `places`.
 - [ ] Full test suite green; `scripts/check_models.py` OK; `scripts/check_sources.py` on the researched catalogue; `alembic upgrade head` on a fresh DB; `load_sources.py`; one live cycle with backfill (local, `MAX_EXTRACTIONS_PER_CYCLE` 600); `POST /api/report/run`; inspect output quality (questions, quotes, Friday note) and fix prompts if needed.
-- [ ] Railway: new project `caritas-scanner`, `postgres` from `pgvector/pgvector:pg16` + volume, `web` from repo Dockerfile; variables `DATABASE_URL`, `APP_PASSWORD=oberland`, `SECRET_KEY`, `SCHEDULER_ENABLED=true`; Nicklas sets `ANTHROPIC_API_KEY` via `! railway variable set`; deploy; run a cycle + report in production; browser smoke test of all seven views.
+- [ ] Railway: new project `caritas-scanner`, `postgres` from `pgvector/pgvector:pg16` + volume, `web` from repo Dockerfile; variables `DATABASE_URL`, `APP_PASSWORD`, `SECRET_KEY`, `SCHEDULER_ENABLED=true`; Nicklas sets `ANTHROPIC_API_KEY` via `! railway variable set`; deploy; run a cycle + report in production; browser smoke test of all seven views.
 - [ ] README rewritten for this project; memory updated; push.
 
 ---

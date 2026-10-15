@@ -37,7 +37,7 @@ BALANCE_WEEKS = 12
 PROMPT_FIGURES = {"2035", "2040", str(HORIZON_DAYS)}
 
 SYSTEM = f"""You write the weekly Lagebericht of a horizon scanner for social provision in
-Landkreis Miesbach (Upper Bavaria). It is read by Caritas-Zentrum Miesbach (Florian Rausch)
+Landkreis Miesbach (Upper Bavaria). It is read by Caritas-Zentrum Miesbach (its contact for the project)
 and by a TUM foresight student team. The question the whole project serves: can an
 inter-municipal coordination structure for social provision, the "Interkommunale
 Sozialraumlotsen", be designed and anchored so that it still works in 2035 and 2040?
@@ -69,7 +69,7 @@ Write:
   each. An empty list is a fine answer.
 - watch: the events, deadlines and windows from the input that deserve attention in the
   coming weeks, each with why.
-- friday_de, friday_en: the team's weekly written update to Florian Rausch (rules below).
+- friday_de, friday_en: the team's weekly written update to the Caritas contact (rules below).
 - friday_signal_ids: every signal the Friday note draws on.
 
 The Friday note is the part a person will send. Write it as a careful member of a
@@ -80,8 +80,8 @@ foresight team reporting to a client:
   tone, no superlatives, no filler ("spannende Entwicklungen", "es bleibt abzuwarten").
 - First, what the scanner saw this week: the two or three developments that matter most.
   Then what they may mean for the Sozialraumlotsen question; this is a reading, so write
-  "may" or "could", not "will". Then, only if the evidence raises one that Florian is
-  placed to answer, one open question, phrased without addressing him ("Offen ist, ob …",
+  "may" or "could", not "will". Then, only if the evidence raises one that the Caritas contact is
+  placed to answer, one open question, phrased without addressing them ("Offen ist, ob …",
   "Ist bekannt, ob …?"). Never more than one question.
 - Every factual sentence must rest on a signal listed in friday_signal_ids. If the week
   was thin, say so plainly instead of stretching the evidence.

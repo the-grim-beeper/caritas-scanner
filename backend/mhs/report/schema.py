@@ -62,7 +62,7 @@ REPORT_SCHEMA = _obj({
         "type": "array",
         "items": _obj({"event_id": _str("An event id from the input."), "why_de": _str(), "why_en": _str()}),
     },
-    "friday_de": _str("The weekly note to Florian Rausch, German: two or three short paragraphs separated by a "
+    "friday_de": _str("The weekly note to the Caritas contact, German: two or three short paragraphs separated by a "
                       "blank line; plain prose, no headings, no lists, no greeting, no signature."),
     "friday_en": _str("The same note in English, same paragraphs."),
     "friday_signal_ids": _ids("Every signal id the Friday note draws on; at least one."),

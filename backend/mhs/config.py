@@ -90,7 +90,7 @@ class Settings(BaseSettings):
         return Path(__file__).resolve().parents[2] / "data"
 
     # --- app ----------------------------------------------------------------
-    app_password: str = "oberland"
+    app_password: str = "change-me"  # production sets APP_PASSWORD
     secret_key: str = "dev-only-change-me"
     session_max_age_seconds: int = 60 * 60 * 24 * 7
     cycle_hour_utc: int = 5

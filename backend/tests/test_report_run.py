@@ -210,7 +210,7 @@ async def test_live_inputs_are_this_weeks_founders_judgements_and_next_30_days(d
     assert inputs["week"]["monday"] == "2026-10-12"
 
     assert calls[0]["model"] == settings.digest_model
-    assert "Florian" in calls[0]["system"] and "friday_de" in calls[0]["system"]
+    assert "Caritas-Zentrum Miesbach" in calls[0]["system"] and "friday_de" in calls[0]["system"]
 
 
 async def test_live_retry_carries_the_problems_and_records_the_model(db_session, movements, live):

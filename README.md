@@ -1,129 +1,162 @@
 # Horizont-Scanner Landkreis Miesbach
 
-Ein Horizont-Scanner für soziale Versorgung im Landkreis Miesbach, gebaut für das
-Caritas-Zentrum Miesbach im Rahmen der TUM Strategic Foresight Clinic (Team 1). Er dient der
-Leitfrage des Projekts: *Wie kann eine interkommunale Struktur für soziale Versorgung im
-Landkreis – die „Interkommunalen Sozialraumlotsen“ – so gestaltet und verankert werden, dass
-sie 2035 und 2040 noch trägt?* Der Scanner verdichtet, was sich dafür bewegt, zu wenigen
-belegten Erkenntnissen pro Woche. „Bewegung“ heißt hier: Mandate, Geld, Personal, Regeln und
-Legitimität rund um soziale Versorgung – nicht allgemeine Lokalnachrichten. Deutsch zuerst;
-die Oberfläche lässt sich auf Englisch umschalten.
+A horizon scanner for **social provision in Landkreis Miesbach** (Upper Bavaria), built for
+Caritas-Zentrum Miesbach within the TUM Think Tank **Strategic Foresight Clinic** (Edition 01,
+Team 1).
 
-**Live:** https://web-production-3e84e.up.railway.app — das Passwort wird separat mitgeteilt.
+> **Kurz auf Deutsch.** Der Scanner liest jeden Tag rund 150 öffentliche Quellen – Gemeinden,
+> Landkreis, Wohlfahrtsverbände, Kirche, Bezirk, Freistaat, Bund, Lokalpresse, Vergleichsfälle –
+> und verdichtet, was sich bei Mandaten, Geld, Personal, Regeln und Legitimität rund um die
+> soziale Versorgung bewegt. Jede Woche entsteht ein Lagebericht mit einer kurzen Notiz an das
+> Caritas-Zentrum. Alles, was der Scanner behauptet, ist mit der Quelle belegt.
 
-## Was er tut
+## Why it exists
 
-- **Neun Ebenen.** Gemeinden · Landkreis & Dienste · Wohlfahrt & Zivilgesellschaft · Kirche ·
-  Bezirk Oberbayern · Freistaat Bayern · Bund · Medien & Forschung · Vergleichsfälle. Jede
-  Quelle gehört zu genau einer (`backend/mhs/vocab.py`).
-- **Quellen: geprüft, nicht geglaubt.** Der Katalog `data/sources.yaml` umfasst 168 Quellen;
-  155 davon waren bei der Live-Prüfung vom 14. Oktober 2026 erreichbar (`checked_at` in
-  `data/sources-live.json`; was nicht erreichbar war, steht mit Grund in
-  `data/sources-check-report.json`). Gesammelt wird nur, was die Prüfung bestanden hat.
-  Newsletter, APIs und soziale Medien sind katalogisiert, werden aber nicht gesammelt.
-- **Sammeln** mit fünf Methoden: `rss` (Feeds), `page` (Listen-Seiten), `query`
-  (Google-News-Suche), `diff` (Strukturseiten – gemeldet wird die Änderung gegenüber dem
-  letzten Stand), `pdf` (PDF-Links auf Listen-Seiten, z. B. Sitzungsvorlagen). Kanonische URL
-  und Inhalts-Hash verhindern Doppelungen; was beim ersten Sehen älter als 60 Tage ist, gilt
-  als Archiv.
-- **Extraktion.** Ein Modellaufruf pro Eintrag mit strukturierter Ausgabe: Schlagzeile und
-  Zusammenfassung (DE/EN), Signaltyp, Themen aus festem Vokabular, Orte, Organisationen,
-  Gremien, Programme und Ämter, Termine und Fristen, Beziehungen mit Zitat. Ein Signal ist nie
-  später datiert als sein Eintrag gesammelt wurde.
-- **Analyse.** Lokale Embeddings, Stories (dieselbe Entwicklung aus mehreren Quellen zählt
-  einmal, mit Bestätigungen), Score, Trends nach Thema × Ebene × Woche.
-- **15 Beobachtungsfragen** (`data/questions.yaml`, aus dem Brief). Jedes Signal wird gegen
-  die Fragen gelesen; eine Einschätzung wird nur gespeichert, wenn ihr Zitat wörtlich in einem
-  Text dieses Signals steht (`backend/mhs/questions/validate.py`). Paraphrasen und
-  Übersetzungen fallen heraus.
-- **Evidenznetz.** Finanzierung, Beauftragung, Mitgliedschaft, Koordination, Aufsicht,
-  Kooperation – gesät aus dem Brief (`data/network.yaml`), erweitert um Beziehungen, die die
-  Extraktion mit Zitat belegt (`backend/mhs/network/resolve.py`).
-- **Kalender.** Termine und Beobachtungsfenster aus dem Brief (`data/calendar.yaml`) plus
-  extrahierte Termine und Fristen; Fristen bleiben von Terminen getrennt.
-- **Wöchentlicher Lagebericht**, donnerstags 18:00 (Europe/Berlin), mit der Freitagsnotiz –
-  dem wöchentlichen schriftlichen Update des Teams an das Caritas-Zentrum. Der Bericht darf nur
-  Signale zitieren, die ihm übergeben wurden; ein Validator prüft das.
-- **Sich selbst pflegende Quellen.** Montags 06:00 (Europe/Berlin) schlägt ein Modell mit
-  Websuche neue Quellen vor; jede wird live geprüft. Vorschläge werden nach 7 Tagen
-  übernommen, sofern niemand sie ablehnt (Ansicht *Quellen*).
-- **Täglicher Zyklus**, 05:00 UTC: fällige Vorschläge übernehmen → sammeln → extrahieren →
-  analysieren → Fragen beurteilen → Netz → Trends. Es läuft immer nur ein Zyklus und ein
-  Lagebericht zugleich, ob aus der Oberfläche, dem Scheduler oder der Kommandozeile gestartet
-  (Postgres-Advisory-Lock, `backend/mhs/cycle.py`).
+The project behind it asks one question: *how can an inter-municipal structure for social
+provision — the "Interkommunale Sozialraumlotsen" — be designed and anchored so that it still
+works in 2035 and 2040?*
 
-Ansichten: Lage · Fragen · Netz · Lagebericht · Signale · Kalender · Quellen.
+The deep-research brief behind the scanner found that the county already has many *named*
+coordination structures (a Sozialbeirat, several networks, a GesundheitsregionPlus in the
+making). The open question is whether they connect, hold decision rights, keep their people
+and move information. So the scanner does not collect general local news. It watches for
+change in **mandates, money, staffing, rules and legitimacy**, and it reads every signal
+against fifteen standing monitoring questions taken from that brief.
 
-Ohne `ANTHROPIC_API_KEY` läuft die ganze Pipeline auf einem deterministischen Mock
-(Stichwort-Vokabular + Entitätenverzeichnis); die Oberfläche zeigt dann ein **Mock**-Abzeichen.
+## What it does
 
-## Modelle
-
-Modell-IDs stehen ausschließlich in `backend/mhs/config.py` (Extraktion, Fragen-Richter,
-Lagebericht mit Ersatzmodell, Quellenvorschläge mit Websuche-Werkzeug), zuletzt am
-14. Oktober 2026 gegen die Modellliste und mit je einem echten Aufruf geprüft. Vor jeder
-Änderung erneut prüfen:
-
-```bash
-cd backend && .venv/bin/python scripts/check_models.py
+```mermaid
+flowchart LR
+    A[168 catalogued sources<br/>155 verified live] --> B[collect<br/>rss · page · query · diff · pdf]
+    B --> C[extract<br/>one structured call per item]
+    C --> D[stories & score<br/>embeddings, corroboration]
+    D --> E[judge<br/>15 monitoring questions]
+    E --> F[network<br/>who funds, commissions, coordinates whom]
+    F --> G[trends]
+    D --> H[weekly Lagebericht<br/>+ Friday note]
+    E --> H
+    S[weekly source discovery<br/>web search] -->|adopted after 7 days<br/>unless declined| A
 ```
 
-## Lokal
+- **Nine layers.** Gemeinden · Landkreis & Dienste · Wohlfahrt & Zivilgesellschaft · Kirche ·
+  Bezirk Oberbayern · Freistaat Bayern · Bund · Medien & Forschung · Vergleichsfälle.
+- **A verified catalogue.** `data/sources.yaml` lists 168 sources, covering all 17
+  municipalities. Only sources that passed a live check (`scripts/check_sources.py` →
+  `data/sources-live.json`) are ever collected; everything else stays in the catalogue with the
+  reason it is not collected.
+- **Five collection methods.** RSS/Atom feeds; list pages; Google News searches per
+  municipality and theme; *diffs* of structural pages (the change itself is the item); and the
+  text of PDFs linked from council and finance pages.
+- **Extraction.** One structured model call per item: headline and summary in German and
+  English, signal type, topics from a fixed 33-tag vocabulary, places, organisations, forums,
+  programmes and offices, events and deadlines, and relations between actors with the quote
+  that states them. Persons are never entities; offices are.
+- **Stories and score.** The same development reported by several outlets counts once, with
+  corroboration. Score = authority × regional relevance × novelty × consequence × forward lag.
+- **Fifteen monitoring questions** (`data/questions.yaml`). Each relevant signal is judged
+  *for* or *against* each question it bears on, with a strength and a quote. A weekly balance
+  per question decays toward zero when no new evidence arrives.
+- **Evidence network.** Seeded from the brief (`data/network.yaml`: edges, standing forums and
+  the known gaps, such as the undocumented link between Caritas, the Lotsen project, the county
+  and the municipalities), extended only by relations a signal quotes.
+- **Calendar.** Deadlines, meetings and watch windows from the brief plus those extracted from
+  sources; deadlines are kept separate from event dates.
+- **Weekly Lagebericht**, Thursdays 18:00 Europe/Berlin: a lead, movement per question,
+  sections per layer, cross-layer chains, a watch list, and the *Freitagsnotiz* — two or three
+  plain paragraphs for the team's weekly update to Caritas.
+- **Self-updating sources.** Every Monday a web-searching model proposes new sources aimed at
+  the coverage gaps. Each candidate is verified live; it is adopted after seven days unless
+  someone declines it. Declines are permanent.
+
+Seven views, German by default with an English toggle: **Lage · Fragen · Netz · Lagebericht ·
+Signale · Kalender · Quellen**.
+
+## Provenance is enforced in code
+
+The scanner is meant to be trusted by people who will act on it, so nothing a model writes is
+taken on faith:
+
+- A judgement is stored only if its quote is a verbatim span of **one** field of that signal's
+  source text, at least three words long. The stored quote is the source's own text, with its
+  original spelling and punctuation.
+- A network edge from a signal must carry that signal and its quote (a database constraint).
+- The Lagebericht may cite only signals, events, judgements and questions it was given; a
+  validator rejects anything else, and numbers in the Friday note must appear in its input.
+- No signal is dated in the future, and undated list-page items whose own stated date is older
+  than 60 days are treated as archive, not news.
+- Model IDs live only in `backend/mhs/config.py` and are checked against the live model list
+  (`scripts/check_models.py`) before they change.
+
+## Stack
+
+FastAPI · SQLAlchemy 2 (async) · PostgreSQL with pgvector · Alembic · APScheduler · fastembed
+(multilingual MiniLM) · Anthropic API with structured outputs (Claude Haiku 5.5 for extraction,
+Sonnet 5.5 for judging and source discovery with web search, Opus 5.5 for the Lagebericht) ·
+React 19 · Vite · TypeScript · Tailwind CSS v4 · d3-force.
+
+Without an `ANTHROPIC_API_KEY` the whole pipeline runs on a deterministic mock (keyword
+vocabulary and entity dictionary) and the interface shows a **Mock** badge.
+
+## Running it locally
 
 ```bash
-docker compose up -d                                   # Postgres (pgvector) auf :5441
+docker compose up -d                                   # Postgres with pgvector on :5441
 cd backend
 python3.12 -m venv .venv && .venv/bin/pip install -e ".[test]"
-cp .env.example .env                                   # ohne ANTHROPIC_API_KEY: Mock-Modus
+cp .env.example .env                                   # add ANTHROPIC_API_KEY for live mode
 .venv/bin/alembic upgrade head
-.venv/bin/python scripts/check_sources.py              # Katalog live prüfen → data/sources-live.json
-.venv/bin/python scripts/load_sources.py               # Katalog ∩ Live-Ergebnis, Entitäten, Netz, Kalender, Fragen
-.venv/bin/python scripts/run_cycle.py                  # ein Tageszyklus
-.venv/bin/python scripts/run_cycle.py --report         # den Wochen-Lagebericht schreiben
-.venv/bin/uvicorn mhs.main:app --reload --port 8471    # API + gebaute Oberfläche
-cd ../frontend && npm install && npm run dev           # :3001, leitet /api an :8471 weiter
+.venv/bin/python scripts/check_sources.py              # verify the catalogue live
+.venv/bin/python scripts/load_sources.py               # sources, entities, network, calendar, questions
+.venv/bin/python scripts/run_cycle.py                  # one daily cycle
+.venv/bin/python scripts/run_cycle.py --report         # write the weekly Lagebericht
+.venv/bin/uvicorn mhs.main:app --reload --port 8471    # API and the built interface
+cd ../frontend && npm install && npm run dev           # dev server on :3001, proxies /api
 ```
 
-`backend/.env` (siehe `.env.example`): `DATABASE_URL`, `ANTHROPIC_API_KEY`, `APP_PASSWORD`,
-`SECRET_KEY`, `SCHEDULER_ENABLED`, `CYCLE_HOUR_UTC`, optional `MAX_EXTRACTIONS_PER_CYCLE`.
+Environment (`backend/.env`, see `.env.example`): `DATABASE_URL`, `ANTHROPIC_API_KEY`,
+`APP_PASSWORD`, `SECRET_KEY`, `SCHEDULER_ENABLED`, `CYCLE_HOUR_UTC`, optionally
+`MAX_EXTRACTIONS_PER_CYCLE`.
 
 ## Tests
 
 ```bash
-cd backend && .venv/bin/python -m pytest -q            # braucht das lokale Postgres auf :5441
-cd frontend && npm run build && npm run lint
+cd backend && .venv/bin/python -m pytest -q            # needs the local Postgres on :5441
+cd frontend && npm run build && npx oxlint
 ```
 
-Die Tests legen ihre eigene Datenbank `mhs_test` an und laufen immer im Mock-Modus: ein
-Schlüssel in `backend/.env` kann sie nicht live schalten, sie kosten nie Geld. Die meisten
-Tests benennen die falsche Implementierung, gegen die sie schützen („Wrong: …“).
+The suite (339 tests) builds its own database and always runs in mock mode: a key in
+`backend/.env` cannot switch it live, so tests never cost money. Most tests name the plausible
+wrong implementation they guard against.
 
-## Deploy
+## Deploying
 
-Railway-Projekt `caritas-scanner`: der Dienst `web` (Dockerfile: Vite-Build → Python mit
-vorgeladenem Embedding-Modell) und ein Postgres-Dienst (`pgvector/pgvector:pg16` mit Volume).
-Deployt wird mit `railway up` aus einem sauberen Abzug des committeten Stands, nicht aus dem
-Arbeitsverzeichnis – etwa so, im verknüpften Repo-Verzeichnis:
+The reference deployment runs on Railway: a `web` service built from the `Dockerfile` (Vite
+build, then Python with the embedding model baked in) and a `pgvector/pgvector:pg16` Postgres
+with a volume. At start, `backend/scripts/start.sh` runs Alembic, loads the catalogue
+idempotently and starts uvicorn. Set `APP_PASSWORD`, `SECRET_KEY` and `ANTHROPIC_API_KEY` on
+the service; never commit them. Schema changes after the first deployment need their own
+Alembic migration (`0002` onward).
 
-```bash
-snap=$(mktemp -d) && git archive HEAD | tar -x -C "$snap"
-railway up "$snap" --path-as-root --service web --detach
+## Repository layout
+
+```
+backend/mhs/        collect · extract · analyse · questions · network · report · suggest · api
+backend/scripts/    check_sources · load_sources · run_cycle · check_models · start.sh
+backend/tests/      pytest suite (mock mode)
+data/               sources, entities, questions, network, calendar (the domain, as data)
+frontend/src/       the seven views
+docs/superpowers/   design spec and implementation plan
 ```
 
-Beim Start führt `backend/scripts/start.sh` aus:
+## Status and limits
 
-1. `scripts/reset_if_empty.py` – ein No-op, außer `RESET_EMPTY_SCHEMA=yes` ist gesetzt **und**
-   die Datenbank enthält kein einziges Signal (einmalig für die erste Produktionsdatenbank
-   genutzt; die Variable ist wieder entfernt);
-2. `alembic upgrade head`;
-3. `scripts/load_sources.py` (idempotent);
+Built in October 2026 for the Clinic's first edition. Known limits: several municipal council
+information systems are script-only and cannot be read directly; some provider websites block
+automated reading; the network still collects some generic actors ("Kommunen"); the question
+judge is deliberately conservative. The deep-research brief the catalogue and questions were
+built from is not part of this repository.
 
-dann `uvicorn`. **Ab jetzt braucht jede Schemaänderung eine eigene Alembic-Migration (ab
-`0002`)**: `0001_initial` baut die Tabellen aus den Modellen und läuft auf der
-Produktionsdatenbank nicht noch einmal.
+---
 
-## Unterlagen
-
-- Brief: `docs/brief/source-architecture.pdf` (mit Text- und Linkliste daneben)
-- Design: `docs/superpowers/specs/2026-10-14-caritas-scanner-design.md`
-- Umsetzungsplan: `docs/superpowers/plans/2026-10-14-caritas-scanner.md`
+Built by Nicklas Berild Lundblad for the TUM Think Tank Strategic Foresight Clinic, with the
+Caritas Miesbach team.

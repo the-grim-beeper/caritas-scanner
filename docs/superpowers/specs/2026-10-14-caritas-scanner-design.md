@@ -2,8 +2,8 @@
 
 **Date:** 2026-10-14
 **Status:** approved by Nicklas in chat (2026-10-14); spec review waived for the 15 Oct deadline
-**Client:** Caritas-Zentrum Miesbach (Florian Rausch), via the TUM Strategic Foresight Clinic, Team 1.
-Subproject "Horizon scanner" (Nicklas, Felix Heß), agreed 2026-10-06.
+**Client:** Caritas-Zentrum Miesbach, via the TUM Strategic Foresight Clinic, Team 1.
+Subproject "Horizon scanner" (two team members), agreed 2026-10-06.
 **Template:** fork of `the-grim-beeper/rhein-neckar-scanner` at `372deb1` (history kept as lineage).
 **Brief:** `docs/brief/source-architecture.pdf` (ChatGPT deep research, cut 2026-10-08) with its text
 (`source-architecture.txt`) and link list (`source-architecture-links.txt`). The three CSVs the report
@@ -28,7 +28,7 @@ Pflegestützpunkt). The unknown is whether they connect, hold decision rights, k
 and move information. So "change" means change in **mandates, money, staffing, rules and
 legitimacy** around social provision, not general local news.
 
-Audience: the student team first (German-speaking, TUM), then Florian Rausch and colleagues.
+Audience: the student team first (German-speaking, TUM), then the Caritas contact and colleagues.
 **German first**; the English toggle is kept from the template.
 
 ### Non-goals (v1)
@@ -245,7 +245,7 @@ questions: [{question_id, movement, note_de, note_en, judgement_ids[]}]
 sections:  [{layer, items: [{signal_id, note_de, note_en}]}]
 chains:    [{title_de, title_en, signal_ids[]}]
 watch:     [{event_id, why_de, why_en}]
-friday_de, friday_en                               # the 2–3 paragraph update to Florian
+friday_de, friday_en                               # the 2–3 paragraph update to the Caritas contact
 friday_signal_ids: [..]                            # what the Friday note rests on
 ```
 
@@ -341,7 +341,7 @@ cycle with the 60-day backfill; then the deployed URL is smoke-tested in a brows
 
 New Railway project `caritas-scanner`: `web` (repo Dockerfile, as the template) + `postgres`
 (`pgvector/pgvector:pg16`, volume). Pre-deploy: `alembic upgrade head && python scripts/load_sources.py`.
-`APP_PASSWORD=oberland`. The Anthropic key is set by Nicklas with a `! railway variable set` command
+`APP_PASSWORD` (set on the service, never in the repo). The Anthropic key is set by Nicklas with a `! railway variable set` command
 (auto mode blocks secret writes). Local Postgres on host port **5441** (5438 is the Rhein-Neckar
 scanner's).
 
