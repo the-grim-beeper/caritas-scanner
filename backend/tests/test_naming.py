@@ -24,10 +24,13 @@ def test_no_template_names_left_in_user_facing_text_or_docs():
     assert hits == []
 
 
-def test_readme_names_this_scanner_and_its_live_url_but_not_the_password():
+def test_readme_names_this_scanner_but_publishes_no_access_details():
+    # The README is public. Wrong: it carries the instance's URL or its password — the instance
+    # has a word password, no login rate limit and buttons that spend money on the API key.
     from mhs.config import Settings
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert readme.startswith("# Horizont-Scanner Landkreis Miesbach")
-    assert "https://web-production-3e84e.up.railway.app" in readme
+    assert "up.railway.app" not in readme
     assert Settings.model_fields["app_password"].default not in readme
+    assert "APP_PASSWORD=" not in readme
